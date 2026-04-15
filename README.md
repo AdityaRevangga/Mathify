@@ -337,15 +337,53 @@ Response:
 
 ---
 
+### Role-Based Access Control (RBAC)
+
+Mathify menggunakan sistem role untuk mengatur akses fitur:
+
+| Role | Deskripsi |
+|------|-----------|
+| `admin` | Administrator - bisa mengelola semua konten (CRUD topics, materials, videos, quizzes, discussions) |
+| `student` | Siswa - bisa membaca konten, mengerjakan quiz, melihat hasil dan pembahasan |
+
+#### Ringkasan Akses per Role
+
+| Fitur | Public | Student | Admin |
+|-------|--------|---------|-------|
+| Lihat topics, materials, videos, quizzes |  |  |  |
+| Lihat pembahasan quiz |  |  |  |
+| Submit quiz |  |  |  |
+| Lihat hasil quiz sendiri |  |  |  |
+| CRUD topics, materials, videos |  |  |  |
+| CRUD quiz & questions |  |  |  |
+| CRUD pembahasan |  |  |  |
+
+#### Membuat Admin Pertama
+
+Untuk membuat akun admin, jalankan SQL langsung di database:
+
+```sql
+-- Hash password dengan bcrypt terlebih dahulu
+INSERT INTO users (username, email, password, full_name, role)
+VALUES ('admin', 'admin@mathify.com', '$2a$10$...', 'Admin', 'admin');
+```
+
+Atau ubah role user yang sudah ada:
+```sql
+UPDATE users SET role = 'admin' WHERE email = 'email@example.com';
+```
+
+---
+
 ### 📚 Topics (Topik Matematika)
 
-| Method | Endpoint | Auth | Deskripsi |
-|--------|----------|------|-----------|
-| GET | `/api/topics` | ❌ | Daftar semua topik aktif |
-| GET | `/api/topics/:id` | ❌ | Detail satu topik |
-| POST | `/api/topics` | ✅ | Buat topik baru |
-| PUT | `/api/topics/:id` | ✅ | Update topik |
-| DELETE | `/api/topics/:id` | ✅ | Hapus topik |
+| Method | Endpoint | Akses | Deskripsi |
+|--------|----------|-------|-----------|
+| GET | `/api/topics` | Public | Daftar semua topik aktif |
+| GET | `/api/topics/:id` | Public | Detail satu topik |
+| POST | `/api/topics` | Admin | Buat topik baru |
+| PUT | `/api/topics/:id` | Admin | Update topik |
+| DELETE | `/api/topics/:id` | Admin | Hapus topik |
 
 #### Create Topic
 
@@ -367,13 +405,13 @@ Content-Type: application/json
 
 ### 📖 Materials (Materi)
 
-| Method | Endpoint | Auth | Deskripsi |
-|--------|----------|------|-----------|
-| GET | `/api/topics/:topicId/materials` | ❌ | Daftar materi dalam topik |
-| GET | `/api/topics/:topicId/materials/:id` | ❌ | Detail materi + steps |
-| POST | `/api/topics/:topicId/materials` | ✅ | Buat materi baru |
-| PUT | `/api/topics/:topicId/materials/:id` | ✅ | Update materi |
-| DELETE | `/api/topics/:topicId/materials/:id` | ✅ | Hapus materi |
+| Method | Endpoint | Akses | Deskripsi |
+|--------|----------|-------|-----------|
+| GET | `/api/topics/:topicId/materials` | Public | Daftar materi dalam topik |
+| GET | `/api/topics/:topicId/materials/:id` | Public | Detail materi + steps |
+| POST | `/api/topics/:topicId/materials` | Admin | Buat materi baru |
+| PUT | `/api/topics/:topicId/materials/:id` | Admin | Update materi |
+| DELETE | `/api/topics/:topicId/materials/:id` | Admin | Hapus materi |
 
 #### Detail Materi (Step-by-step)
 
@@ -418,12 +456,12 @@ Response:
 
 ### 📝 Material Steps (Detail Step-by-step)
 
-| Method | Endpoint | Auth | Deskripsi |
-|--------|----------|------|-----------|
-| GET | `/api/topics/:topicId/materials/:materialId/steps` | ❌ | Daftar semua step |
-| POST | `/api/topics/:topicId/materials/:materialId/steps` | ✅ | Tambah step baru |
-| PUT | `/api/topics/:topicId/materials/steps/:stepId` | ✅ | Update step |
-| DELETE | `/api/topics/:topicId/materials/steps/:stepId` | ✅ | Hapus step |
+| Method | Endpoint | Akses | Deskripsi |
+|--------|----------|-------|-----------|
+| GET | `/api/topics/:topicId/materials/:materialId/steps` | Public | Daftar semua step |
+| POST | `/api/topics/:topicId/materials/:materialId/steps` | Admin | Tambah step baru |
+| PUT | `/api/topics/:topicId/materials/steps/:stepId` | Admin | Update step |
+| DELETE | `/api/topics/:topicId/materials/steps/:stepId` | Admin | Hapus step |
 
 #### Create Step
 
@@ -445,13 +483,13 @@ Content-Type: application/json
 
 ### 🎥 Videos (Video Pembelajaran)
 
-| Method | Endpoint | Auth | Deskripsi |
-|--------|----------|------|-----------|
-| GET | `/api/topics/:topicId/materials/:materialId/videos` | ❌ | Daftar video |
-| GET | `/api/topics/:topicId/materials/:materialId/videos/:id` | ❌ | Detail video |
-| POST | `/api/topics/:topicId/materials/:materialId/videos` | ✅ | Tambah video |
-| PUT | `/api/topics/:topicId/materials/:materialId/videos/:id` | ✅ | Update video |
-| DELETE | `/api/topics/:topicId/materials/:materialId/videos/:id` | ✅ | Hapus video |
+| Method | Endpoint | Akses | Deskripsi |
+|--------|----------|-------|-----------|
+| GET | `/api/topics/:topicId/materials/:materialId/videos` | Public | Daftar video |
+| GET | `/api/topics/:topicId/materials/:materialId/videos/:id` | Public | Detail video |
+| POST | `/api/topics/:topicId/materials/:materialId/videos` | Admin | Tambah video |
+| PUT | `/api/topics/:topicId/materials/:materialId/videos/:id` | Admin | Update video |
+| DELETE | `/api/topics/:topicId/materials/:materialId/videos/:id` | Admin | Hapus video |
 
 #### Create Video
 
@@ -474,13 +512,13 @@ Content-Type: application/json
 
 ### ❓ Quiz
 
-| Method | Endpoint | Auth | Deskripsi |
-|--------|----------|------|-----------|
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes` | ❌ | Daftar quiz |
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes/:id` | ❌ | Detail quiz + soal (tanpa jawaban) |
-| POST | `/api/topics/:topicId/materials/:materialId/quizzes` | ✅ | Buat quiz baru |
-| PUT | `/api/topics/:topicId/materials/:materialId/quizzes/:id` | ✅ | Update quiz |
-| DELETE | `/api/topics/:topicId/materials/:materialId/quizzes/:id` | ✅ | Hapus quiz |
+| Method | Endpoint | Akses | Deskripsi |
+|--------|----------|-------|-----------|
+| GET | `/api/topics/:topicId/materials/:materialId/quizzes` | Public | Daftar quiz |
+| GET | `/api/topics/:topicId/materials/:materialId/quizzes/:id` | Public | Detail quiz + soal (tanpa jawaban) |
+| POST | `/api/topics/:topicId/materials/:materialId/quizzes` | Admin | Buat quiz baru |
+| PUT | `/api/topics/:topicId/materials/:materialId/quizzes/:id` | Admin | Update quiz |
+| DELETE | `/api/topics/:topicId/materials/:materialId/quizzes/:id` | Admin | Hapus quiz |
 
 #### Detail Quiz (Soal tanpa jawaban benar)
 
@@ -520,11 +558,11 @@ Response:
 
 ### 📝 Quiz Questions (Soal Quiz)
 
-| Method | Endpoint | Auth | Deskripsi |
-|--------|----------|------|-----------|
-| POST | `/api/topics/:topicId/materials/:materialId/quizzes/:id/questions` | ✅ | Tambah soal |
-| PUT | `/api/topics/:topicId/materials/:materialId/quizzes/questions/:questionId` | ✅ | Update soal |
-| DELETE | `/api/topics/:topicId/materials/:materialId/quizzes/questions/:questionId` | ✅ | Hapus soal |
+| Method | Endpoint | Akses | Deskripsi |
+|--------|----------|-------|-----------|
+| POST | `/api/topics/:topicId/materials/:materialId/quizzes/:id/questions` | Admin | Tambah soal |
+| PUT | `/api/topics/:topicId/materials/:materialId/quizzes/questions/:questionId` | Admin | Update soal |
+| DELETE | `/api/topics/:topicId/materials/:materialId/quizzes/questions/:questionId` | Admin | Hapus soal |
 
 #### Create Question
 
@@ -548,12 +586,12 @@ Content-Type: application/json
 
 ### ✅ Submit Quiz & Hasil
 
-| Method | Endpoint | Auth | Deskripsi |
-|--------|----------|------|-----------|
-| POST | `/api/topics/:topicId/materials/:materialId/quizzes/:id/submit` | ✅ | Submit jawaban quiz |
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes/:id/results` | ✅ | Riwayat hasil quiz per quiz |
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes/results/:resultId` | ✅ | Detail hasil quiz |
-| GET | `/api/my-results` | ✅ | Semua hasil quiz user |
+| Method | Endpoint | Akses | Deskripsi |
+|--------|----------|-------|-----------|
+| POST | `/api/topics/:topicId/materials/:materialId/quizzes/:id/submit` | Login | Submit jawaban quiz |
+| GET | `/api/topics/:topicId/materials/:materialId/quizzes/:id/results` | Login | Riwayat hasil quiz per quiz |
+| GET | `/api/topics/:topicId/materials/:materialId/quizzes/results/:resultId` | Login | Detail hasil quiz |
+| GET | `/api/my-results` | Login | Semua hasil quiz user |
 
 #### Submit Quiz
 
@@ -609,16 +647,13 @@ Response:
 **Logika penilaian:**
 - `score` = (jawaban benar / total soal) × 100
 - `passed` = `true` jika `score >= passing_score` quiz
-
----
-
 ### 💡 Pembahasan Quiz
 
-| Method | Endpoint | Auth | Deskripsi |
-|--------|----------|------|-----------|
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes/:id/discussions` | ❌ | Pembahasan semua soal dalam quiz |
-| POST | `/api/topics/:topicId/materials/:materialId/quizzes/questions/:questionId/discussions` | ✅ | Tambah pembahasan |
-| PUT | `/api/topics/:topicId/materials/:materialId/quizzes/discussions/:discussionId` | ✅ | Update pembahasan |
+| Method | Endpoint | Akses | Deskripsi |
+|--------|----------|-------|-----------|
+| GET | `/api/topics/:topicId/materials/:materialId/quizzes/:id/discussions` | Public | Pembahasan semua soal dalam quiz |
+| POST | `/api/topics/:topicId/materials/:materialId/quizzes/questions/:questionId/discussions` | Admin | Tambah pembahasan |
+| PUT | `/api/topics/:topicId/materials/:materialId/quizzes/discussions/:discussionId` | Admin | Update pembahasan |
 
 #### Get Discussions
 

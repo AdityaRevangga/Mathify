@@ -17,10 +17,20 @@ const QuizQuestion = {
 
   async create({ quiz_id, question_text, option_a, option_b, option_c, option_d, correct_answer, sort_order }) {
     const result = await db.query(
-      `INSERT INTO quiz_questions (quiz_id, question_text, option_a, option_b, option_c, option_d, correct_answer, sort_order)
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [quiz_id, question_text, option_a, option_b, option_c, option_d, correct_answer, sort_order || 0]
-    );
+    `INSERT INTO quiz_questions 
+    (quiz_id, question_text, option_a, option_b, option_c, option_d, correct_answer, sort_order)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    [
+      quiz_id,
+      question_text,
+      option_a,
+      option_b,
+      option_c,
+      option_d,
+      correct_answer,
+      sort_order || 0
+    ]
+  );
     return result.rows[0];
   },
 

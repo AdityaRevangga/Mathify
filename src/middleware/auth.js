@@ -37,4 +37,22 @@ const optionalAuth = async (req, res, next) => {
   next();
 };
 
-module.exports = { auth, optionalAuth };
+// Role-based authorization
+const authorize = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Silakan login terlebih dahulu' });
+    }
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ success: false, message: 'Anda tidak memiliki akses untuk fitur ini' });
+    }
+    next();
+  };
+};
+
+// Shortcut middleware untuk role tertentu
+const adminOnly = [auth, authorize('admin')];
+const studentOnly = [auth, authorize('student')];
+const allRoles = [auth, authorize('admin', 'student')];
+
+module.exports = { auth, optionalAuth, authorize, adminOnly, studentOnly, allRoles };
