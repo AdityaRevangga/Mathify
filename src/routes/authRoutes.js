@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const { auth } = require('../middleware/auth');
+const { allRoles } = require('../middleware/auth');
 
+// Public - tanpa login
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.get('/me', auth, authController.me);
 router.post('/refresh', authController.refreshToken);
 router.post('/logout', authController.logout);
-router.post('/logout-all', auth, authController.logoutAll);
+
+// Perlu login (student atau admin)
+router.get('/me', allRoles, authController.me);
+router.post('/logout-all', allRoles, authController.logoutAll);
 
 module.exports = router;
