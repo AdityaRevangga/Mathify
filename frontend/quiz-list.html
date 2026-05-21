@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis - Mathify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { display: flex; min-height: 100vh; background: var(--bg-soft); }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 220px; background: white;
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 1.5rem 0;
+      position: fixed; top: 0; left: 0; height: 100vh; z-index: 50;
+    }
+    .sidebar-logo {
+      font-size: 1.3rem; font-weight: 800; color: var(--blue);
+      letter-spacing: -0.02em;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border); margin-bottom: 1rem;
+    }
+    .sidebar-nav {
+      flex: 1; padding: 0 0.75rem;
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.85rem; border-radius: var(--radius-sm);
+      font-size: 0.875rem; font-weight: 500;
+      color: var(--text-muted); text-decoration: none; transition: all 0.15s;
+    }
+    .nav-item:hover { background: var(--bg-soft); color: var(--text); }
+    .nav-item.active { background: var(--blue-light); color: var(--blue); font-weight: 700; }
+    .sidebar-bottom {
+      padding: 0 0.75rem; border-top: 1px solid var(--border);
+      padding-top: 1rem; margin-top: 1rem;
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      position: fixed; top: 0; left: 220px; right: 0; height: 60px;
+      background: white; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; z-index: 40;
+    }
+    .search-bar {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--bg-soft); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.45rem 0.85rem; width: 280px;
+    }
+    .search-bar input {
+      border: none; background: none; outline: none;
+      font-size: 0.875rem; font-family: inherit; color: var(--text); width: 100%;
+    }
+    .search-bar input::placeholder { color: var(--text-light); }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-icon-btn {
+      width: 36px; height: 36px; border: none; background: none;
+      border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); transition: all 0.15s;
+    }
+    .topbar-icon-btn:hover { background: var(--bg-soft); color: var(--text); }
+    .user-chip { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; text-decoration: none; }
+    .user-info { text-align: right; }
+    .user-name { font-size: 0.875rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--blue-light);
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+    }
+
+    /* ===== MAIN ===== */
+    .main {
+      margin-left: 220px; margin-top: 60px;
+      flex: 1; padding: 2rem;
+    }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header { margin-bottom: 1.5rem; }
+    .page-header h2 {
+      font-size: 1.5rem; font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 0.2rem;
+    }
+    .page-header p { font-size: 0.875rem; color: var(--text-muted); }
+
+    /* ===== FILTER TABS ===== */
+    .filter-row {
+      display: flex; gap: 0.5rem;
+      margin-bottom: 1.75rem; flex-wrap: wrap;
+    }
+    .filter-tab {
+      padding: 0.45rem 1.25rem;
+      border-radius: 999px;
+      font-size: 0.875rem; font-weight: 600; font-family: inherit;
+      border: 1.5px solid var(--border);
+      background: white; color: var(--text-muted);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .filter-tab:hover { border-color: var(--blue-mid); color: var(--text); }
+    .filter-tab.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+    /* ===== QUIZ GRID ===== */
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .quiz-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+      position: relative;
+    }
+    .quiz-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .quiz-card.completed { border-color: #A7F3D0; background: #F0FDF9; }
+
+    .quiz-card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 1rem;
+    }
+
+    .quiz-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .quiz-icon.blue { background: var(--blue-light); }
+    .quiz-icon.pink { background: #FDF2F8; }
+    .quiz-icon.green { background: #ECFDF5; }
+
+    .badge-new {
+      background: var(--red); color: white;
+      font-size: 0.7rem; font-weight: 700;
+      padding: 0.2rem 0.6rem; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+
+    .badge-lulus {
+      background: #D1FAE5; color: #065F46;
+      font-size: 0.78rem; font-weight: 700;
+      padding: 0.25rem 0.75rem; border-radius: 999px;
+    }
+
+    .quiz-card h3 {
+      font-size: 1rem; font-weight: 800;
+      margin-bottom: 0.4rem; color: var(--text);
+    }
+
+    .quiz-card p {
+      font-size: 0.825rem; color: var(--text-muted);
+      line-height: 1.6; margin-bottom: 1rem;
+    }
+
+    .quiz-meta-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.1rem;
+    }
+
+    .quiz-questions {
+      font-size: 0.78rem; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;
+    }
+
+    .quiz-score-best {
+      font-size: 0.78rem; font-weight: 700; color: var(--blue);
+    }
+    .quiz-score-none {
+      font-size: 0.78rem; color: var(--text-light);
+    }
+
+    .btn-start {
+      width: 100%; padding: 0.7rem;
+      background: var(--text); color: white; border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem; font-weight: 700; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+      transition: background 0.15s;
+    }
+    .btn-start:hover { background: #374151; }
+
+    .btn-retry {
+      width: 100%; padding: 0.7rem;
+      background: white; color: var(--green);
+      border: 1.5px solid var(--green);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem; font-weight: 700; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+      transition: background 0.15s;
+    }
+    .btn-retry:hover { background: #ECFDF5; }
+
+    /* ===== BOTTOM ROW ===== */
+    .bottom-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    /* Leaderboard */
+    .leaderboard-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .card-title-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-size: 0.95rem; font-weight: 800;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .card-label {
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    .leaderboard-item {
+      display: flex; align-items: center; gap: 0.85rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.4rem;
+      transition: background 0.15s;
+    }
+    .leaderboard-item:hover { background: var(--bg-soft); }
+    .leaderboard-item.me { background: var(--blue-light); }
+
+    .rank-num {
+      font-size: 0.875rem; font-weight: 800;
+      color: var(--text-muted); width: 18px; text-align: center;
+    }
+
+    .lb-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--bg-gray);
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+
+    .lb-name { font-size: 0.875rem; font-weight: 600; flex: 1; }
+    .leaderboard-item.me .lb-name { color: var(--blue); }
+
+    .lb-xp { font-size: 0.875rem; font-weight: 700; color: var(--text); }
+    .leaderboard-item.me .lb-xp { color: var(--blue); }
+
+    /* Special Mission */
+    .mission-card {
+      background: var(--blue);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      position: relative; overflow: hidden;
+    }
+    .mission-card::before {
+      content: '';
+      position: absolute; top: -40px; right: -40px;
+      width: 150px; height: 150px; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .mission-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.85rem; position: relative; z-index: 1;
+    }
+    .mission-title {
+      font-size: 0.95rem; font-weight: 800; color: white;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .mission-badge {
+      font-size: 1.25rem;
+    }
+
+    .mission-desc {
+      font-size: 0.825rem; color: rgba(255,255,255,0.8);
+      margin-bottom: 1.25rem; line-height: 1.6;
+      position: relative; z-index: 1;
+    }
+
+    .mission-progress-track {
+      height: 8px; background: rgba(255,255,255,0.2);
+      border-radius: 999px; overflow: hidden; margin-bottom: 0.5rem;
+      position: relative; z-index: 1;
+    }
+    .mission-progress-fill {
+      height: 100%; background: white;
+      border-radius: 999px; width: 60%;
+    }
+
+    .mission-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.78rem; position: relative; z-index: 1;
+    }
+    .mission-completed { color: rgba(255,255,255,0.7); font-weight: 600; }
+    .mission-reward { color: white; font-weight: 700; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .bottom-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .topbar { left: 0; }
+      .main { margin-left: 0; }
+      .quiz-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">MathIfy</div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Beranda
+      </a>
+      <a href="topik.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Topik Matematika
+      </a>
+      <a href="quiz-list.html" class="nav-item active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+        Kuis
+      </a>
+      <a href="pengaturan.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        Bantuan
+      </a>
+      <a href="login.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Keluar
+      </a>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="search-bar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Cari materi...">
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="topbar-icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </button>
+      <a href="profil.html" class="user-chip">
+        <div class="user-info">
+          <div class="user-name">Budi Santoso</div>
+          <div class="user-role">Siswa Kelas 9</div>
+        </div>
+        <div class="user-avatar">👨‍🎓</div>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-header">
+      <h2>Pilih Tantanganmu ⚡</h2>
+      <p>Uji pemahamanmu pada tiap topik dan kumpulkan XP untuk naik level.</p>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-row">
+      <button class="filter-tab active" onclick="filterQuiz('all', this)">Semua</button>
+      <button class="filter-tab" onclick="filterQuiz('terselesaikan', this)">Terselesaikan</button>
+      <button class="filter-tab" onclick="filterQuiz('belum', this)">Belum Dicoba</button>
+    </div>
+
+    <!-- QUIZ CARDS -->
+    <div class="quiz-grid" id="quizGrid">
+
+      <div class="quiz-card" data-status="belum">
+        <div class="quiz-card-top">
+          <div class="quiz-icon blue">🔢</div>
+          <span class="badge-new">BARU</span>
+        </div>
+        <h3>Quiz Aljabar</h3>
+        <p>Topik: Persamaan Linear, Variabel, & Fungsi Dasar.</p>
+        <div class="quiz-meta-row">
+          <span class="quiz-questions">15 PERTANYAAN</span>
+          <span class="quiz-score-best">Terbaik: 85%</span>
+        </div>
+        <button class="btn-start" onclick="location.href='quiz-soal.html'">MULAI KUIS 🚀</button>
+      </div>
+
+      <div class="quiz-card" data-status="belum">
+        <div class="quiz-card-top">
+          <div class="quiz-icon pink">📐</div>
+        </div>
+        <h3>Quiz Geometri</h3>
+        <p>Uji pengetahuan tentang sudut, bangun ruang, dan teorema Pythagoras.</p>
+        <div class="quiz-meta-row">
+          <span class="quiz-questions">10 PERTANYAAN</span>
+          <span class="quiz-score-none">Belum dicoba</span>
+        </div>
+        <button class="btn-start" onclick="location.href='quiz-soal.html'">MULAI KUIS 🚀</button>
+      </div>
+
+      <div class="quiz-card" data-status="belum">
+        <div class="quiz-card-top">
+          <div class="quiz-icon pink">📐</div>
+        </div>
+        <h3>Quiz Trigonometry</h3>
+        <p>Uji pengetahuan tentang sudut, bangun ruang, dan teorema Pythagoras.</p>
+        <div class="quiz-meta-row">
+          <span class="quiz-questions">10 PERTANYAAN</span>
+          <span class="quiz-score-none">Belum dicoba</span>
+        </div>
+        <button class="btn-start" onclick="location.href='quiz-soal.html'">MULAI KUIS 🚀</button>
+      </div>
+
+      <div class="quiz-card completed" data-status="terselesaikan">
+        <div class="quiz-card-top">
+          <div class="quiz-icon green">📊</div>
+          <span class="badge-lulus">LULUS (100%)</span>
+        </div>
+        <h3>Quiz Statistika</h3>
+        <p>Analisis data, peluang, dan diagram tren masa kini.</p>
+        <div class="quiz-meta-row">
+          <span class="quiz-questions">12 PERTANYAAN</span>
+          <span class="quiz-score-best" style="color:var(--green)">Skor: 100%</span>
+        </div>
+        <button class="btn-retry" onclick="location.href='quiz-soal.html'">ULANGI KUIS 🔄</button>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="bottom-row">
+
+      <!-- LEADERBOARD -->
+      <div class="leaderboard-card">
+        <div class="card-title-row">
+          <span class="card-title">🏆 TOP SQUAD</span>
+          <span class="card-label">WEEKLY</span>
+        </div>
+        <div class="leaderboard-item">
+          <span class="rank-num">1</span>
+          <div class="lb-avatar">👦</div>
+          <span class="lb-name">Raffa</span>
+          <span class="lb-xp">12,450 XP</span>
+        </div>
+        <div class="leaderboard-item me">
+          <span class="rank-num">2</span>
+          <div class="lb-avatar">👨‍🎓</div>
+          <span class="lb-name">You (Budi Santoso)</span>
+          <span class="lb-xp">10,200 XP</span>
+        </div>
+      </div>
+
+      <!-- SPECIAL MISSION -->
+      <div class="mission-card">
+        <div class="mission-header">
+          <span class="mission-title">MISI SPESIAL ✨</span>
+          <span class="mission-badge">🏅</span>
+        </div>
+        <p class="mission-desc">Selesaikan 5 kuis tanpa salah hari ini.</p>
+        <div class="mission-progress-track">
+          <div class="mission-progress-fill"></div>
+        </div>
+        <div class="mission-meta">
+          <span class="mission-completed">3/5 COMPLETED</span>
+          <span class="mission-reward">Reward: Einstein Badge</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function filterQuiz(status, btn) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.quiz-card').forEach(card => {
+        if (status === 'all' || card.dataset.status === status) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

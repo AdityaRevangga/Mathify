@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil - Mathify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { display: flex; min-height: 100vh; background: var(--bg-soft); }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 220px; background: white;
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 1.5rem 0;
+      position: fixed; top: 0; left: 0; height: 100vh; z-index: 50;
+    }
+    .sidebar-logo {
+      font-size: 1.3rem; font-weight: 800; color: var(--blue);
+      letter-spacing: -0.02em;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border); margin-bottom: 1rem;
+    }
+    .sidebar-nav {
+      flex: 1; padding: 0 0.75rem;
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.85rem; border-radius: var(--radius-sm);
+      font-size: 0.875rem; font-weight: 500;
+      color: var(--text-muted); text-decoration: none; transition: all 0.15s;
+    }
+    .nav-item:hover { background: var(--bg-soft); color: var(--text); }
+    .nav-item.active { background: var(--blue-light); color: var(--blue); font-weight: 700; }
+    .sidebar-bottom {
+      padding: 0 0.75rem; border-top: 1px solid var(--border);
+      padding-top: 1rem; margin-top: 1rem;
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      position: fixed; top: 0; left: 220px; right: 0; height: 60px;
+      background: white; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; z-index: 40;
+    }
+    .search-bar {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--bg-soft); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.45rem 0.85rem; width: 280px;
+    }
+    .search-bar input {
+      border: none; background: none; outline: none;
+      font-size: 0.875rem; font-family: inherit; color: var(--text); width: 100%;
+    }
+    .search-bar input::placeholder { color: var(--text-light); }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-icon-btn {
+      width: 36px; height: 36px; border: none; background: none;
+      border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); transition: all 0.15s;
+    }
+    .topbar-icon-btn:hover { background: var(--bg-soft); color: var(--text); }
+    .user-chip { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; text-decoration: none; }
+    .user-info { text-align: right; }
+    .user-name { font-size: 0.875rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--blue-light);
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+    }
+
+    /* ===== MAIN ===== */
+    .main { margin-left: 220px; margin-top: 60px; flex: 1; }
+
+    /* ===== PROFILE HEADER BANNER ===== */
+    .profile-banner {
+      background: var(--blue);
+      padding: 1.75rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .profile-banner-left { display: flex; align-items: center; gap: 1.25rem; }
+
+    .profile-avatar-lg {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 3px solid rgba(255,255,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; flex-shrink: 0;
+    }
+
+    .profile-banner-info h2 {
+      font-size: 1.2rem; font-weight: 800; color: white;
+      margin-bottom: 0.4rem;
+    }
+
+    .profile-badges {
+      display: flex; gap: 0.4rem; margin-bottom: 0.3rem;
+    }
+
+    .profile-badge {
+      font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+    }
+    .badge-active { background: rgba(255,255,255,0.2); color: white; }
+    .badge-premium { background: #FDE68A; color: #92400E; }
+
+    .profile-jenjang { font-size: 0.825rem; color: rgba(255,255,255,0.75); }
+
+    .profile-banner-actions { display: flex; gap: 0.6rem; }
+
+    .btn-banner-outline {
+      padding: 0.5rem 1.1rem;
+      background: transparent; color: white;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      border-radius: var(--radius-xs);
+      font-size: 0.85rem; font-weight: 700; font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .btn-banner-outline:hover { border-color: white; }
+
+    .btn-banner-solid {
+      padding: 0.5rem 1.1rem;
+      background: var(--text); color: white; border: none;
+      border-radius: var(--radius-xs);
+      font-size: 0.85rem; font-weight: 700; font-family: inherit;
+      transition: background 0.15s;
+    }
+    .btn-banner-solid:hover { background: #374151; }
+
+    /* ===== CONTENT ===== */
+    .profile-content { padding: 2rem 2.5rem; }
+
+    /* Tabs */
+    .profile-tabs {
+      display: flex; gap: 0.4rem; margin-bottom: 2rem;
+    }
+
+    .tab-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: var(--radius-xs);
+      font-size: 0.875rem; font-weight: 600; font-family: inherit;
+      border: 1.5px solid var(--border);
+      background: white; color: var(--text-muted);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .tab-btn:hover { color: var(--text); border-color: #94A3B8; }
+    .tab-btn.active { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+
+    /* Section title */
+    .section-title {
+      font-size: 1.1rem; font-weight: 800;
+      letter-spacing: -0.01em; text-align: center;
+      margin-bottom: 0.3rem;
+    }
+    .section-sub {
+      font-size: 0.825rem; color: var(--text-muted);
+      text-align: center; margin-bottom: 1.75rem;
+    }
+
+    /* Stats grid */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 1rem; margin-bottom: 2rem;
+    }
+
+    .stat-box {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1.1rem 1.25rem;
+    }
+    .stat-box-label { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.25rem; }
+    .stat-box-value { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+
+    /* Info Belajar */
+    .info-section { margin-bottom: 2rem; }
+    .info-section-title {
+      font-size: 1.1rem; font-weight: 800; text-align: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .info-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;
+    }
+
+    .info-card {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1rem;
+      display: flex; align-items: center; gap: 0.85rem;
+    }
+
+    .info-card-icon {
+      width: 48px; height: 48px; border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; flex-shrink: 0;
+      background: var(--bg-soft);
+    }
+
+    .info-card-label { font-size: 0.825rem; color: var(--text-muted); }
+    .info-card-value { font-size: 1rem; font-weight: 700; color: var(--text); }
+
+    /* Activity chart */
+    .chart-section { margin-bottom: 2rem; }
+    .chart-title { font-size: 1.1rem; font-weight: 800; text-align: center; margin-bottom: 0.3rem; }
+
+    .chart-box {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .chart-label { font-size: 0.8rem; font-weight: 600; color: var(--blue); margin-bottom: 0.25rem; }
+    .chart-sub { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+    .chart-visual {
+      height: 100px; position: relative;
+      display: flex; align-items: flex-end;
+    }
+
+    .chart-path {
+      width: 100%; height: 100%;
+      position: absolute; top: 0; left: 0;
+    }
+
+    /* ===== EDIT PROFILE VIEW ===== */
+    .edit-profile { display: none; max-width: 560px; margin: 0 auto; }
+
+    .edit-card {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .edit-back {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.875rem; color: var(--text-muted);
+      margin-bottom: 1.5rem; cursor: pointer; border: none; background: none;
+      font-family: inherit; transition: color 0.15s;
+    }
+    .edit-back:hover { color: var(--text); }
+
+    .edit-title { font-size: 1.375rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+    .edit-sub { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.75rem; }
+
+    /* Avatar upload */
+    .avatar-upload {
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .avatar-wrap { position: relative; display: inline-block; }
+
+    .avatar-edit-lg {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--blue-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.25rem; border: 3px solid white;
+      box-shadow: 0 0 0 2px var(--border);
+    }
+
+    .avatar-edit-btn {
+      position: absolute; bottom: 0; right: 0;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--blue); color: white; border: 2px solid white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; cursor: pointer;
+    }
+
+    .avatar-hint { font-size: 0.78rem; color: var(--text-light); }
+
+    /* Form grid */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block; font-size: 0.875rem; font-weight: 600;
+      color: var(--text); margin-bottom: 0.45rem;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%; padding: 0.7rem 1rem;
+      background: white; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem; font-family: inherit; color: var(--text);
+      outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(47,84,235,0.1);
+    }
+
+    /* Jenjang selector */
+    .jenjang-title {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 1rem; font-weight: 800; margin-bottom: 1rem;
+    }
+
+    .jenjang-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+
+    .jenjang-option { position: relative; }
+    .jenjang-option input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+
+    .jenjang-card {
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 0.85rem 0.5rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      cursor: pointer; transition: all 0.15s; background: white;
+    }
+    .jenjang-card:hover { border-color: var(--blue-mid); background: var(--blue-light); }
+    .jenjang-option input:checked + .jenjang-card {
+      border-color: var(--blue); background: var(--blue-light);
+    }
+
+    .jenjang-icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    }
+    .jenjang-icon.sd { background: #FFF7ED; }
+    .jenjang-icon.smp { background: var(--blue-light); }
+    .jenjang-icon.sma { background: #EFF6FF; }
+    .jenjang-icon.kuliah { background: #F5F3FF; }
+
+    .jenjang-name { font-size: 0.825rem; font-weight: 700; color: var(--text); }
+
+    /* Edit action row */
+    .edit-actions {
+      display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.75rem;
+    }
+
+    .btn-cancel {
+      padding: 0.65rem 1.5rem; background: white;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font-size: 0.875rem; font-weight: 700; font-family: inherit;
+      color: var(--text-muted); transition: all 0.15s;
+    }
+    .btn-cancel:hover { border-color: #94A3B8; color: var(--text); }
+
+    .btn-save {
+      padding: 0.65rem 1.75rem; background: var(--blue);
+      border: none; border-radius: var(--radius-sm);
+      font-size: 0.875rem; font-weight: 700; font-family: inherit;
+      color: white; transition: background 0.15s;
+    }
+    .btn-save:hover { background: var(--blue-hover); }
+
+    /* Danger zone */
+    .danger-zone {
+      background: #FFF1F2; border: 1px solid #FECDD3;
+      border-radius: var(--radius); padding: 1.1rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .danger-title { font-size: 0.875rem; font-weight: 700; color: var(--red); margin-bottom: 0.2rem; }
+    .danger-desc { font-size: 0.8rem; color: #9F1239; }
+
+    .btn-danger {
+      padding: 0.55rem 1.25rem; background: white;
+      border: 1.5px solid var(--red); border-radius: var(--radius-sm);
+      font-size: 0.825rem; font-weight: 700; font-family: inherit;
+      color: var(--red); white-space: nowrap; flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background: #FEE2E2; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .topbar { left: 0; }
+      .main { margin-left: 0; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .jenjang-grid { grid-template-columns: repeat(2, 1fr); }
+      .form-row { grid-template-columns: 1fr; }
+      .profile-banner { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">MathIfy</div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Beranda
+      </a>
+      <a href="topik.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Topik Matematika
+      </a>
+      <a href="quiz-list.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+        Kuis
+      </a>
+      <a href="pengaturan.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        Bantuan
+      </a>
+      <a href="login.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Keluar
+      </a>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="search-bar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Cari materi...">
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="topbar-icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </button>
+      <a href="profil.html" class="user-chip">
+        <div class="user-info">
+          <div class="user-name">Budi Santoso</div>
+          <div class="user-role">Siswa Kelas 9</div>
+        </div>
+        <div class="user-avatar">👨‍🎓</div>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PROFILE VIEW -->
+    <div id="profileView">
+      <!-- BANNER -->
+      <div class="profile-banner">
+        <div class="profile-banner-left">
+          <div class="profile-avatar-lg">👨‍🎓</div>
+          <div class="profile-banner-info">
+            <h2>Budi Santoso</h2>
+            <div class="profile-badges">
+              <span class="profile-badge badge-active">Active</span>
+              <span class="profile-badge badge-premium">Premium</span>
+            </div>
+            <div class="profile-jenjang">SMP</div>
+          </div>
+        </div>
+        <div class="profile-banner-actions">
+          <button class="btn-banner-outline" onclick="location.href='login.html'">Keluar</button>
+          <button class="btn-banner-solid" onclick="showEdit()">Edit Profil</button>
+        </div>
+      </div>
+
+      <div class="profile-content">
+        <!-- TABS -->
+        <div class="profile-tabs">
+          <button class="tab-btn active" onclick="switchTab('overview', this)">Overview</button>
+          <button class="tab-btn" onclick="switchTab('progress', this)">Progress</button>
+          <button class="tab-btn" onclick="switchTab('pencapaian', this)">Pencapaian</button>
+        </div>
+
+        <!-- OVERVIEW TAB -->
+        <div id="tab-overview">
+          <h3 class="section-title">Profile Overview</h3>
+          <p class="section-sub">User Stats</p>
+          <p style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-bottom:1.5rem;">User progress metrics</p>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-box-label">Streak</div>
+              <div class="stat-box-value">12 days</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-label">Poin</div>
+              <div class="stat-box-value">2.450</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-label">Topik</div>
+              <div class="stat-box-value">35</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-label">Quiz</div>
+              <div class="stat-box-value">22</div>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h3 class="info-section-title">Info Belajar</h3>
+            <div class="info-grid">
+              <div class="info-card">
+                <div class="info-card-icon">📚</div>
+                <div>
+                  <div class="info-card-label">Materi selesai</div>
+                  <div class="info-card-value">18</div>
+                </div>
+              </div>
+              <div class="info-card">
+                <div class="info-card-icon">📝</div>
+                <div>
+                  <div class="info-card-label">Soal tersedia</div>
+                  <div class="info-card-value">30</div>
+                </div>
+              </div>
+              <div class="info-card">
+                <div class="info-card-icon">⏰</div>
+                <div>
+                  <div class="info-card-label">Total waktu belajar</div>
+                  <div class="info-card-value">15 hours</div>
+                </div>
+              </div>
+              <div class="info-card">
+                <div class="info-card-icon">⭐</div>
+                <div>
+                  <div class="info-card-label">Rata-rata skor quiz</div>
+                  <div class="info-card-value">85%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-section">
+            <h3 class="chart-title">Aktivitas Minggu Ini</h3>
+            <div class="chart-box">
+              <div class="chart-label">Study Time This Week</div>
+              <div class="chart-sub">Hours</div>
+              <div class="chart-visual">
+                <svg class="chart-path" viewBox="0 0 400 100" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#2F54EB" stop-opacity="0.2"/>
+                      <stop offset="100%" stop-color="#2F54EB" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,70 C50,70 60,40 100,50 C140,60 160,80 200,60 C240,40 260,20 300,30 C340,40 360,50 400,35 L400,100 L0,100 Z" fill="url(#chartGrad)"/>
+                  <path d="M0,70 C50,70 60,40 100,50 C140,60 160,80 200,60 C240,40 260,20 300,30 C340,40 360,50 400,35" fill="none" stroke="#2F54EB" stroke-width="2.5"/>
+                </svg>
+              </div>
+              <div style="text-align:right; font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">Days</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROGRESS TAB (hidden) -->
+        <div id="tab-progress" style="display:none;">
+          <h3 class="section-title">Progress Belajar</h3>
+          <p class="section-sub" style="margin-bottom:1.5rem;">Rincian topik yang sedang dikerjakan</p>
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div style="background:white;border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;"><span style="font-weight:700;">Aljabar</span><span style="color:var(--blue);font-weight:700;">75%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:75%;background:var(--blue);"></div></div>
+            </div>
+            <div style="background:white;border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;"><span style="font-weight:700;">Trigonometry</span><span style="color:var(--blue);font-weight:700;">60%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:60%;background:var(--blue);"></div></div>
+            </div>
+            <div style="background:white;border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;"><span style="font-weight:700;">Bilangan</span><span style="color:var(--orange);font-weight:700;">30%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:30%;background:var(--orange);"></div></div>
+            </div>
+            <div style="background:white;border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;"><span style="font-weight:700;">Statistics</span><span style="color:var(--green);font-weight:700;">100%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--green);"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PENCAPAIAN TAB (hidden) -->
+        <div id="tab-pencapaian" style="display:none;">
+          <h3 class="section-title">Pencapaian</h3>
+          <p class="section-sub" style="margin-bottom:1.5rem;">Badge dan penghargaan yang sudah diraih</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+            <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">🏆</div>
+              <div style="font-weight:700;font-size:0.875rem;">Top Scorer</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);">Raih nilai 100%</div>
+            </div>
+            <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">🔥</div>
+              <div style="font-weight:700;font-size:0.875rem;">Streak Master</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);">12 hari berturut-turut</div>
+            </div>
+            <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;opacity:0.4;">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">🧠</div>
+              <div style="font-weight:700;font-size:0.875rem;">Einstein Badge</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);">Belum terbuka</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT PROFILE VIEW -->
+    <div id="editView" style="display:none; padding:2rem 2.5rem;">
+      <div style="max-width:560px; margin:0 auto;">
+        <button class="edit-back" onclick="showProfile()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Kembali ke Profil
+        </button>
+
+        <div class="edit-card">
+          <h2 class="edit-title">Edit Profil</h2>
+          <p class="edit-sub">Perbarui informasi pribadi dan preferensi belajar Anda.</p>
+
+          <div class="avatar-upload">
+            <div class="avatar-wrap">
+              <div class="avatar-edit-lg">👨‍🎓</div>
+              <div class="avatar-edit-btn">✏️</div>
+            </div>
+            <span class="avatar-hint">PNG, JPG up to 5MB</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nama Lengkap</label>
+              <input type="text" value="Budi Santoso">
+            </div>
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" value="budi_smart">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Alamat Email</label>
+            <input type="email" value="budi.santoso@email.com">
+          </div>
+
+          <div class="form-group">
+            <label>Bio / Tentang Saya</label>
+            <textarea rows="3">Saya sangat menyukai Aljabar dan ingin menguasai Kalkulus tahun ini!</textarea>
+          </div>
+
+          <div>
+            <div class="jenjang-title">
+              Jenjang Pendidikan
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
+            </div>
+            <div class="jenjang-grid">
+              <label class="jenjang-option">
+                <input type="radio" name="jenjang_edit" value="sd">
+                <div class="jenjang-card"><div class="jenjang-icon sd">😊</div><span class="jenjang-name">SD</span></div>
+              </label>
+              <label class="jenjang-option">
+                <input type="radio" name="jenjang_edit" value="smp" checked>
+                <div class="jenjang-card"><div class="jenjang-icon smp">📖</div><span class="jenjang-name">SMP</span></div>
+              </label>
+              <label class="jenjang-option">
+                <input type="radio" name="jenjang_edit" value="sma">
+                <div class="jenjang-card"><div class="jenjang-icon sma">🧑‍🎓</div><span class="jenjang-name">SMA</span></div>
+              </label>
+              <label class="jenjang-option">
+                <input type="radio" name="jenjang_edit" value="kuliah">
+                <div class="jenjang-card"><div class="jenjang-icon kuliah">🎓</div><span class="jenjang-name">Kuliah</span></div>
+              </label>
+            </div>
+          </div>
+
+          <div class="edit-actions">
+            <button class="btn-cancel" onclick="showProfile()">Batal</button>
+            <button class="btn-save" onclick="showProfile()">Simpan Perubahan</button>
+          </div>
+        </div>
+
+        <div class="danger-zone">
+          <div>
+            <div class="danger-title">Hapus Akun</div>
+            <div class="danger-desc">Tindakan ini tidak dapat dibatalkan. Semua progress akan hilang.</div>
+          </div>
+          <button class="btn-danger">Hapus Selamanya</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function showEdit() {
+      document.getElementById('profileView').style.display = 'none';
+      document.getElementById('editView').style.display = 'block';
+    }
+
+    function showProfile() {
+      document.getElementById('editView').style.display = 'none';
+      document.getElementById('profileView').style.display = 'block';
+    }
+
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      ['overview','progress','pencapaian'].forEach(t => {
+        document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis - Mathify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { display: flex; min-height: 100vh; background: var(--bg-soft); }
+
+    /* SIDEBAR */
+    .sidebar { width: 220px; background: white; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 50; }
+    .sidebar-logo { font-size: 1.3rem; font-weight: 800; color: var(--blue); padding: 0 1.5rem 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+    .sidebar-nav { flex: 1; padding: 0 0.75rem; display: flex; flex-direction: column; gap: 0.2rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: all 0.15s; }
+    .nav-item:hover { background: var(--bg-soft); color: var(--text); }
+    .nav-item.active { background: var(--blue-light); color: var(--blue); font-weight: 700; }
+    .sidebar-bottom { padding: 0 0.75rem; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.2rem; }
+
+    /* TOPBAR */
+    .topbar { position: fixed; top: 0; left: 220px; right: 0; height: 60px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; z-index: 40; }
+    .search-bar { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.45rem 0.85rem; width: 280px; }
+    .search-bar input { border: none; background: none; outline: none; font-size: 0.875rem; font-family: inherit; color: var(--text); width: 100%; }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-icon-btn { width: 36px; height: 36px; border: none; background: none; border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.15s; }
+    .topbar-icon-btn:hover { background: var(--bg-soft); color: var(--text); }
+    .user-chip { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; text-decoration: none; }
+    .user-info { text-align: right; }
+    .user-name { font-size: 0.875rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+
+    /* MAIN */
+    .main { margin-left: 220px; margin-top: 60px; flex: 1; padding: 2rem; display: flex; flex-direction: column; align-items: center; }
+
+    /* INTRO CARD */
+    .intro-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem 2rem; max-width: 540px; width: 100%; text-align: center; }
+    .intro-icon { width: 72px; height: 72px; background: var(--blue); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem; }
+    .intro-tag { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+    .intro-title { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+    .intro-title span { color: var(--blue); }
+    .intro-meta-row { display: flex; gap: 0.75rem; justify-content: center; margin: 1.5rem 0; }
+    .intro-meta-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.6rem 1rem; text-align: center; }
+    .meta-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.2rem; }
+    .meta-value { font-size: 1rem; font-weight: 800; color: var(--text); }
+    .intro-meta-item.highlight { background: var(--blue-light); border-color: var(--blue-mid); }
+    .intro-meta-item.highlight .meta-value { color: var(--blue); }
+    .btn-start-mission { width: 100%; padding: 0.9rem; background: var(--blue); color: white; border: none; border-radius: var(--radius-sm); font-size: 1rem; font-weight: 700; font-family: inherit; margin-bottom: 0.6rem; transition: background 0.15s; }
+    .btn-start-mission:hover { background: var(--blue-hover); }
+    .intro-rules { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* QUIZ AREA */
+    .quiz-area { max-width: 720px; width: 100%; display: none; }
+    .quiz-progress-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .quiz-progress-label { font-size: 0.875rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .quiz-timer { display: flex; align-items: center; gap: 0.35rem; font-size: 0.875rem; font-weight: 700; color: var(--blue); }
+    .quiz-progress-bar { height: 5px; background: var(--bg-gray); border-radius: 999px; overflow: hidden; margin-bottom: 1.75rem; }
+    .quiz-progress-fill { height: 100%; background: var(--blue); border-radius: 999px; transition: width 0.3s ease; }
+    .question-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 1.25rem; position: relative; }
+    .question-accent { position: absolute; left: 0; top: 1.5rem; bottom: 1.5rem; width: 4px; border-radius: 0 4px 4px 0; background: var(--blue); }
+    .question-text { font-size: 1.05rem; font-weight: 700; color: var(--text); line-height: 1.5; padding-left: 0.75rem; }
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .option-btn { display: flex; align-items: center; gap: 0.85rem; padding: 0.85rem 1.1rem; background: var(--bg-soft); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600; font-family: inherit; color: var(--text); cursor: pointer; text-align: left; transition: all 0.15s; }
+    .option-btn:hover:not(:disabled) { border-color: var(--blue-mid); background: var(--blue-light); }
+    .option-btn.selected-correct { background: #DCFCE7; border-color: var(--green); color: #166534; }
+    .option-btn.selected-wrong { background: #FEE2E2; border-color: var(--red); color: #991B1B; }
+    .option-btn.reveal-correct { background: #DCFCE7; border-color: var(--green); color: #166534; }
+    .option-label { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background: white; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; }
+    .selected-correct .option-label, .reveal-correct .option-label { background: var(--green); border-color: var(--green); color: white; }
+    .selected-wrong .option-label { background: var(--red); border-color: var(--red); color: white; }
+    .feedback-box { border-radius: var(--radius-sm); padding: 1.1rem 1.25rem; margin-top: 1.25rem; display: none; }
+    .feedback-box.correct { background: #F0FDF4; border: 1.5px solid #A7F3D0; }
+    .feedback-box.wrong { background: #FFF1F2; border: 1.5px solid #FECDD3; }
+    .feedback-title { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .feedback-box.correct .feedback-title { color: #166534; }
+    .feedback-box.wrong .feedback-title { color: #991B1B; }
+    .feedback-body { font-size: 0.825rem; color: var(--text-muted); line-height: 1.6; }
+    .btn-next { display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.6rem 1.25rem; background: white; border: 1.5px solid var(--border); border-radius: var(--radius-xs); font-size: 0.85rem; font-weight: 700; font-family: inherit; margin-top: 0.85rem; transition: all 0.15s; }
+    .btn-next:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* RESULT */
+    .result-screen { max-width: 720px; width: 100%; display: none; }
+    .result-layout { display: grid; grid-template-columns: 240px 1fr; gap: 1.25rem; }
+    .result-summary { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+    .result-date { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+    .result-stat-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.2rem; }
+    .result-stat-value { font-size: 3rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; margin-bottom: 1rem; }
+    .score-pass { color: var(--green); }
+    .score-fail { color: var(--red); }
+    .result-congrats { font-size: 0.825rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+    .btn-retry { width: 100%; padding: 0.65rem; background: white; border: 1.5px solid var(--blue); border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 700; font-family: inherit; color: var(--blue); transition: background 0.15s; }
+    .btn-retry:hover { background: var(--blue-light); }
+    .result-questions { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; overflow-y: auto; max-height: 520px; }
+    .result-q { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .result-q:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .result-q-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .result-q-text { font-size: 0.875rem; color: var(--text); margin-bottom: 0.75rem; line-height: 1.5; }
+    .result-option { padding: 0.5rem 0.85rem; border-radius: var(--radius-xs); font-size: 0.825rem; margin-bottom: 0.4rem; border: 1px solid var(--border); }
+    .result-option.correct { background: #DCFCE7; border-color: #A7F3D0; color: #166534; font-weight: 600; }
+    .result-option.wrong { background: #FEE2E2; border-color: #FECDD3; color: #991B1B; }
+    .result-explanation { margin-top: 0.75rem; padding: 0.75rem 1rem; background: var(--bg-soft); border-radius: var(--radius-xs); font-size: 0.825rem; color: var(--text-muted); line-height: 1.6; }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); } .topbar { left: 0; } .main { margin-left: 0; padding: 1.25rem; }
+      .options-grid { grid-template-columns: 1fr; } .result-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">MathIfy</div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Beranda</a>
+      <a href="topik.html" class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Topik Matematika</a>
+      <a href="quiz-list.html" class="nav-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>Kuis</a>
+      <a href="pengaturan.html" class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Pengaturan</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>Bantuan</a>
+      <a href="login.html" class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Keluar</a>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="search-bar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Cari materi...">
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+      <button class="topbar-icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></button>
+      <a href="profil.html" class="user-chip">
+        <div class="user-info"><div class="user-name">Budi Santoso</div><div class="user-role">Siswa Kelas 9</div></div>
+        <div class="user-avatar">👨‍🎓</div>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- INTRO -->
+    <div class="intro-card" id="introCard">
+      <div class="intro-icon">🚀</div>
+      <div class="intro-tag" id="introTag">KUIS MODUL • 4 SOAL</div>
+      <div class="intro-title">SIAP TAKLUKKAN <span id="introTitle">ALJABAR?</span></div>
+      <div class="intro-meta-row">
+        <div class="intro-meta-item"><div class="meta-label">SOAL</div><div class="meta-value">4</div></div>
+        <div class="intro-meta-item highlight"><div class="meta-label">HADIAH</div><div class="meta-value">400 XP</div></div>
+        <div class="intro-meta-item"><div class="meta-label">LULUS</div><div class="meta-value">≥75%</div></div>
+      </div>
+      <button class="btn-start-mission" onclick="startQuiz()">MULAI KUIS SEKARANG!</button>
+      <p class="intro-rules">Baca aturan main &amp; sistem poin</p>
+    </div>
+
+    <!-- QUIZ AREA -->
+    <div class="quiz-area" id="quizArea">
+      <div class="quiz-progress-row">
+        <span class="quiz-progress-label" id="progressLabel">SOAL 01/04</span>
+        <span class="quiz-timer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="timerDisplay">10:00</span>
+        </span>
+      </div>
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill" style="width:0%"></div></div>
+      <div class="question-card"><div class="question-accent"></div><p class="question-text" id="questionText"></p></div>
+      <div class="options-grid" id="optionsGrid"></div>
+      <div class="feedback-box" id="feedbackBox">
+        <div class="feedback-title" id="feedbackTitle"></div>
+        <div class="feedback-body" id="feedbackBody"></div>
+        <button class="btn-next" onclick="nextQuestion()">NEXT QUESTION 📘</button>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="result-screen" id="resultScreen">
+      <div class="result-layout">
+        <div class="result-summary">
+          <div class="result-date" id="resultDate"></div>
+          <div class="result-stat-label">Total soal</div>
+          <div class="result-stat-value" style="color:var(--text);font-size:2.5rem;" id="totalSoal">4</div>
+          <div class="result-stat-label">Score</div>
+          <div class="result-stat-value" id="scoreDisplay">0</div>
+          <p class="result-congrats" id="resultCongrats"></p>
+          <button class="btn-retry" onclick="location.href='quiz-list.html'">Kembali ke Daftar Kuis</button>
+        </div>
+        <div class="result-questions" id="resultQuestions"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ===== PLACEHOLDER QUESTIONS (Lorem Ipsum) =====
+    // Akan diganti dengan soal asli setelah dikonfirmasi
+    const PLACEHOLDER_QUESTIONS = [
+      {
+        q: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Manakah pernyataan berikut yang paling tepat?',
+        o: ['A. Lorem ipsum dolor sit amet', 'B. Consectetur adipiscing elit', 'C. Sed do eiusmod tempor', 'D. Ut labore et dolore'],
+        a: 1,
+        p: 'Consectetur adipiscing elit adalah jawaban yang benar karena lorem ipsum dolor sit amet. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+      },
+      {
+        q: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco. Nilai dari variabel x yang memenuhi persamaan berikut adalah…',
+        o: ['A. x = 2', 'B. x = 4', 'C. x = 6', 'D. x = 8'],
+        a: 2,
+        p: 'Nilai x = 6 karena quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.'
+      },
+      {
+        q: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum. Pernyataan yang BENAR tentang konsep berikut adalah…',
+        o: ['A. Cillum dolore eu fugiat', 'B. Nulla pariatur excepteur', 'C. Sint occaecat cupidatat', 'D. Sunt in culpa qui officia'],
+        a: 0,
+        p: 'Cillum dolore eu fugiat nulla pariatur adalah jawaban yang benar. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+      },
+      {
+        q: 'Excepteur sint occaecat cupidatat non proident. Hasil dari operasi berikut adalah…',
+        o: ['A. 12', 'B. 24', 'C. 36', 'D. 48'],
+        a: 3,
+        p: 'Jawabannya 48 karena sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+      }
+    ];
+
+    // Read URL params for topik info
+    const params = new URLSearchParams(window.location.search);
+    const topikParam = params.get('topik') || '';
+    const subParam = params.get('sub') || '';
+
+    const TOPIK_LABELS = {
+      bilangan: 'BILANGAN', aljabar: 'ALJABAR', geometri: 'GEOMETRI',
+      trigonometri: 'TRIGONOMETRI', statistika: 'STATISTIKA', kalkulus: 'KALKULUS'
+    };
+
+    if (topikParam && TOPIK_LABELS[topikParam]) {
+      document.getElementById('introTitle').textContent = TOPIK_LABELS[topikParam] + '?';
+      document.getElementById('introTag').textContent = `KUIS MODUL ${topikParam.toUpperCase()} • 4 SOAL`;
+    }
+
+    let current = 0;
+    let answers = [];
+    let answered = false;
+    let timerInterval;
+    let secondsLeft = 600;
+    const questions = PLACEHOLDER_QUESTIONS;
+
+    function startQuiz() {
+      document.getElementById('introCard').style.display = 'none';
+      document.getElementById('quizArea').style.display = 'block';
+      loadQuestion();
+      timerInterval = setInterval(() => {
+        secondsLeft--;
+        const m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+        const s = (secondsLeft % 60).toString().padStart(2, '0');
+        document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+        if (secondsLeft <= 0) { clearInterval(timerInterval); showResult(); }
+      }, 1000);
+    }
+
+    function loadQuestion() {
+      answered = false;
+      const q = questions[current];
+      document.getElementById('progressLabel').textContent = `SOAL ${String(current + 1).padStart(2,'0')}/${questions.length.toString().padStart(2,'0')}`;
+      document.getElementById('quizProgressFill').style.width = `${(current / questions.length) * 100}%`;
+      document.getElementById('questionText').innerHTML = q.q;
+
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+      q.o.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="option-label">${['A','B','C','D'][i]}</span>${opt.replace(/^[A-D]\.\s/, '')}`;
+        btn.onclick = () => selectAnswer(i, btn);
+        grid.appendChild(btn);
+      });
+
+      document.getElementById('feedbackBox').style.display = 'none';
+    }
+
+    function selectAnswer(index, btn) {
+      if (answered) return;
+      answered = true;
+      const q = questions[current];
+      answers.push(index);
+
+      document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+      const btns = document.querySelectorAll('.option-btn');
+      const isCorrect = index === q.a;
+      btn.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+      if (!isCorrect) btns[q.a].classList.add('reveal-correct');
+
+      const fb = document.getElementById('feedbackBox');
+      fb.style.display = 'block';
+      fb.className = `feedback-box ${isCorrect ? 'correct' : 'wrong'}`;
+      document.getElementById('feedbackTitle').innerHTML = isCorrect ? '✅ CORRECT! YOU\'RE FIRE!' : '❌ OOPS, WRONG ANSWER!';
+      document.getElementById('feedbackBody').innerHTML = isCorrect
+        ? q.p
+        : `<strong>Jawaban yang benar adalah ${['A','B','C','D'][q.a]}</strong><br>${q.p}`;
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current >= questions.length) { clearInterval(timerInterval); showResult(); }
+      else loadQuestion();
+    }
+
+    function showResult() {
+      document.getElementById('quizArea').style.display = 'none';
+      document.getElementById('resultScreen').style.display = 'block';
+
+      const correct = answers.filter((a, i) => a === questions[i].a).length;
+      const score = Math.round((correct / questions.length) * 100);
+      const pass = score >= 75;
+
+      const now = new Date();
+      document.getElementById('resultDate').textContent = `Tanggal Kuis: ${now.toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'})}`;
+      document.getElementById('totalSoal').textContent = questions.length;
+      const scoreEl = document.getElementById('scoreDisplay');
+      scoreEl.textContent = score;
+      scoreEl.className = `result-stat-value ${pass ? 'score-pass' : 'score-fail'}`;
+      document.getElementById('resultCongrats').textContent = pass ? 'Selamat! Anda telah lulus dari kuis ini. 🎉' : 'Jangan menyerah! Pelajari kembali materinya ya.';
+
+      const rq = document.getElementById('resultQuestions');
+      rq.innerHTML = '';
+      questions.forEach((q, i) => {
+        const userAns = answers[i] ?? -1;
+        const isCorrect = userAns === q.a;
+        const optHtml = q.o.map((opt, j) => {
+          let cls = '';
+          if (j === q.a) cls = 'correct';
+          else if (j === userAns && !isCorrect) cls = 'wrong';
+          return `<div class="result-option ${cls}">${opt}</div>`;
+        }).join('');
+        rq.innerHTML += `<div class="result-q">
+          <div class="result-q-label">Soal ${i + 1}</div>
+          <div class="result-q-text">${q.q}</div>
+          ${optHtml}
+          <div class="result-explanation">${q.p}</div>
+        </div>`;
+      });
+    }
+  </script>
+
+</body>
+</html>

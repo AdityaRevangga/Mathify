@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Pembelajaran - Mathify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { display: flex; min-height: 100vh; background: var(--bg-soft); }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 40;
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.85rem; color: var(--text-muted);
+    }
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
+    .breadcrumb a:hover { color: var(--blue); }
+    .breadcrumb .sep { color: var(--text-light); }
+    .breadcrumb .current { color: var(--blue); font-weight: 600; }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-icon-btn {
+      width: 36px; height: 36px; border: none; background: none;
+      border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); transition: all 0.15s;
+    }
+    .topbar-icon-btn:hover { background: var(--bg-soft); color: var(--text); }
+    .user-chip { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; text-decoration: none; }
+    .user-info { text-align: right; }
+    .user-name { font-size: 0.875rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--blue-light);
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+    }
+
+    /* ===== LAYOUT ===== */
+    .page-wrap {
+      margin-top: 56px;
+      display: flex;
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 1.75rem 2.5rem 3rem;
+      min-width: 0;
+    }
+
+    /* ===== VIDEO PLAYER ===== */
+    .video-player {
+      background: #0f172a;
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16/9;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .video-placeholder {
+      font-size: 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.3);
+      z-index: 2;
+      transition: background 0.2s;
+    }
+    .video-player:hover .play-overlay { background: rgba(0,0,0,0.4); }
+
+    .play-btn {
+      width: 64px; height: 64px;
+      background: var(--blue);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.5rem;
+      box-shadow: 0 4px 20px rgba(47,84,235,0.5);
+      transition: transform 0.2s;
+    }
+    .video-player:hover .play-btn { transform: scale(1.08); }
+
+    /* Progress bar */
+    .video-progress {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.6);
+      padding: 0.6rem 1rem;
+      z-index: 3;
+    }
+
+    .progress-track {
+      height: 3px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 999px;
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+    }
+
+    .progress-track-fill {
+      height: 100%;
+      background: var(--orange);
+      border-radius: 999px;
+      width: 70%;
+    }
+
+    .video-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .video-controls-left {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+
+    .ctrl-btn {
+      background: none; border: none; color: white;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0; font-size: 0.85rem; opacity: 0.85;
+      transition: opacity 0.15s;
+    }
+    .ctrl-btn:hover { opacity: 1; }
+
+    .video-time {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .video-controls-right {
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+
+    /* ===== VIDEO META ===== */
+    .video-meta {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .video-meta-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      gap: 1rem;
+    }
+
+    .video-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+
+    .video-actions {
+      display: flex; gap: 0.5rem; flex-shrink: 0;
+    }
+
+    .btn-action {
+      display: flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 0.85rem;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: var(--radius-xs);
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .btn-action:hover { border-color: #94A3B8; color: var(--text); background: var(--bg-soft); }
+
+    .video-stats {
+      display: flex; align-items: center; gap: 1rem;
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+
+    .video-stats span { display: flex; align-items: center; gap: 0.3rem; }
+
+    .video-desc {
+      margin-top: 0.85rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      border-top: 1px solid var(--border);
+      padding-top: 0.85rem;
+    }
+
+    /* ===== RELATED ===== */
+    .related-title { font-size: 1rem; font-weight: 800; margin-bottom: 1.1rem; }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .related-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.2s;
+      display: block;
+    }
+    .related-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+    .related-thumb {
+      height: 90px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; position: relative;
+    }
+
+    .related-duration {
+      position: absolute; bottom: 0.4rem; right: 0.4rem;
+      background: rgba(0,0,0,0.7); color: white;
+      font-size: 0.72rem; font-weight: 600;
+      padding: 0.15rem 0.4rem; border-radius: 4px;
+    }
+
+    .related-body { padding: 0.85rem; }
+    .related-level {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem;
+    }
+    .level-menengah { color: var(--orange); }
+    .level-dasar { color: var(--green); }
+    .level-lanjutan { color: var(--blue); }
+    .related-body h4 { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.25rem; line-height: 1.4; }
+    .related-body p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+
+    /* Chat FAB */
+    .chat-fab {
+      position: fixed; bottom: 1.75rem; right: 1.75rem;
+      width: 48px; height: 48px;
+      background: var(--orange); border: none; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.25rem;
+      box-shadow: 0 4px 16px rgba(245,158,11,0.4);
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; z-index: 99;
+    }
+    .chat-fab:hover { transform: scale(1.08); }
+
+    /* ===== STEPS SIDEBAR ===== */
+    .steps-sidebar {
+      width: 280px; flex-shrink: 0;
+      position: sticky; top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+      border-left: 1px solid var(--border);
+      background: white; padding: 1.5rem;
+    }
+
+    .steps-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .steps-header h4 { font-size: 0.9rem; font-weight: 800; }
+    .steps-progress-badge {
+      background: var(--green); color: white;
+      font-size: 0.72rem; font-weight: 700;
+      padding: 0.2rem 0.6rem; border-radius: 999px;
+    }
+
+    .step-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.85rem; border-radius: var(--radius-sm);
+      margin-bottom: 0.5rem; cursor: pointer; transition: background 0.15s;
+      text-decoration: none;
+    }
+    .step-item:hover { background: var(--bg-soft); }
+    .step-item.active { background: var(--blue-light); }
+
+    .step-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 0.9rem;
+    }
+    .step-icon.done { background: var(--green); color: white; }
+    .step-icon.current { background: var(--blue); color: white; }
+    .step-icon.locked { background: var(--bg-gray); color: var(--text-muted); }
+
+    .step-info { min-width: 0; }
+    .step-name { font-size: 0.85rem; font-weight: 700; color: var(--text); line-height: 1.3; margin-bottom: 0.2rem; }
+    .step-item.active .step-name { color: var(--blue); }
+    .step-duration { font-size: 0.75rem; color: var(--text-muted); }
+    .step-item.active .step-duration { color: var(--blue); opacity: 0.8; }
+    .step-playing { font-size: 0.7rem; color: var(--blue); font-weight: 600; }
+
+    .btn-start-quiz {
+      width: 100%; margin-top: 1.25rem; padding: 0.8rem;
+      background: var(--blue); color: white; border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem; font-weight: 700; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      transition: background 0.15s;
+    }
+    .btn-start-quiz:hover { background: var(--blue-hover); }
+
+    @media (max-width: 900px) { .steps-sidebar { display: none; } }
+    @media (max-width: 600px) {
+      .content-area { padding: 1.25rem; }
+      .related-grid { grid-template-columns: 1fr; }
+      .video-actions { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="breadcrumb">
+      <a href="topik.html">Matematika</a>
+      <span class="sep">›</span>
+      <a href="topik.html">Aljabar dan Fungsi</a>
+      <span class="sep">›</span>
+      <span class="current">Pemahaman makna simbol matematika</span>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="topbar-icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </button>
+      <a href="profil.html" class="user-chip">
+        <div class="user-info">
+          <div class="user-name">Budi Santoso</div>
+          <div class="user-role">Siswa Kelas 9</div>
+        </div>
+        <div class="user-avatar">👨‍🎓</div>
+      </a>
+    </div>
+  </header>
+
+  <div class="page-wrap">
+
+    <!-- CONTENT -->
+    <div class="content-area">
+
+      <!-- VIDEO PLAYER -->
+      <div class="video-player" onclick="togglePlay(this)">
+        <div class="video-placeholder">📹</div>
+        <div class="play-overlay" id="playOverlay">
+          <div class="play-btn" id="playBtn">▶</div>
+        </div>
+        <div class="video-progress">
+          <div class="progress-track">
+            <div class="progress-track-fill" id="progressFill"></div>
+          </div>
+          <div class="video-controls">
+            <div class="video-controls-left">
+              <button class="ctrl-btn">⏸</button>
+              <button class="ctrl-btn">🔊</button>
+              <span class="video-time">12:45 / 18:20</span>
+            </div>
+            <div class="video-controls-right">
+              <button class="ctrl-btn">⚙️</button>
+              <button class="ctrl-btn">⛶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIDEO META -->
+      <div class="video-meta">
+        <div class="video-meta-top">
+          <div class="video-title">Pemahaman makna simbol matematika</div>
+          <div class="video-actions">
+            <button class="btn-action">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Unduh Materi
+            </button>
+            <button class="btn-action">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Bagikan
+            </button>
+          </div>
+        </div>
+        <div class="video-stats">
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            12,402 Tayangan
+          </span>
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            24 April 2026
+          </span>
+        </div>
+        <div class="video-desc">
+          Dalam sesi ini, kita akan melampaui bidang datar dan mengeksplorasi bagaimana Teorema Pythagoras berlaku pada objek tiga dimensi. Kita akan mempelajari cara menghitung diagonal ruang pada balok dan kubus dengan menggunakan rumus turunan yang cerdas. Pastikan kamu sudah memahami dasar-dasar Pythagoras 2D sebelum memulai!
+        </div>
+      </div>
+
+      <!-- RELATED -->
+      <h3 class="related-title">Materi Terkait</h3>
+      <div class="related-grid">
+        <a href="video.html" class="related-card">
+          <div class="related-thumb" style="background:#1e293b;">
+            📐
+            <span class="related-duration">12:30</span>
+          </div>
+          <div class="related-body">
+            <div class="related-level level-menengah">MENENGAH</div>
+            <h4>Aplikasi Pythagoras di Dunia Nyata</h4>
+            <p>Belajar bagaimana arsitek menggunakan Pythagoras...</p>
+          </div>
+        </a>
+        <a href="video.html" class="related-card">
+          <div class="related-thumb" style="background:#0f172a;">
+            🔢
+            <span class="related-duration">08:45</span>
+          </div>
+          <div class="related-body">
+            <div class="related-level level-dasar">DASAR</div>
+            <h4>Triple Pythagoras yang Harus Dihafal</h4>
+            <p>Kumpulan angka saktii yang sering muncul di ujian!</p>
+          </div>
+        </a>
+        <a href="video.html" class="related-card">
+          <div class="related-thumb" style="background:#172554;">
+            📊
+            <span class="related-duration">15:20</span>
+          </div>
+          <div class="related-body">
+            <div class="related-level level-lanjutan">LANJUTAN</div>
+            <h4>Trigonometri Dasar & Pythagoras</h4>
+            <p>Hubungan antara sudut dan panjang sisi segitiga.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- STEPS SIDEBAR -->
+    <aside class="steps-sidebar">
+      <div class="steps-header">
+        <h4>Langkah Pembelajaran</h4>
+        <span class="steps-progress-badge">65% Selesai</span>
+      </div>
+
+      <a href="materi.html" class="step-item">
+        <div class="step-icon done">✓</div>
+        <div class="step-info">
+          <div class="step-name">Pemahaman makna simbol matematika</div>
+          <div class="step-duration">05:20 Menit</div>
+        </div>
+      </a>
+
+      <a href="video.html" class="step-item active">
+        <div class="step-icon current">▶</div>
+        <div class="step-info">
+          <div class="step-name">Video Pembelajaran</div>
+          <div class="step-duration">18:20 Menit</div>
+          <div class="step-playing">• Sedang Diputar</div>
+        </div>
+      </a>
+
+      <a href="#" class="step-item">
+        <div class="step-icon locked">🔒</div>
+        <div class="step-info">
+          <div class="step-name">Latihan Soal</div>
+          <div class="step-duration">5 Pertanyaan</div>
+        </div>
+      </a>
+
+      <a href="#" class="step-item">
+        <div class="step-icon locked">📋</div>
+        <div class="step-info">
+          <div class="step-name">Kuis Akhir Modul</div>
+          <div class="step-duration">10 Menit • 100 Poin</div>
+        </div>
+      </a>
+
+      <button class="btn-start-quiz" onclick="location.href='quiz-soal.html'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
+        Mulai Kuis Sekarang
+      </button>
+    </aside>
+  </div>
+
+  <button class="chat-fab" aria-label="Chat">💬</button>
+
+  <script>
+    let playing = false;
+    function togglePlay(el) {
+      playing = !playing;
+      const overlay = document.getElementById('playOverlay');
+      const btn = document.getElementById('playBtn');
+      if (playing) {
+        overlay.style.opacity = '0';
+        btn.textContent = '⏸';
+      } else {
+        overlay.style.opacity = '1';
+        btn.textContent = '▶';
+      }
+    }
+  </script>
+
+</body>
+</html>

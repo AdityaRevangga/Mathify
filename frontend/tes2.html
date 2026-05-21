@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathify Design System – Figma Export</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8F9FF; color: #111827; -webkit-font-smoothing: antialiased; }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: #2F54EB; padding: 0 2rem;
+      display: flex; align-items: center; gap: 0; height: 52px;
+    }
+    .nav-logo { color: white; font-weight: 800; font-size: 1.1rem; margin-right: 2rem; white-space: nowrap; }
+    .nav-btn {
+      padding: 0 1rem; height: 52px;
+      color: rgba(255,255,255,0.7); font-size: 0.825rem; font-weight: 600;
+      cursor: pointer; border: none; background: none; font-family: inherit;
+      border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap;
+    }
+    .nav-btn:hover { color: white; }
+    .nav-btn.active { color: white; border-bottom-color: white; }
+
+    /* ── PAGES ── */
+    .page { display: none; padding: 72px 0 0; min-height: 100vh; }
+    .page.active { display: block; }
+
+    /* ── SCREENSHOT FRAME ── */
+    .frame {
+      width: 1280px; margin: 0 auto;
+      background: white;
+    }
+
+    /* ── FRAME HEADER ── */
+    .frame-header {
+      background: #2F54EB;
+      padding: 2rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .frame-header-left {}
+    .frame-badge {
+      display: inline-block; background: rgba(255,255,255,0.15);
+      color: white; font-size: 0.65rem; font-weight: 700;
+      padding: 0.15rem 0.6rem; border-radius: 999px;
+      letter-spacing: 0.06em; margin-bottom: 0.5rem;
+    }
+    .frame-title { font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.02em; }
+    .frame-sub { font-size: 0.825rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem; }
+    .frame-logo { font-size: 1rem; font-weight: 800; color: white; opacity: 0.9; }
+
+    /* ── CONTENT AREA ── */
+    .content { padding: 2rem 2.5rem 2.5rem; }
+
+    /* ──────────── COLOR PALETTE ──────────── */
+    .color-section { margin-bottom: 1.75rem; }
+    .section-label {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #9CA3AF; margin-bottom: 0.75rem;
+    }
+
+    .color-strip { display: flex; border-radius: 10px; overflow: hidden; border: 1px solid #E5E7EB; }
+    .color-swatch {
+      flex: 1; height: 72px; display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end; padding-bottom: 0.5rem;
+      position: relative; transition: flex 0.2s;
+    }
+    .color-swatch:hover { flex: 1.5; }
+    .swatch-name { font-size: 0.58rem; font-weight: 700; margin-bottom: 1px; }
+    .swatch-hex  { font-size: 0.55rem; font-family: monospace; opacity: 0.85; }
+    .primary-tag {
+      position: absolute; top: 0.35rem; left: 50%; transform: translateX(-50%);
+      background: rgba(255,255,255,0.25); color: white;
+      font-size: 0.5rem; font-weight: 800; padding: 0.1rem 0.35rem;
+      border-radius: 3px; white-space: nowrap; letter-spacing: 0.05em;
+    }
+
+    /* Semantic grid */
+    .semantic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .sem-card { border-radius: 10px; overflow: hidden; border: 1px solid #E5E7EB; }
+    .sem-top { height: 52px; display: flex; align-items: center; justify-content: center; }
+    .sem-top span { font-size: 0.75rem; font-weight: 700; }
+    .sem-body { background: white; padding: 0.75rem; }
+    .sem-name { font-size: 0.78rem; font-weight: 700; color: #1F2937; margin-bottom: 0.2rem; }
+    .sem-use  { font-size: 0.68rem; color: #6B7280; line-height: 1.4; }
+    .sem-hex  { font-size: 0.62rem; font-family: monospace; color: #9CA3AF; margin-top: 0.35rem; }
+
+    /* Text colors */
+    .text-color-row { display: flex; flex-direction: column; gap: 0.6rem; }
+    .tc-item { display: flex; align-items: center; gap: 1rem; }
+    .tc-dot { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; }
+    .tc-label { font-size: 0.8rem; font-weight: 600; }
+    .tc-use { font-size: 0.72rem; color: #9CA3AF; }
+    .tc-token { font-size: 0.65rem; font-family: monospace; background: #F3F4F6; padding: 0.15rem 0.5rem; border-radius: 4px; color: #4B5563; flex-shrink: 0; }
+
+    /* ──────────── TYPOGRAPHY ──────────── */
+    .type-table { width: 100%; border-collapse: collapse; }
+    .type-table th {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #9CA3AF; text-align: left;
+      padding: 0 0 0.6rem; border-bottom: 1px solid #E5E7EB;
+    }
+    .type-table td { padding: 0.9rem 0; border-bottom: 1px solid #F3F4F6; vertical-align: middle; }
+    .type-table tr:last-child td { border-bottom: none; }
+    .type-name-col { font-size: 0.72rem; font-weight: 700; color: #374151; }
+    .type-use-col  { font-size: 0.62rem; color: #9CA3AF; }
+    .type-token-col { font-size: 0.62rem; font-family: monospace; color: #2F54EB; background: #EEF2FF; padding: 0.15rem 0.4rem; border-radius: 3px; display: inline-block; }
+    .type-size-col, .type-wt-col { font-size: 0.68rem; font-family: monospace; color: #6B7280; }
+
+    /* Weight showcase */
+    .weight-row { display: flex; gap: 2rem; align-items: baseline; flex-wrap: wrap; }
+    .wt-item { text-align: center; }
+    .wt-sample { font-size: 1.75rem; color: #111827; line-height: 1; }
+    .wt-label { font-size: 0.65rem; font-weight: 700; color: #6B7280; margin-top: 0.4rem; }
+    .wt-val   { font-size: 0.6rem; font-family: monospace; color: #9CA3AF; }
+
+    /* ──────────── EFFECTS ──────────── */
+    .shadow-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .shadow-card {
+      border: 1px solid #F3F4F6; border-radius: 10px; padding: 1.25rem;
+      text-align: center;
+    }
+    .shadow-preview {
+      width: 60px; height: 60px; border-radius: 8px;
+      margin: 0 auto 1rem; background: white;
+    }
+    .shadow-name  { font-size: 0.78rem; font-weight: 700; color: #1F2937; margin-bottom: 0.2rem; }
+    .shadow-token { font-size: 0.62rem; font-family: monospace; color: #2F54EB; margin-bottom: 0.4rem; }
+    .shadow-val   { font-size: 0.6rem; color: #9CA3AF; font-family: monospace; line-height: 1.5; }
+    .shadow-use   { font-size: 0.6rem; color: #D1D5DB; margin-top: 0.4rem; }
+
+    /* Blur row */
+    .blur-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .blur-card { }
+    .blur-visual {
+      height: 72px; border-radius: 8px; overflow: hidden; position: relative;
+      background: linear-gradient(135deg, #A5B4FC, #2F54EB);
+      margin-bottom: 0.6rem;
+    }
+    .blur-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .blur-chip {
+      background: rgba(255,255,255,0.2); backdrop-filter: var(--bf);
+      border-radius: 6px; padding: 0.3rem 0.75rem;
+      font-size: 0.72rem; font-weight: 700; color: white;
+    }
+    .blur-name  { font-size: 0.72rem; font-weight: 700; color: #374151; text-align: center; }
+    .blur-token { font-size: 0.6rem; font-family: monospace; color: #9CA3AF; text-align: center; }
+
+    /* Radius */
+    .radius-strip { display: flex; gap: 1.25rem; align-items: flex-end; flex-wrap: wrap; }
+    .radius-item { text-align: center; }
+    .radius-box {
+      background: #EEF2FF; border: 2px solid #A5B4FC;
+      width: 64px; height: 64px; margin: 0 auto 0.5rem;
+    }
+    .radius-name  { font-size: 0.68rem; font-weight: 700; color: #374151; }
+    .radius-val   { font-size: 0.6rem; font-family: monospace; color: #9CA3AF; }
+    .radius-usage { font-size: 0.58rem; color: #D1D5DB; margin-top: 0.2rem; }
+
+    /* ──────────── SPACING ──────────── */
+    .spacing-table { width: 100%; }
+    .sp-row { display: flex; align-items: center; gap: 1rem; padding: 0.55rem 0; border-bottom: 1px solid #F9FAFB; }
+    .sp-token { width: 100px; font-size: 0.68rem; font-family: monospace; color: #2F54EB; background: #EEF2FF; padding: 0.15rem 0.4rem; border-radius: 3px; flex-shrink: 0; }
+    .sp-bar-wrap { flex: 1; height: 18px; background: #F3F4F6; border-radius: 4px; overflow: hidden; }
+    .sp-bar { height: 100%; background: #818CF8; border-radius: 4px; }
+    .sp-rem  { width: 64px; font-size: 0.65rem; font-family: monospace; color: #6B7280; flex-shrink: 0; }
+    .sp-px   { width: 48px; font-size: 0.65rem; font-family: monospace; color: #9CA3AF; flex-shrink: 0; }
+    .sp-use  { width: 180px; font-size: 0.62rem; color: #D1D5DB; flex-shrink: 0; }
+
+    /* ──────────── COMPONENTS ──────────── */
+    .comp-section { margin-bottom: 2rem; }
+    .comp-title { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; margin-bottom: 1rem; }
+    .comp-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1.25rem; border-radius: 8px; font-size: 0.875rem; font-weight: 700; font-family: inherit; border: none; cursor: default; }
+    .btn-primary { background: #2F54EB; color: white; box-shadow: 0 4px 12px rgba(47,84,235,0.3); }
+    .btn-primary-hover { background: #1D40AF; color: white; }
+    .btn-outline { background: white; color: #111827; border: 1.5px solid #E5E7EB; }
+    .btn-outline-hover { background: #F9FAFB; color: #111827; border: 1.5px solid #9CA3AF; }
+    .btn-ghost { background: transparent; color: #6B7280; }
+    .btn-ghost-hover { background: #F3F4F6; color: #111827; }
+    .btn-danger { background: #EF4444; color: white; }
+    .btn-sm { padding: 0.4rem 0.85rem; font-size: 0.78rem; }
+    .btn-lg { padding: 0.85rem 1.75rem; font-size: 1rem; }
+
+    /* State label */
+    .state-label { font-size: 0.62rem; color: #9CA3AF; text-align: center; margin-top: 0.35rem; }
+    .comp-item { display: flex; flex-direction: column; align-items: center; }
+
+    /* Badges */
+    .badge { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; }
+    .badge-blue   { background: #EEF2FF; color: #2F54EB; }
+    .badge-green  { background: #DCFCE7; color: #065F46; }
+    .badge-orange { background: #FEF3C7; color: #92400E; }
+    .badge-red    { background: #FEE2E2; color: #991B1B; }
+    .badge-dark   { background: #111827; color: white; }
+    .badge-gray   { background: #F3F4F6; color: #6B7280; }
+
+    /* Input */
+    .input-demo {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 0.9rem; border-radius: 8px; background: #F9FAFB;
+      border: 1.5px solid #E5E7EB; font-size: 0.875rem; color: #9CA3AF;
+      min-width: 220px;
+    }
+    .input-demo.focus { border-color: #2F54EB; background: white; box-shadow: 0 0 0 3px rgba(47,84,235,0.1); color: #111827; }
+    .input-demo.error { border-color: #EF4444; background: white; }
+
+    /* Cards */
+    .card-demo {
+      background: white; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 1.25rem; width: 200px;
+    }
+    .card-demo-hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .card-icon { width: 40px; height: 40px; background: #EEF2FF; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.75rem; }
+    .card-name { font-size: 0.875rem; font-weight: 700; color: #111827; margin-bottom: 0.3rem; }
+    .card-desc { font-size: 0.72rem; color: #6B7280; line-height: 1.5; margin-bottom: 0.75rem; }
+    .card-progress-bar { height: 5px; background: #F3F4F6; border-radius: 999px; overflow: hidden; }
+    .card-progress-fill { height: 100%; background: #2F54EB; border-radius: 999px; }
+
+    /* Nav item */
+    .nav-item-demo {
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 0.6rem 0.85rem; border-radius: 8px;
+      font-size: 0.825rem; font-weight: 500; color: #6B7280; width: 180px;
+    }
+    .nav-item-demo.active { background: #EEF2FF; color: #2F54EB; font-weight: 700; }
+
+    /* Toggle */
+    .toggle-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+    .toggle {
+      width: 44px; height: 24px; border-radius: 999px; position: relative;
+      cursor: default;
+    }
+    .toggle-off { background: #E5E7EB; }
+    .toggle-on  { background: #2F54EB; }
+    .toggle-dot {
+      position: absolute; top: 3px; width: 18px; height: 18px;
+      background: white; border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .toggle-off .toggle-dot { left: 3px; }
+    .toggle-on  .toggle-dot { left: 23px; }
+
+    /* Progress bar component */
+    .prog-demo { width: 200px; }
+    .prog-label { display: flex; justify-content: space-between; font-size: 0.68rem; color: #6B7280; margin-bottom: 0.35rem; }
+    .prog-track { height: 6px; background: #F3F4F6; border-radius: 999px; overflow: hidden; }
+    .prog-fill  { height: 100%; border-radius: 999px; }
+
+    /* Step item component */
+    .step-demo {
+      background: #EEF2FF; border-radius: 8px; padding: 0.65rem 0.85rem;
+      display: flex; align-items: center; gap: 0.65rem; width: 240px;
+    }
+    .step-icon-demo {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+    }
+    .step-icon-done { background: #10B981; color: white; }
+    .step-icon-act  { background: #2F54EB; color: white; }
+    .step-icon-lock { background: #E5E7EB; color: #9CA3AF; }
+    .step-info-demo { }
+    .step-name-demo { font-size: 0.78rem; font-weight: 700; color: #2F54EB; }
+    .step-sub-demo  { font-size: 0.65rem; color: #2F54EB; opacity: 0.75; }
+
+    /* ── INSTRUCTION BANNER ── */
+    .info-banner {
+      background: #EEF2FF; border: 1px solid #C7D2FE; border-radius: 10px;
+      padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+      display: flex; align-items: flex-start; gap: 0.75rem;
+    }
+    .info-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .info-title { font-size: 0.78rem; font-weight: 700; color: #1D40AF; margin-bottom: 0.25rem; }
+    .info-text  { font-size: 0.72rem; color: #3B82F6; line-height: 1.5; }
+
+    /* ── DIVIDER ── */
+    .divider { border: none; border-top: 1px solid #F3F4F6; margin: 1.5rem 0; }
+
+    /* ── STEP INDICATOR ── */
+    .step-indicator {
+      display: flex; align-items: center; gap: 0; background: #F9FAFB;
+      border-radius: 10px; padding: 0.5rem; margin-bottom: 1.5rem;
+    }
+    .si-item {
+      flex: 1; text-align: center; padding: 0.5rem 0.25rem;
+      font-size: 0.72rem; font-weight: 600; color: #9CA3AF;
+      border-radius: 6px; cursor: pointer; transition: all 0.15s;
+    }
+    .si-item.active { background: white; color: #2F54EB; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .si-num { font-size: 0.6rem; font-weight: 700; display: block; margin-bottom: 0.1rem; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">Mathify DS</div>
+    <button class="nav-btn active" onclick="show('colors')">🎨 Color Palette</button>
+    <button class="nav-btn" onclick="show('typography')">✏️ Typography</button>
+    <button class="nav-btn" onclick="show('effects')">💫 Effect Style</button>
+    <button class="nav-btn" onclick="show('components')">🧩 Components</button>
+    <button class="nav-btn" onclick="show('spacing')">📐 Spacing</button>
+  </nav>
+
+  <!-- ════════════════════════════════════════
+       PAGE 1: COLOR PALETTE
+  ════════════════════════════════════════ -->
+  <div class="page active" id="page-colors">
+    <div class="frame">
+      <div class="frame-header">
+        <div class="frame-header-left">
+          <div class="frame-badge">DESIGN SYSTEM · MATHIFY</div>
+          <div class="frame-title">🎨 Color Palette</div>
+          <div class="frame-sub">Primary Blue · Neutral Gray · Semantic Colors · Text Usage</div>
+        </div>
+        <div class="frame-logo">Mathify</div>
+      </div>
+      <div class="content">
+
+        <div class="info-banner">
+          <div class="info-icon">📋</div>
+          <div>
+            <div class="info-title">Cara import ke Figma</div>
+            <div class="info-text">Screenshot halaman ini → paste ke Figma sebagai referensi. Atau buat Color Style manual: buat Rectangle → klik Fill → ikon 4 kotak → (+) → beri nama sesuai token.</div>
+          </div>
+        </div>
+
+        <!-- Primary Blue -->
+        <div class="color-section">
+          <div class="section-label">Primary — Blue Scale</div>
+          <div class="color-strip">
+            <div class="color-swatch" style="background:#EEF2FF;"><div class="swatch-name" style="color:#1D40AF;">Blue 50</div><div class="swatch-hex" style="color:#1D40AF;">#EEF2FF</div></div>
+            <div class="color-swatch" style="background:#E0E7FF;"><div class="swatch-name" style="color:#1D40AF;">100</div><div class="swatch-hex" style="color:#1D40AF;">#E0E7FF</div></div>
+            <div class="color-swatch" style="background:#C7D2FE;"><div class="swatch-name" style="color:#1D40AF;">200</div><div class="swatch-hex" style="color:#1D40AF;">#C7D2FE</div></div>
+            <div class="color-swatch" style="background:#A5B4FC;"><div class="swatch-name" style="color:white;">300</div><div class="swatch-hex" style="color:white;">#A5B4FC</div></div>
+            <div class="color-swatch" style="background:#818CF8;"><div class="swatch-name" style="color:white;">400</div><div class="swatch-hex" style="color:white;">#818CF8</div></div>
+            <div class="color-swatch" style="background:#2F54EB; flex:1.8;">
+              <div class="primary-tag">PRIMARY</div>
+              <div class="swatch-name" style="color:white;">Blue 500</div>
+              <div class="swatch-hex" style="color:white;">#2F54EB</div>
+            </div>
+            <div class="color-swatch" style="background:#1D4FD8;"><div class="swatch-name" style="color:white;">600</div><div class="swatch-hex" style="color:white;">#1D4FD8</div></div>
+            <div class="color-swatch" style="background:#1D40AF;"><div class="swatch-name" style="color:white;">700</div><div class="swatch-hex" style="color:white;">#1D40AF</div></div>
+            <div class="color-swatch" style="background:#1E3A8A;"><div class="swatch-name" style="color:white;">800</div><div class="swatch-hex" style="color:white;">#1E3A8A</div></div>
+            <div class="color-swatch" style="background:#1E3464;"><div class="swatch-name" style="color:white;">900</div><div class="swatch-hex" style="color:white;">#1E3464</div></div>
+          </div>
+        </div>
+
+        <!-- Neutral Gray -->
+        <div class="color-section">
+          <div class="section-label">Neutral — Gray Scale</div>
+          <div class="color-strip">
+            <div class="color-swatch" style="background:#FFFFFF; border-right:1px solid #E5E7EB;"><div class="swatch-name" style="color:#374151;">White</div><div class="swatch-hex" style="color:#374151;">#FFFFFF</div></div>
+            <div class="color-swatch" style="background:#F9FAFB;"><div class="swatch-name" style="color:#374151;">50</div><div class="swatch-hex" style="color:#374151;">#F9FAFB</div></div>
+            <div class="color-swatch" style="background:#F3F4F6;"><div class="swatch-name" style="color:#374151;">100</div><div class="swatch-hex" style="color:#374151;">#F3F4F6</div></div>
+            <div class="color-swatch" style="background:#E5E7EB;"><div class="swatch-name" style="color:#374151;">200</div><div class="swatch-hex" style="color:#374151;">#E5E7EB</div></div>
+            <div class="color-swatch" style="background:#D1D5DB;"><div class="swatch-name" style="color:#374151;">300</div><div class="swatch-hex" style="color:#374151;">#D1D5DB</div></div>
+            <div class="color-swatch" style="background:#9CA3AF;"><div class="swatch-name" style="color:white;">400</div><div class="swatch-hex" style="color:white;">#9CA3AF</div></div>
+            <div class="color-swatch" style="background:#6B7280;"><div class="swatch-name" style="color:white;">500</div><div class="swatch-hex" style="color:white;">#6B7280</div></div>
+            <div class="color-swatch" style="background:#4B5563;"><div class="swatch-name" style="color:white;">600</div><div class="swatch-hex" style="color:white;">#4B5563</div></div>
+            <div class="color-swatch" style="background:#374151;"><div class="swatch-name" style="color:white;">700</div><div class="swatch-hex" style="color:white;">#374151</div></div>
+            <div class="color-swatch" style="background:#1F2937;"><div class="swatch-name" style="color:white;">800</div><div class="swatch-hex" style="color:white;">#1F2937</div></div>
+            <div class="color-swatch" style="background:#111827;"><div class="swatch-name" style="color:white;">900</div><div class="swatch-hex" style="color:white;">#111827</div></div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Semantic -->
+        <div class="color-section">
+          <div class="section-label">Semantic Colors</div>
+          <div class="semantic-row">
+            <div class="sem-card">
+              <div class="sem-top" style="background:#DCFCE7;"><span style="color:#065F46;">Light</span></div>
+              <div class="sem-top" style="background:#10B981; height:48px;"><span style="color:white; font-size:0.8rem;">✅ Success</span></div>
+              <div class="sem-top" style="background:#065F46;"><span style="color:white;">Dark</span></div>
+              <div class="sem-body"><div class="sem-name">Success / Green</div><div class="sem-use">Jawaban benar, badge lulus, progress selesai</div><div class="sem-hex">#10B981</div></div>
+            </div>
+            <div class="sem-card">
+              <div class="sem-top" style="background:#FEF3C7;"><span style="color:#92400E;">Light</span></div>
+              <div class="sem-top" style="background:#F59E0B; height:48px;"><span style="color:white; font-size:0.8rem;">⚠️ Warning</span></div>
+              <div class="sem-top" style="background:#92400E;"><span style="color:white;">Dark</span></div>
+              <div class="sem-body"><div class="sem-name">Warning / Orange</div><div class="sem-use">Badge intermediate, FAB chat, streak fire</div><div class="sem-hex">#F59E0B</div></div>
+            </div>
+            <div class="sem-card">
+              <div class="sem-top" style="background:#FEE2E2;"><span style="color:#991B1B;">Light</span></div>
+              <div class="sem-top" style="background:#EF4444; height:48px;"><span style="color:white; font-size:0.8rem;">❌ Danger</span></div>
+              <div class="sem-top" style="background:#991B1B;"><span style="color:white;">Dark</span></div>
+              <div class="sem-body"><div class="sem-name">Danger / Red</div><div class="sem-use">Jawaban salah, hapus akun, error state</div><div class="sem-hex">#EF4444</div></div>
+            </div>
+            <div class="sem-card">
+              <div class="sem-top" style="background:#DBEAFE;"><span style="color:#1E40AF;">Light</span></div>
+              <div class="sem-top" style="background:#3B82F6; height:48px;"><span style="color:white; font-size:0.8rem;">ℹ️ Info</span></div>
+              <div class="sem-top" style="background:#1E40AF;"><span style="color:white;">Dark</span></div>
+              <div class="sem-body"><div class="sem-name">Info / Blue Alt</div><div class="sem-use">Informasi tambahan, tooltip, notifikasi</div><div class="sem-hex">#3B82F6</div></div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Text Color Usage -->
+        <div class="color-section">
+          <div class="section-label">Text Color Usage</div>
+          <div class="text-color-row">
+            <div class="tc-item">
+              <div class="tc-dot" style="background:#111827;"></div>
+              <div><div class="tc-label" style="color:#111827;">Gray 900 · #111827</div><div class="tc-use">Heading utama, judul halaman — contrast tinggi</div></div>
+              <div class="tc-token">--gray-900</div>
+            </div>
+            <div class="tc-item">
+              <div class="tc-dot" style="background:#374151;"></div>
+              <div><div class="tc-label" style="color:#374151;">Gray 700 · #374151</div><div class="tc-use">Body text materi — readable di background putih</div></div>
+              <div class="tc-token">--gray-700</div>
+            </div>
+            <div class="tc-item">
+              <div class="tc-dot" style="background:#6B7280;"></div>
+              <div><div class="tc-label" style="color:#6B7280;">Gray 500 · #6B7280</div><div class="tc-use">Deskripsi, caption, nav link non-aktif</div></div>
+              <div class="tc-token">--gray-500</div>
+            </div>
+            <div class="tc-item">
+              <div class="tc-dot" style="background:#9CA3AF;"></div>
+              <div><div class="tc-label" style="color:#9CA3AF;">Gray 400 · #9CA3AF</div><div class="tc-use">Placeholder, icon non-aktif, sub-label</div></div>
+              <div class="tc-token">--gray-400</div>
+            </div>
+            <div class="tc-item">
+              <div class="tc-dot" style="background:#2F54EB;"></div>
+              <div><div class="tc-label" style="color:#2F54EB;">Blue 500 · #2F54EB</div><div class="tc-use">Link aktif, highlight brand, breadcrumb current</div></div>
+              <div class="tc-token">--blue-500</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE 2: TYPOGRAPHY
+  ════════════════════════════════════════ -->
+  <div class="page" id="page-typography">
+    <div class="frame">
+      <div class="frame-header">
+        <div class="frame-header-left">
+          <div class="frame-badge">DESIGN SYSTEM · MATHIFY</div>
+          <div class="frame-title">✏️ Typography</div>
+          <div class="frame-sub">Font: Plus Jakarta Sans · Type Scale · Font Weights · Line Height</div>
+        </div>
+        <div class="frame-logo">Mathify</div>
+      </div>
+      <div class="content">
+
+        <!-- Type Scale Table -->
+        <div style="margin-bottom:1.75rem;">
+          <div class="section-label">Type Scale</div>
+          <table class="type-table">
+            <thead>
+              <tr>
+                <th style="width:140px;">Name</th>
+                <th>Sample</th>
+                <th style="width:110px;">Size</th>
+                <th style="width:70px;">Weight</th>
+                <th style="width:130px;">Token</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="type-name-col">Display / Hero</div><div class="type-use-col">Landing page heading</div></td>
+                <td><span style="font-size:2.25rem;font-weight:800;letter-spacing:-0.03em;line-height:1.1;">Mathify</span></td>
+                <td class="type-size-col">36px · 2.25rem</td>
+                <td class="type-wt-col">800</td>
+                <td><span class="type-token-col">--font-size-4xl</span></td>
+              </tr>
+              <tr>
+                <td><div class="type-name-col">Heading 1</div><div class="type-use-col">Page title utama</div></td>
+                <td><span style="font-size:1.875rem;font-weight:800;letter-spacing:-0.02em;">Explore Topics</span></td>
+                <td class="type-size-col">30px · 1.875rem</td>
+                <td class="type-wt-col">800</td>
+                <td><span class="type-token-col">--font-size-3xl</span></td>
+              </tr>
+              <tr>
+                <td><div class="type-name-col">Heading 2</div><div class="type-use-col">Section title</div></td>
+                <td><span style="font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;">Why Choose MathFlow?</span></td>
+                <td class="type-size-col">24px · 1.5rem</td>
+                <td class="type-wt-col">800</td>
+                <td><span class="type-token-col">--font-size-2xl</span></td>
+              </tr>
+              <tr>
+                <td><div class="type-name-col">Heading 3</div><div class="type-use-col">Card title</div></td>
+                <td><span style="font-size:1.25rem;font-weight:800;">Jenis-jenis Bilangan</span></td>
+                <td class="type-size-col">20px · 1.25rem</td>
+                <td class="type-wt-col">800</td>
+                <td><span class="type-token-col">--font-size-xl</span></td>
+              </tr>
+              <tr>
+                <td><div class="type-name-col">Heading 4</div><div class="type-use-col">Card name, list title</div></td>
+                <td><span style="font-size:1rem;font-weight:700;">Video Lessons</span></td>
+                <td class="type-size-col">16px · 1rem</td>
+                <td class="type-wt-col">700</td>
+                <td><span class="type-token-col">--font-size-md</span></td>
+              </tr>
+              <tr>
+                <td><div class="type-name-col">Body Large</div><div class="type-use-col">Hero description</div></td>
+                <td><span style="font-size:1rem;font-weight:400;color:#374151;line-height:1.75;">Unlock your potential with interactive lessons and personalized AI-driven practice.</span></td>
+                <td class="type-size-col">16px · 1rem</td>
+                <td class="type-wt-col">400</td>
+                <td><span class="type-token-col">--font-size-md</span></td>
+              </tr>
+              <tr>
+                <td><div class="type-name-col">Body</div><div class="type-use-col">Konten materi utama</div></td>
+                <td><span style="font-size:0.9rem;font-weight:400;color:#374151;line-height:1.85;">Bilangan adalah konsep dasar yang digunakan untuk menghitung, mengukur, dan memberi label pada suatu objek.</span></td>
+                <td class="type-size-col">14.4px · 0.9rem</td>
+                <td class="type-wt-col">400</td>
+                <td><span class="type-token-col">--font-size-base</span></td>
+              </tr>
+              <tr>
+                <td><div class="type-name-col">Body Small</div><div class="type-use-col">Caption, deskripsi card</div></td>
+                <td><span style="font-size:0.825rem;font-weight:400;color:#6B7280;">Belajar bagaimana arsitek menggunakan Pythagoras di dunia nyata.</span></td>
+                <td class="type-size-col">13.2px · 0.825rem</td>
+                <td class="type-wt-col">400</td>
+                <td><span class="type-token-col">--font-size-sm</span></td>
+              </tr>
+              <tr>
+                <td><div class="type-name-col">Label / Button</div><div class="type-use-col">CTA, nav link</div></td>
+                <td><span style="font-size:0.875rem;font-weight:600;">Start Learning Free</span></td>
+                <td class="type-size-col">14px · 0.875rem</td>
+                <td class="type-wt-col">600</td>
+                <td><span class="type-token-col">label</span></td>
+              </tr>
+              <tr>
+                <td><div class="type-name-col">Caption / Badge</div><div class="type-use-col">Tag, badge, meta</div></td>
+                <td><span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#9CA3AF;">LEVEL: INTERMEDIATE</span></td>
+                <td class="type-size-col">12px · 0.75rem</td>
+                <td class="type-wt-col">700</td>
+                <td><span class="type-token-col">--font-size-xs</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Font Weights -->
+        <div>
+          <div class="section-label">Font Weights — Plus Jakarta Sans</div>
+          <div class="weight-row">
+            <div class="wt-item">
+              <div class="wt-sample" style="font-weight:400;">Aa</div>
+              <div class="wt-label">Regular</div>
+              <div class="wt-val">400</div>
+            </div>
+            <div class="wt-item">
+              <div class="wt-sample" style="font-weight:500;">Aa</div>
+              <div class="wt-label">Medium</div>
+              <div class="wt-val">500</div>
+            </div>
+            <div class="wt-item">
+              <div class="wt-sample" style="font-weight:600;">Aa</div>
+              <div class="wt-label">SemiBold</div>
+              <div class="wt-val">600</div>
+            </div>
+            <div class="wt-item">
+              <div class="wt-sample" style="font-weight:700;">Aa</div>
+              <div class="wt-label">Bold</div>
+              <div class="wt-val">700</div>
+            </div>
+            <div class="wt-item">
+              <div class="wt-sample" style="font-weight:800;">Aa</div>
+              <div class="wt-label">ExtraBold</div>
+              <div class="wt-val">800</div>
+            </div>
+            <div style="flex:1; background:#F9FAFB; border-radius:10px; padding:1rem 1.25rem; margin-left:1rem;">
+              <div class="section-label" style="margin-bottom:0.5rem;">Line Height</div>
+              <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                <div style="font-size:0.68rem; color:#374151;"><span style="font-family:monospace; color:#2F54EB; font-size:0.65rem;">1.15</span> — Display / Hero</div>
+                <div style="font-size:0.68rem; color:#374151;"><span style="font-family:monospace; color:#2F54EB; font-size:0.65rem;">1.2</span>&nbsp; — Heading 1–2</div>
+                <div style="font-size:0.68rem; color:#374151;"><span style="font-family:monospace; color:#2F54EB; font-size:0.65rem;">1.3</span>&nbsp; — Heading 3–4</div>
+                <div style="font-size:0.68rem; color:#374151;"><span style="font-family:monospace; color:#2F54EB; font-size:0.65rem;">1.75</span> — Body Large</div>
+                <div style="font-size:0.68rem; color:#374151;"><span style="font-family:monospace; color:#2F54EB; font-size:0.65rem;">1.85</span> — Body</div>
+                <div style="font-size:0.68rem; color:#374151;"><span style="font-family:monospace; color:#2F54EB; font-size:0.65rem;">1.65</span> — Body Small</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE 3: EFFECT STYLE
+  ════════════════════════════════════════ -->
+  <div class="page" id="page-effects">
+    <div class="frame">
+      <div class="frame-header">
+        <div class="frame-header-left">
+          <div class="frame-badge">DESIGN SYSTEM · MATHIFY</div>
+          <div class="frame-title">💫 Effect Style</div>
+          <div class="frame-sub">Shadows · Blur & Overlay · Border Radius · Opacity</div>
+        </div>
+        <div class="frame-logo">Mathify</div>
+      </div>
+      <div class="content">
+
+        <!-- Neutral Shadows -->
+        <div class="section-label">Drop Shadow — Neutral</div>
+        <div class="shadow-grid" style="margin-bottom:1.5rem;">
+          <div class="shadow-card">
+            <div class="shadow-preview" style="box-shadow:0 1px 2px rgba(0,0,0,0.05);"></div>
+            <div class="shadow-name">Shadow XS</div>
+            <div class="shadow-token">--shadow-xs</div>
+            <div class="shadow-val">X:0 Y:1 Blur:2 Op:5%</div>
+            <div class="shadow-use">Input, badge, tag</div>
+          </div>
+          <div class="shadow-card">
+            <div class="shadow-preview" style="box-shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);"></div>
+            <div class="shadow-name">Shadow SM</div>
+            <div class="shadow-token">--shadow-sm</div>
+            <div class="shadow-val">X:0 Y:1 Blur:3 Op:8%</div>
+            <div class="shadow-use">Card default</div>
+          </div>
+          <div class="shadow-card">
+            <div class="shadow-preview" style="box-shadow:0 4px 16px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);"></div>
+            <div class="shadow-name">Shadow</div>
+            <div class="shadow-token">--shadow</div>
+            <div class="shadow-val">X:0 Y:4 Blur:16 Op:8%</div>
+            <div class="shadow-use">Card hover</div>
+          </div>
+          <div class="shadow-card">
+            <div class="shadow-preview" style="box-shadow:0 8px 24px rgba(0,0,0,0.10);"></div>
+            <div class="shadow-name">Shadow MD</div>
+            <div class="shadow-token">--shadow-md</div>
+            <div class="shadow-val">X:0 Y:8 Blur:24 Op:10%</div>
+            <div class="shadow-use">Dropdown, popover</div>
+          </div>
+          <div class="shadow-card">
+            <div class="shadow-preview" style="box-shadow:0 16px 40px rgba(0,0,0,0.12);"></div>
+            <div class="shadow-name">Shadow LG</div>
+            <div class="shadow-token">--shadow-lg</div>
+            <div class="shadow-val">X:0 Y:16 Blur:40 Op:12%</div>
+            <div class="shadow-use">Hero image, modal</div>
+          </div>
+          <div class="shadow-card">
+            <div class="shadow-preview" style="box-shadow:0 24px 64px rgba(0,0,0,0.14);"></div>
+            <div class="shadow-name">Shadow XL</div>
+            <div class="shadow-token">--shadow-xl</div>
+            <div class="shadow-val">X:0 Y:24 Blur:64 Op:14%</div>
+            <div class="shadow-use">Floating panel</div>
+          </div>
+        </div>
+
+        <!-- Colored Shadows -->
+        <div class="section-label">Drop Shadow — Colored</div>
+        <div class="shadow-grid" style="margin-bottom:1.5rem;">
+          <div class="shadow-card">
+            <div class="shadow-preview" style="background:#2F54EB;box-shadow:0 4px 12px rgba(47,84,235,0.20);"></div>
+            <div class="shadow-name">Blue SM</div>
+            <div class="shadow-token">--shadow-blue-sm</div>
+            <div class="shadow-val">Blur:12 Color:#2F54EB Op:20%</div>
+            <div class="shadow-use">Button primary hover</div>
+          </div>
+          <div class="shadow-card">
+            <div class="shadow-preview" style="background:#2F54EB;box-shadow:0 8px 24px rgba(47,84,235,0.28);"></div>
+            <div class="shadow-name">Blue</div>
+            <div class="shadow-token">--shadow-blue</div>
+            <div class="shadow-val">Blur:24 Color:#2F54EB Op:28%</div>
+            <div class="shadow-use">CTA button aktif</div>
+          </div>
+          <div class="shadow-card">
+            <div class="shadow-preview" style="background:#10B981;box-shadow:0 4px 12px rgba(16,185,129,0.28);"></div>
+            <div class="shadow-name">Green</div>
+            <div class="shadow-token">--shadow-green</div>
+            <div class="shadow-val">Blur:12 Color:#10B981 Op:28%</div>
+            <div class="shadow-use">Success state</div>
+          </div>
+          <div class="shadow-card">
+            <div class="shadow-preview" style="background:#F59E0B;box-shadow:0 4px 12px rgba(245,158,11,0.28);"></div>
+            <div class="shadow-name">Orange</div>
+            <div class="shadow-token">--shadow-orange</div>
+            <div class="shadow-val">Blur:12 Color:#F59E0B Op:28%</div>
+            <div class="shadow-use">FAB / Chat button</div>
+          </div>
+          <div class="shadow-card">
+            <div class="shadow-preview" style="background:#EF4444;box-shadow:0 4px 12px rgba(239,68,68,0.28);"></div>
+            <div class="shadow-name">Red</div>
+            <div class="shadow-token">--shadow-red</div>
+            <div class="shadow-val">Blur:12 Color:#EF4444 Op:28%</div>
+            <div class="shadow-use">Danger action</div>
+          </div>
+          <div class="shadow-card" style="background:#F9FAFB; display:flex; align-items:center; justify-content:center; text-align:center;">
+            <div>
+              <div style="font-size:0.72rem;font-weight:700;color:#374151;margin-bottom:0.5rem;">💡 Cara input ke Figma</div>
+              <div style="font-size:0.65rem;color:#6B7280;line-height:1.6;">Rectangle → Effects (+)<br>→ Drop Shadow<br>→ set X, Y, Blur, warna<br>→ klik ikon 4 kotak → (+)<br>→ beri nama token</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Border Radius -->
+        <div class="section-label" style="margin-bottom:1rem;">Border Radius Scale</div>
+        <div class="radius-strip" style="margin-bottom:1.5rem;">
+          <div class="radius-item"><div class="radius-box" style="border-radius:4px;"></div><div class="radius-name">XS</div><div class="radius-val">--radius-xs · 4px</div><div class="radius-usage">Tag, badge, chip</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:8px;"></div><div class="radius-name">SM</div><div class="radius-val">--radius-sm · 8px</div><div class="radius-usage">Button, input</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:12px;"></div><div class="radius-name">Base</div><div class="radius-val">--radius · 12px</div><div class="radius-usage">Card, panel</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:16px;"></div><div class="radius-name">LG</div><div class="radius-val">--radius-lg · 16px</div><div class="radius-usage">Panel besar</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:24px;"></div><div class="radius-name">XL</div><div class="radius-val">--radius-xl · 24px</div><div class="radius-usage">Hero image</div></div>
+          <div class="radius-item"><div class="radius-box" style="border-radius:9999px;width:64px;height:32px;"></div><div class="radius-name">Full</div><div class="radius-val">9999px</div><div class="radius-usage">Pill, avatar</div></div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Blur -->
+        <div class="section-label" style="margin-bottom:1rem;">Backdrop Blur</div>
+        <div class="blur-row">
+          <div class="blur-card">
+            <div class="blur-visual">
+              <div class="blur-overlay"><div class="blur-chip">None</div></div>
+            </div>
+            <div class="blur-name">None</div>
+            <div class="blur-token">blur(0)</div>
+          </div>
+          <div class="blur-card">
+            <div class="blur-visual">
+              <div class="blur-overlay" style="backdrop-filter:blur(4px);background:rgba(255,255,255,0.1);">
+                <div class="blur-chip">SM</div>
+              </div>
+            </div>
+            <div class="blur-name">Blur SM</div>
+            <div class="blur-token">blur(4px) · navbar</div>
+          </div>
+          <div class="blur-card">
+            <div class="blur-visual">
+              <div class="blur-overlay" style="backdrop-filter:blur(8px);background:rgba(255,255,255,0.15);">
+                <div class="blur-chip">MD</div>
+              </div>
+            </div>
+            <div class="blur-name">Blur</div>
+            <div class="blur-token">blur(8px) · modal</div>
+          </div>
+          <div class="blur-card">
+            <div class="blur-visual">
+              <div class="blur-overlay" style="backdrop-filter:blur(16px);background:rgba(255,255,255,0.2);">
+                <div class="blur-chip">LG</div>
+              </div>
+            </div>
+            <div class="blur-name">Blur LG</div>
+            <div class="blur-token">blur(16px) · panel</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE 4: COMPONENTS
+  ════════════════════════════════════════ -->
+  <div class="page" id="page-components">
+    <div class="frame">
+      <div class="frame-header">
+        <div class="frame-header-left">
+          <div class="frame-badge">DESIGN SYSTEM · MATHIFY</div>
+          <div class="frame-title">🧩 Components</div>
+          <div class="frame-sub">Buttons · Badges · Input · Cards · Navigation · Progress · Toggle</div>
+        </div>
+        <div class="frame-logo">Mathify</div>
+      </div>
+      <div class="content">
+
+        <!-- Buttons -->
+        <div class="comp-section">
+          <div class="comp-title">Buttons</div>
+          <div style="display:flex; gap:2rem; flex-wrap:wrap;">
+            <div>
+              <div class="comp-title" style="font-size:0.58rem;">SIZE</div>
+              <div class="comp-row" style="margin-top:0.5rem;">
+                <div class="comp-item"><div class="btn btn-primary btn-sm">Button SM</div><div class="state-label">Small</div></div>
+                <div class="comp-item"><div class="btn btn-primary">Button MD</div><div class="state-label">Default</div></div>
+                <div class="comp-item"><div class="btn btn-primary btn-lg">Button LG</div><div class="state-label">Large</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="comp-title" style="font-size:0.58rem;">VARIANT</div>
+              <div class="comp-row" style="margin-top:0.5rem;">
+                <div class="comp-item"><div class="btn btn-primary">Primary</div><div class="state-label">Default</div></div>
+                <div class="comp-item"><div class="btn btn-primary-hover">Primary</div><div class="state-label">Hover</div></div>
+                <div class="comp-item"><div class="btn btn-outline">Outline</div><div class="state-label">Default</div></div>
+                <div class="comp-item"><div class="btn btn-outline-hover">Outline</div><div class="state-label">Hover</div></div>
+                <div class="comp-item"><div class="btn btn-ghost">Ghost</div><div class="state-label">Default</div></div>
+                <div class="comp-item"><div class="btn btn-ghost-hover">Ghost</div><div class="state-label">Hover</div></div>
+                <div class="comp-item"><div class="btn btn-danger">Danger</div><div class="state-label">Danger</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Badges -->
+        <div class="comp-section">
+          <div class="comp-title">Badges & Tags</div>
+          <div class="comp-row">
+            <div class="comp-item"><div class="badge badge-blue">Active</div><div class="state-label">Blue</div></div>
+            <div class="comp-item"><div class="badge badge-green">Completed</div><div class="state-label">Green</div></div>
+            <div class="comp-item"><div class="badge badge-orange">75% Complete</div><div class="state-label">Orange</div></div>
+            <div class="comp-item"><div class="badge badge-red">BARU</div><div class="state-label">Red</div></div>
+            <div class="comp-item"><div class="badge badge-dark">Premium</div><div class="state-label">Dark</div></div>
+            <div class="comp-item"><div class="badge badge-gray">Not Started</div><div class="state-label">Gray</div></div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Input Fields -->
+        <div class="comp-section">
+          <div class="comp-title">Input Fields</div>
+          <div class="comp-row" style="align-items:flex-start;">
+            <div class="comp-item">
+              <div class="input-demo">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                Cari materi...
+              </div>
+              <div class="state-label">Default</div>
+            </div>
+            <div class="comp-item">
+              <div class="input-demo focus">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F54EB" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                name@student.com
+              </div>
+              <div class="state-label">Focus</div>
+            </div>
+            <div class="comp-item">
+              <div class="input-demo error">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span style="color:#EF4444;">Email tidak valid</span>
+              </div>
+              <div class="state-label">Error</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Cards -->
+        <div class="comp-section">
+          <div class="comp-title">Cards</div>
+          <div class="comp-row" style="align-items:flex-start;">
+            <div class="comp-item">
+              <div class="card-demo">
+                <div class="card-icon">🔢</div>
+                <div class="card-name">Bilangan</div>
+                <div class="card-desc">Explore shapes, sizes, and the properties of space.</div>
+                <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:#6B7280;margin-bottom:0.3rem;"><span>Progress</span><span style="color:#2F54EB;font-weight:700;">30%</span></div>
+                <div class="card-progress-bar"><div class="card-progress-fill" style="width:30%;background:#F59E0B;"></div></div>
+              </div>
+              <div class="state-label">Default</div>
+            </div>
+            <div class="comp-item">
+              <div class="card-demo" style="box-shadow:0 4px 16px rgba(0,0,0,0.08); transform:translateY(-2px);">
+                <div class="card-icon">📐</div>
+                <div class="card-name">Geometri</div>
+                <div class="card-desc">Explore shapes, sizes, and the properties of space.</div>
+                <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:#6B7280;margin-bottom:0.3rem;"><span>Progress</span><span style="color:#10B981;font-weight:700;">Completed</span></div>
+                <div class="card-progress-bar"><div class="card-progress-fill" style="width:100%;background:#10B981;"></div></div>
+              </div>
+              <div class="state-label">Hover</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Navigation + Progress + Toggle -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:2rem;">
+
+          <!-- Nav Items -->
+          <div class="comp-section">
+            <div class="comp-title">Sidebar Navigation</div>
+            <div style="display:flex;flex-direction:column;gap:0.3rem;">
+              <div class="nav-item-demo">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Beranda
+              </div>
+              <div class="nav-item-demo active">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                Topik Matematika
+              </div>
+              <div class="nav-item-demo">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+                Kuis
+              </div>
+            </div>
+            <div class="state-label" style="text-align:left;">Default & Active State</div>
+          </div>
+
+          <!-- Progress -->
+          <div class="comp-section">
+            <div class="comp-title">Progress Bar</div>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+              <div class="prog-demo">
+                <div class="prog-label"><span>Bilangan</span><span style="color:#F59E0B;font-weight:700;">30%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:30%;background:#F59E0B;"></div></div>
+              </div>
+              <div class="prog-demo">
+                <div class="prog-label"><span>Aljabar</span><span style="color:#2F54EB;font-weight:700;">75%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:75%;background:#2F54EB;"></div></div>
+              </div>
+              <div class="prog-demo">
+                <div class="prog-label"><span>Statistika</span><span style="color:#10B981;font-weight:700;">100%</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:100%;background:#10B981;"></div></div>
+              </div>
+              <div class="prog-demo">
+                <div class="prog-label"><span>Kalkulus</span><span style="color:#9CA3AF;">Not Started</span></div>
+                <div class="prog-track"><div class="prog-fill" style="width:0%;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step + Toggle -->
+          <div class="comp-section">
+            <div class="comp-title">Step Items</div>
+            <div style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1rem;">
+              <div class="step-demo" style="background:#EEF2FF;">
+                <div class="step-icon-demo step-icon-done">✓</div>
+                <div class="step-info-demo"><div class="step-name-demo">Materi Selesai</div><div class="step-sub-demo">05:20 Menit</div></div>
+              </div>
+              <div class="step-demo" style="background:#EEF2FF;">
+                <div class="step-icon-demo step-icon-act">▶</div>
+                <div class="step-info-demo"><div class="step-name-demo">Video (Aktif)</div><div class="step-sub-demo">18:20 Menit</div></div>
+              </div>
+              <div class="step-demo" style="background:#F9FAFB;">
+                <div class="step-icon-demo step-icon-lock">🔒</div>
+                <div class="step-info-demo"><div class="step-name-demo" style="color:#374151;">Latihan Soal</div><div class="step-sub-demo" style="color:#9CA3AF;">Terkunci</div></div>
+              </div>
+            </div>
+            <div class="comp-title">Toggle</div>
+            <div class="comp-row">
+              <div class="comp-item">
+                <div class="toggle toggle-on"><div class="toggle-dot"></div></div>
+                <div class="state-label">On</div>
+              </div>
+              <div class="comp-item">
+                <div class="toggle toggle-off"><div class="toggle-dot"></div></div>
+                <div class="state-label">Off</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE 5: SPACING
+  ════════════════════════════════════════ -->
+  <div class="page" id="page-spacing">
+    <div class="frame">
+      <div class="frame-header">
+        <div class="frame-header-left">
+          <div class="frame-badge">DESIGN SYSTEM · MATHIFY</div>
+          <div class="frame-title">📐 Spacing / Layout System</div>
+          <div class="frame-sub">Spacing Scale · Grid Layout · Component Padding</div>
+        </div>
+        <div class="frame-logo">Mathify</div>
+      </div>
+      <div class="content">
+
+        <!-- Spacing scale -->
+        <div style="margin-bottom:1.75rem;">
+          <div class="section-label">Spacing Scale — Base Unit: 4px</div>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1rem;">
+            <div style="background:#F9FAFB;border-radius:8px;padding:0.75rem;">
+              <div style="font-size:0.65rem;font-weight:700;color:#9CA3AF;margin-bottom:0.35rem;">4px BASE</div>
+              <div style="font-size:0.72rem;color:#374151;">Semua spacing adalah kelipatan 4px</div>
+            </div>
+            <div style="background:#F9FAFB;border-radius:8px;padding:0.75rem;">
+              <div style="font-size:0.65rem;font-weight:700;color:#9CA3AF;margin-bottom:0.35rem;">PADDING CARD</div>
+              <div style="font-size:0.72rem;color:#374151;">16px (space-4) — 24px (space-6)</div>
+            </div>
+            <div style="background:#F9FAFB;border-radius:8px;padding:0.75rem;">
+              <div style="font-size:0.65rem;font-weight:700;color:#9CA3AF;margin-bottom:0.35rem;">GRID GAP</div>
+              <div style="font-size:0.72rem;color:#374151;">20px (space-5) — 24px (space-6)</div>
+            </div>
+            <div style="background:#F9FAFB;border-radius:8px;padding:0.75rem;">
+              <div style="font-size:0.65rem;font-weight:700;color:#9CA3AF;margin-bottom:0.35rem;">SECTION PAD</div>
+              <div style="font-size:0.72rem;color:#374151;">32px (space-8) — 64px (space-16)</div>
+            </div>
+          </div>
+
+          <div class="spacing-table">
+            <div class="sp-row" style="padding-bottom:0.4rem;border-bottom:1px solid #E5E7EB;margin-bottom:0.4rem;">
+              <div style="width:100px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;">Token</div>
+              <div style="flex:1;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;">Visual</div>
+              <div style="width:64px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;">REM</div>
+              <div style="width:48px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;">PX</div>
+              <div style="width:180px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;">Penggunaan</div>
+            </div>
+            <div class="sp-row"><div class="sp-token">--space-1</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:4px;"></div></div><div class="sp-rem">0.25rem</div><div class="sp-px">4px</div><div class="sp-use">Gap kecil, icon margin</div></div>
+            <div class="sp-row"><div class="sp-token">--space-2</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:8px;"></div></div><div class="sp-rem">0.5rem</div><div class="sp-px">8px</div><div class="sp-use">Gap icon-teks</div></div>
+            <div class="sp-row"><div class="sp-token">--space-3</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:12px;"></div></div><div class="sp-rem">0.75rem</div><div class="sp-px">12px</div><div class="sp-use">Padding badge, nav item</div></div>
+            <div class="sp-row"><div class="sp-token">--space-4</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:20px;"></div></div><div class="sp-rem">1rem</div><div class="sp-px">16px</div><div class="sp-use">Padding button, gap card</div></div>
+            <div class="sp-row"><div class="sp-token">--space-5</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:30px;"></div></div><div class="sp-rem">1.25rem</div><div class="sp-px">20px</div><div class="sp-use">Grid gap, section inner</div></div>
+            <div class="sp-row"><div class="sp-token">--space-6</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:40px;"></div></div><div class="sp-rem">1.5rem</div><div class="sp-px">24px</div><div class="sp-use">Card padding, nav padding</div></div>
+            <div class="sp-row"><div class="sp-token">--space-8</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:64px;"></div></div><div class="sp-rem">2rem</div><div class="sp-px">32px</div><div class="sp-use">Section padding, main content</div></div>
+            <div class="sp-row"><div class="sp-token">--space-10</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:90px;"></div></div><div class="sp-rem">2.5rem</div><div class="sp-px">40px</div><div class="sp-use">Topbar padding lateral</div></div>
+            <div class="sp-row"><div class="sp-token">--space-12</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:120px;"></div></div><div class="sp-rem">3rem</div><div class="sp-px">48px</div><div class="sp-use">Section margin bottom</div></div>
+            <div class="sp-row"><div class="sp-token">--space-16</div><div class="sp-bar-wrap"><div class="sp-bar" style="width:200px;"></div></div><div class="sp-rem">4rem</div><div class="sp-px">64px</div><div class="sp-use">Hero section padding</div></div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Layout Grid -->
+        <div>
+          <div class="section-label">Layout System</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+
+            <!-- Sidebar layout -->
+            <div style="background:#F9FAFB; border-radius:10px; overflow:hidden; border:1px solid #E5E7EB;">
+              <div style="background:#E5E7EB; padding:0.5rem 0.75rem; font-size:0.62rem; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:0.06em;">Dashboard Layout</div>
+              <div style="padding:0.75rem; display:flex; gap:0.5rem; height:120px;">
+                <div style="width:40px; background:#2F54EB; border-radius:6px; display:flex; flex-direction:column; align-items:center; padding-top:0.5rem; gap:0.3rem;">
+                  <div style="width:20px;height:3px;background:white;border-radius:2px;opacity:0.6;"></div>
+                  <div style="width:20px;height:3px;background:white;border-radius:2px;opacity:0.6;"></div>
+                  <div style="width:20px;height:3px;background:white;border-radius:2px;"></div>
+                  <div style="width:20px;height:3px;background:white;border-radius:2px;opacity:0.6;"></div>
+                </div>
+                <div style="flex:1; background:white; border-radius:6px; padding:0.5rem;">
+                  <div style="height:16px;background:#EEF2FF;border-radius:4px;margin-bottom:0.5rem;"></div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.3rem;">
+                    <div style="height:40px;background:#F3F4F6;border-radius:4px;"></div>
+                    <div style="height:40px;background:#F3F4F6;border-radius:4px;"></div>
+                    <div style="height:40px;background:#F3F4F6;border-radius:4px;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:0 0.75rem 0.75rem; font-size:0.65rem; color:#6B7280;">Sidebar 220px · Main flex:1 · Gap 0</div>
+            </div>
+
+            <!-- Materi layout -->
+            <div style="background:#F9FAFB; border-radius:10px; overflow:hidden; border:1px solid #E5E7EB;">
+              <div style="background:#E5E7EB; padding:0.5rem 0.75rem; font-size:0.62rem; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:0.06em;">Materi Layout</div>
+              <div style="padding:0.75rem; display:flex; gap:0.5rem; height:120px;">
+                <div style="flex:1; background:white; border-radius:6px; padding:0.5rem;">
+                  <div style="height:10px;background:#111827;border-radius:3px;width:60%;margin-bottom:0.4rem;"></div>
+                  <div style="height:6px;background:#E5E7EB;border-radius:3px;margin-bottom:0.2rem;"></div>
+                  <div style="height:6px;background:#E5E7EB;border-radius:3px;width:80%;margin-bottom:0.2rem;"></div>
+                  <div style="height:6px;background:#E5E7EB;border-radius:3px;width:90%;"></div>
+                </div>
+                <div style="width:52px; background:white; border-radius:6px; padding:0.5rem;">
+                  <div style="height:8px;background:#E5E7EB;border-radius:3px;margin-bottom:0.3rem;"></div>
+                  <div style="height:20px;background:#EEF2FF;border-radius:4px;margin-bottom:0.3rem;"></div>
+                  <div style="height:20px;background:#F3F4F6;border-radius:4px;"></div>
+                </div>
+              </div>
+              <div style="padding:0 0.75rem 0.75rem; font-size:0.65rem; color:#6B7280;">Content flex:1 · Sidebar 300px · Border left</div>
+            </div>
+
+            <!-- Grid 3 col -->
+            <div style="background:#F9FAFB; border-radius:10px; overflow:hidden; border:1px solid #E5E7EB;">
+              <div style="background:#E5E7EB; padding:0.5rem 0.75rem; font-size:0.62rem; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:0.06em;">Card Grid — 3 Columns</div>
+              <div style="padding:0.75rem; display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem;">
+                <div style="height:50px;background:white;border-radius:6px;border:1px solid #E5E7EB;"></div>
+                <div style="height:50px;background:white;border-radius:6px;border:1px solid #E5E7EB;"></div>
+                <div style="height:50px;background:white;border-radius:6px;border:1px solid #E5E7EB;"></div>
+              </div>
+              <div style="padding:0 0.75rem 0.75rem; font-size:0.65rem; color:#6B7280;">grid-template-columns: repeat(3, 1fr) · gap: 20px</div>
+            </div>
+
+            <!-- Grid 2 col -->
+            <div style="background:#F9FAFB; border-radius:10px; overflow:hidden; border:1px solid #E5E7EB;">
+              <div style="background:#E5E7EB; padding:0.5rem 0.75rem; font-size:0.62rem; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:0.06em;">Card Grid — 2 Columns</div>
+              <div style="padding:0.75rem; display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                <div style="height:50px;background:white;border-radius:6px;border:1px solid #E5E7EB;"></div>
+                <div style="height:50px;background:white;border-radius:6px;border:1px solid #E5E7EB;"></div>
+              </div>
+              <div style="padding:0 0.75rem 0.75rem; font-size:0.65rem; color:#6B7280;">grid-template-columns: repeat(2, 1fr) · gap: 20px</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function show(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      event.target.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+  </script>
+
+</body>
+</html>

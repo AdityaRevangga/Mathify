@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beranda - Mathify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { display: flex; min-height: 100vh; background: var(--bg-soft); }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 220px;
+      background: white;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 0;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      z-index: 50;
+    }
+
+    .sidebar-logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--blue);
+      letter-spacing: -0.02em;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 0 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .nav-item:hover { background: var(--bg-soft); color: var(--text); }
+    .nav-item.active { background: var(--blue-light); color: var(--blue); font-weight: 700; }
+
+    .nav-item svg { flex-shrink: 0; }
+
+    .sidebar-bottom {
+      padding: 0 0.75rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      position: fixed;
+      top: 0; left: 220px; right: 0;
+      height: 60px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 40;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.85rem;
+      width: 280px;
+    }
+
+    .search-bar input {
+      border: none;
+      background: none;
+      outline: none;
+      font-size: 0.875rem;
+      font-family: inherit;
+      color: var(--text);
+      width: 100%;
+    }
+    .search-bar input::placeholder { color: var(--text-light); }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .topbar-icon-btn {
+      width: 36px; height: 36px;
+      border: none;
+      background: none;
+      border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .topbar-icon-btn:hover { background: var(--bg-soft); color: var(--text); }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+    }
+
+    .user-info { text-align: right; }
+    .user-name { font-size: 0.875rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+
+    .user-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      overflow: hidden;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      margin-left: 220px;
+      margin-top: 60px;
+      flex: 1;
+      padding: 2rem;
+      max-width: 100%;
+    }
+
+    /* ===== WELCOME BANNER ===== */
+    .welcome-banner {
+      background: var(--blue);
+      border-radius: var(--radius);
+      padding: 1.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.75rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .welcome-banner::after {
+      content: '';
+      position: absolute;
+      top: -40px; right: 180px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .welcome-text h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.4rem;
+    }
+
+    .welcome-text p {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.8);
+      max-width: 420px;
+      line-height: 1.6;
+    }
+
+    .welcome-cta {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-white {
+      padding: 0.55rem 1.1rem;
+      background: white;
+      color: var(--blue);
+      border: none;
+      border-radius: var(--radius-xs);
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: inherit;
+      transition: opacity 0.15s;
+    }
+    .btn-white:hover { opacity: 0.9; }
+
+    .btn-white-outline {
+      padding: 0.55rem 1.1rem;
+      background: transparent;
+      color: white;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      border-radius: var(--radius-xs);
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .btn-white-outline:hover { border-color: white; }
+
+    .welcome-image {
+      width: 140px;
+      height: 100px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== STATS ROW ===== */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .stat-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .stat-icon.fire { background: #FFF7ED; }
+    .stat-icon.star { background: #EFF6FF; }
+    .stat-icon.check { background: #ECFDF5; }
+
+    .stat-value {
+      font-size: 1.875rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .stat-sub {
+      font-size: 0.8rem;
+      color: var(--green);
+      font-weight: 600;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .stat-progress {
+      height: 4px;
+      background: var(--bg-gray);
+      border-radius: 999px;
+      margin-top: 0.75rem;
+      overflow: hidden;
+    }
+
+    .stat-progress-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .stat-chips {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-chip {
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* ===== SECTION HEADER ===== */
+    .section-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1.1rem;
+    }
+
+    .section-row h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .section-row p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .section-row-text { }
+
+    .link-blue {
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .link-blue:hover { text-decoration: underline; }
+
+    /* ===== COURSE CARDS ===== */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .course-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .course-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+    .course-thumb {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      position: relative;
+    }
+
+    .course-thumb.blue-bg { background: linear-gradient(135deg, #E0E7FF, #C7D2FE); }
+    .course-thumb.green-bg { background: linear-gradient(135deg, #D1FAE5, #A7F3D0); }
+    .course-thumb.orange-bg { background: linear-gradient(135deg, #FEF3C7, #FDE68A); }
+
+    .course-level-badge {
+      position: absolute;
+      top: 0.75rem; left: 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-intermediate { background: #FEF3C7; color: #92400E; }
+    .badge-beginner { background: #D1FAE5; color: #065F46; }
+    .badge-advanced { background: #FEE2E2; color: #991B1B; }
+
+    .course-body { padding: 1.1rem; }
+    .course-body h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .course-body p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 0.85rem; }
+
+    .course-progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .progress-pct { font-weight: 700; }
+    .pct-blue { color: var(--blue); }
+    .pct-green { color: var(--green); }
+    .pct-orange { color: var(--orange); }
+
+    .progress-bar { margin-bottom: 1rem; }
+    .fill-blue { background: var(--blue); width: 75%; }
+    .fill-green { background: var(--green); width: 30%; }
+    .fill-orange { background: var(--orange); width: 10%; }
+
+    .btn-resume {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: var(--radius-xs);
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .btn-resume-blue { background: none; border: 1.5px solid var(--blue); color: var(--blue); }
+    .btn-resume-blue:hover { background: var(--blue-light); }
+
+    .btn-resume-green { background: none; border: 1.5px solid var(--green); color: var(--green); }
+    .btn-resume-green:hover { background: #ECFDF5; }
+
+    .btn-resume-orange { background: none; border: 1.5px solid var(--orange); color: var(--orange); }
+    .btn-resume-orange:hover { background: #FFF7ED; }
+
+    /* ===== SCHEDULED QUIZ ===== */
+    .quiz-banner {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .quiz-banner-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .quiz-banner-icon {
+      width: 36px; height: 36px;
+      background: var(--blue-light);
+      border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--blue);
+      flex-shrink: 0;
+    }
+
+    .quiz-banner-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .quiz-banner h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .quiz-banner p { font-size: 0.825rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.6rem; }
+
+    .quiz-meta {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .quiz-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-take-quiz {
+      padding: 0.7rem 1.5rem;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: inherit;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .btn-take-quiz:hover { background: var(--blue-hover); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .courses-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .topbar { left: 0; }
+      .main { margin-left: 0; }
+      .stats-row { grid-template-columns: 1fr; }
+      .courses-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">MathIfy</div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Beranda
+      </a>
+      <a href="topik.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Topik Matematika
+      </a>
+      <a href="quiz-list.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+        Kuis
+      </a>
+      <a href="pengaturan.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        Bantuan
+      </a>
+      <a href="login.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Keluar
+      </a>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="search-bar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Cari materi...">
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn" aria-label="Notifikasi">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="topbar-icon-btn" aria-label="Bantuan">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </button>
+      <a href="profil.html" class="user-chip">
+        <div class="user-info">
+          <div class="user-name">Budi Santoso</div>
+          <div class="user-role">Siswa Kelas 9</div>
+        </div>
+        <div class="user-avatar">👨‍🎓</div>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- WELCOME BANNER -->
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2>Welcome back, Budi! 👋</h2>
+        <p>You're on a roll! Keep up the momentum and solve 5 more algebra problems to unlock your next achievement.</p>
+        <div class="welcome-cta">
+          <button class="btn-white" onclick="location.href='materi.html'">Resume Last Lesson</button>
+          <button class="btn-white-outline">View Goals</button>
+        </div>
+      </div>
+      <div class="welcome-image">📊</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon fire">🔥</div>
+        <div class="stat-value">12 Days</div>
+        <div class="stat-label">Current Streak</div>
+        <div class="stat-progress">
+          <div class="stat-progress-fill" style="width: 60%; background: var(--orange);"></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon star">⭐</div>
+        <div class="stat-value">2,450</div>
+        <div class="stat-label">Total Points</div>
+        <div class="stat-sub">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          +150 today
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon check">✅</div>
+        <div class="stat-value">18</div>
+        <div class="stat-label">Topics Finished</div>
+        <div class="stat-chips">
+          <span class="stat-chip">Σ</span>
+          <span class="stat-chip">x</span>
+          <span class="stat-chip">√</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTINUE LEARNING -->
+    <div class="section-row">
+      <div class="section-row-text">
+        <h3>Continue Learning</h3>
+        <p>Pick up exactly where you left off</p>
+      </div>
+      <a href="topik.html" class="link-blue">
+        View all courses
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="courses-grid">
+      <div class="course-card">
+        <div class="course-thumb blue-bg">
+          🔢
+          <span class="course-level-badge badge-intermediate">Intermediate</span>
+        </div>
+        <div class="course-body">
+          <h4>Bilangan</h4>
+          <p>Master the art of solving complex linear systems with ease and accuracy.</p>
+          <div class="course-progress-row">
+            <span>Progress</span>
+            <span class="progress-pct pct-blue">75%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill fill-blue"></div></div>
+          <button class="btn-resume btn-resume-blue" onclick="location.href='materi.html'">Resume Course</button>
+        </div>
+      </div>
+      <div class="course-card">
+        <div class="course-thumb green-bg">
+          🔷
+          <span class="course-level-badge badge-beginner">Beginner</span>
+        </div>
+        <div class="course-body">
+          <h4>Geometry</h4>
+          <p>Understanding properties of triangles, congruence, and similarity theorems.</p>
+          <div class="course-progress-row">
+            <span>Progress</span>
+            <span class="progress-pct pct-green">30%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill fill-green"></div></div>
+          <button class="btn-resume btn-resume-green" onclick="location.href='materi.html'">Resume Course</button>
+        </div>
+      </div>
+      <div class="course-card">
+        <div class="course-thumb orange-bg">
+          📈
+          <span class="course-level-badge badge-advanced">Advanced</span>
+        </div>
+        <div class="course-body">
+          <h4>Aljabar dan Fungsi</h4>
+          <p>The foundation of calculus: understanding rates of change and tangent lines.</p>
+          <div class="course-progress-row">
+            <span>Progress</span>
+            <span class="progress-pct pct-orange">10%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill fill-orange"></div></div>
+          <button class="btn-resume btn-resume-orange" onclick="location.href='materi.html'">Resume Course</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULED QUIZ -->
+    <div class="quiz-banner">
+      <div class="quiz-banner-left">
+        <div class="quiz-banner-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div class="quiz-banner-label">📅 Scheduled Quiz</div>
+          <h4>Algebra Mastery Quiz</h4>
+          <p>Your weekly assessment is ready. Complete it to earn a 2x point multiplier for the next 24 hours!</p>
+          <div class="quiz-meta">
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              15 mins
+            </span>
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+              20 questions
+            </span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-take-quiz" onclick="location.href='quiz-list.html'">Take Quiz Now</button>
+    </div>
+
+  </main>
+
+</body>
+</html>

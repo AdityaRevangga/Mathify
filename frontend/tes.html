@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathify – Design System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ── BRAND COLORS ── */
+      --blue-50:  #EEF2FF;
+      --blue-100: #E0E7FF;
+      --blue-200: #C7D2FE;
+      --blue-300: #A5B4FC;
+      --blue-400: #818CF8;
+      --blue-500: #2F54EB;   /* Primary */
+      --blue-600: #1D4FD8;
+      --blue-700: #1D40AF;
+      --blue-800: #1E3A8A;
+      --blue-900: #1E3464;
+
+      /* ── NEUTRAL ── */
+      --gray-0:   #FFFFFF;
+      --gray-50:  #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+
+      /* ── SEMANTIC ── */
+      --success-light: #DCFCE7;
+      --success:       #10B981;
+      --success-dark:  #065F46;
+
+      --warning-light: #FEF3C7;
+      --warning:       #F59E0B;
+      --warning-dark:  #92400E;
+
+      --danger-light:  #FEE2E2;
+      --danger:        #EF4444;
+      --danger-dark:   #991B1B;
+
+      --info-light:    #DBEAFE;
+      --info:          #3B82F6;
+      --info-dark:     #1E40AF;
+
+      /* ── TYPOGRAPHY ── */
+      --font:        'Plus Jakarta Sans', sans-serif;
+      --font-size-xs:  0.75rem;    /* 12px */
+      --font-size-sm:  0.825rem;   /* 13px */
+      --font-size-base: 0.9rem;    /* 14.4px */
+      --font-size-md:  1rem;       /* 16px */
+      --font-size-lg:  1.125rem;   /* 18px */
+      --font-size-xl:  1.25rem;    /* 20px */
+      --font-size-2xl: 1.5rem;     /* 24px */
+      --font-size-3xl: 1.875rem;   /* 30px */
+      --font-size-4xl: 2.25rem;    /* 36px */
+
+      /* ── RADIUS ── */
+      --radius-xs: 4px;
+      --radius-sm: 8px;
+      --radius:    12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+
+      /* ── SPACING ── */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+
+      /* ── SHADOWS ── */
+      --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow:    0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
+      --shadow-xl: 0 24px 64px rgba(0,0,0,0.14), 0 8px 16px rgba(0,0,0,0.08);
+
+      --shadow-blue-sm: 0 4px 12px rgba(47,84,235,0.20);
+      --shadow-blue:    0 8px 24px rgba(47,84,235,0.28);
+      --shadow-blue-lg: 0 16px 40px rgba(47,84,235,0.32);
+
+      --shadow-green:   0 4px 12px rgba(16,185,129,0.28);
+      --shadow-orange:  0 4px 12px rgba(245,158,11,0.28);
+      --shadow-red:     0 4px 12px rgba(239,68,68,0.28);
+
+      /* ── BLUR ── */
+      --blur-sm: blur(4px);
+      --blur:    blur(8px);
+      --blur-lg: blur(16px);
+      --blur-xl: blur(24px);
+    }
+
+    /* ──────────────────────────── BASE ──────────────────────────── */
+    body {
+      font-family: var(--font);
+      background: var(--gray-50);
+      color: var(--gray-900);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ──────────────────────────── LAYOUT ──────────────────────────── */
+    .ds-header {
+      background: var(--blue-500);
+      padding: 3rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .ds-header::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .ds-header::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -40px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .ds-header-inner { position: relative; z-index: 1; }
+    .ds-logo { font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+    .ds-logo span { opacity: 0.6; font-weight: 400; font-size: 1rem; }
+    .ds-header h1 { font-size: 2.25rem; font-weight: 800; color: white; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+    .ds-header p { color: rgba(255,255,255,0.75); font-size: 1rem; }
+    .ds-version { display: inline-block; background: rgba(255,255,255,0.15); color: white; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.75rem; border-radius: var(--radius-full); margin-top: 1rem; letter-spacing: 0.04em; }
+
+    .ds-nav {
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 4rem;
+      display: flex;
+      gap: 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .ds-nav-item {
+      padding: 1rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .ds-nav-item:hover { color: var(--gray-800); }
+    .ds-nav-item.active { color: var(--blue-500); border-bottom-color: var(--blue-500); }
+
+    .ds-body { max-width: 1200px; margin: 0 auto; padding: 3rem 4rem; }
+
+    .ds-section { margin-bottom: 4rem; }
+    .ds-section-header { margin-bottom: 2rem; }
+    .ds-section-title {
+      font-size: 1.375rem; font-weight: 800;
+      letter-spacing: -0.02em; color: var(--gray-900);
+      margin-bottom: 0.35rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .ds-section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 1.2em;
+      background: var(--blue-500);
+      border-radius: 2px;
+    }
+    .ds-section-desc { font-size: 0.875rem; color: var(--gray-500); }
+
+    .ds-divider { border: none; border-top: 1px solid var(--gray-200); margin: 3rem 0; }
+
+    /* ── Panel ── */
+    .ds-panel {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .ds-panel-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-400); margin-bottom: 1.5rem; }
+
+    /* ── Token tag ── */
+    .token {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-xs);
+    }
+    .token.blue { background: var(--blue-50); color: var(--blue-600); }
+
+    /* ──────────────────────────── TYPOGRAPHY ──────────────────────────── */
+    .type-grid { display: flex; flex-direction: column; gap: 0; }
+
+    .type-row {
+      display: grid;
+      grid-template-columns: 180px 1fr 100px 80px 80px;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .type-row:last-child { border-bottom: none; }
+
+    .type-meta { }
+    .type-name { font-size: 0.75rem; font-weight: 700; color: var(--gray-700); margin-bottom: 0.2rem; }
+    .type-var  { font-size: 0.68rem; font-family: monospace; color: var(--gray-400); }
+
+    .type-sample { color: var(--gray-900); line-height: 1.3; }
+
+    .type-size, .type-weight, .type-lh {
+      font-size: 0.75rem; color: var(--gray-500);
+      font-family: monospace;
+    }
+
+    /* ──────────────────────────── COLORS ──────────────────────────── */
+    .color-group { margin-bottom: 2rem; }
+    .color-group-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 1rem; }
+
+    .color-row { display: flex; gap: 0; border-radius: var(--radius); overflow: hidden; margin-bottom: 0.75rem; border: 1px solid var(--gray-200); }
+
+    .color-chip {
+      flex: 1;
+      height: 64px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 0.35rem 0.5rem;
+      transition: flex 0.2s;
+    }
+    .color-chip:hover { flex: 1.4; }
+
+    .color-chip-label {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .color-chip:hover .color-chip-label { opacity: 1; }
+    .color-chip-name { font-size: 0.6rem; font-weight: 700; line-height: 1; }
+    .color-chip-hex  { font-size: 0.58rem; font-family: monospace; opacity: 0.8; }
+
+    /* Semantic colors grid */
+    .semantic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .semantic-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    .semantic-swatch {
+      height: 56px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .semantic-swatch-label { font-size: 0.75rem; font-weight: 700; }
+    .semantic-info { background: white; padding: 0.75rem; }
+    .semantic-info-name { font-size: 0.78rem; font-weight: 700; color: var(--gray-800); margin-bottom: 0.25rem; }
+    .semantic-info-usage { font-size: 0.72rem; color: var(--gray-500); line-height: 1.4; }
+
+    /* ──────────────────────────── EFFECTS ──────────────────────────── */
+    .effects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .effect-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .effect-card:hover { transform: translateY(-3px); }
+
+    .effect-preview {
+      width: 72px; height: 72px;
+      border-radius: var(--radius);
+      background: var(--blue-500);
+      margin: 0 auto 1.25rem;
+    }
+
+    .effect-name { font-size: 0.875rem; font-weight: 700; color: var(--gray-800); margin-bottom: 0.25rem; }
+    .effect-token { font-size: 0.7rem; font-family: monospace; color: var(--blue-500); margin-bottom: 0.5rem; }
+    .effect-value { font-size: 0.7rem; color: var(--gray-500); font-family: monospace; line-height: 1.5; word-break: break-word; }
+
+    /* Shadow previews */
+    .shadow-xs-preview  { box-shadow: var(--shadow-xs); }
+    .shadow-sm-preview  { box-shadow: var(--shadow-sm); }
+    .shadow-preview     { box-shadow: var(--shadow); }
+    .shadow-md-preview  { box-shadow: var(--shadow-md); }
+    .shadow-lg-preview  { box-shadow: var(--shadow-lg); }
+    .shadow-xl-preview  { box-shadow: var(--shadow-xl); }
+    .shadow-blue-sm-preview { background: var(--blue-500); box-shadow: var(--shadow-blue-sm); }
+    .shadow-blue-preview    { background: var(--blue-500); box-shadow: var(--shadow-blue); }
+    .shadow-blue-lg-preview { background: var(--blue-500); box-shadow: var(--shadow-blue-lg); }
+    .shadow-green-preview   { background: var(--success);  box-shadow: var(--shadow-green); }
+    .shadow-orange-preview  { background: var(--warning);  box-shadow: var(--shadow-orange); }
+    .shadow-red-preview     { background: var(--danger);   box-shadow: var(--shadow-red); }
+
+    /* Blur previews */
+    .blur-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+    .blur-preview-wrap {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      height: 100px;
+      background: linear-gradient(135deg, var(--blue-300), var(--blue-600));
+    }
+    .blur-preview-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .blur-chip {
+      background: rgba(255,255,255,0.25);
+      border-radius: var(--radius-sm);
+      padding: 0.4rem 0.75rem;
+      font-size: 0.75rem; font-weight: 700; color: white;
+    }
+    .blur-label { text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--gray-700); margin-top: 0.6rem; margin-bottom: 0.2rem; }
+    .blur-token-text { text-align: center; font-size: 0.68rem; font-family: monospace; color: var(--gray-500); }
+
+    /* Radius previews */
+    .radius-grid { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-end; }
+    .radius-item { text-align: center; }
+    .radius-preview {
+      background: var(--blue-100);
+      border: 2px solid var(--blue-300);
+      width: 72px; height: 72px;
+      margin: 0 auto 0.6rem;
+    }
+    .radius-name { font-size: 0.72rem; font-weight: 700; color: var(--gray-700); }
+    .radius-token-text { font-size: 0.65rem; font-family: monospace; color: var(--gray-500); }
+
+    /* Opacity */
+    .opacity-row { display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: center; }
+    .opacity-item { text-align: center; }
+    .opacity-preview {
+      width: 64px; height: 48px;
+      background: var(--blue-500);
+      border-radius: var(--radius-sm);
+      margin: 0 auto 0.5rem;
+    }
+    .opacity-label { font-size: 0.72rem; font-weight: 700; color: var(--gray-700); }
+
+    /* ── Spacing visual ── */
+    .spacing-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .spacing-item { display: flex; align-items: center; gap: 1rem; }
+    .spacing-bar-wrap { flex: 1; height: 24px; background: var(--gray-100); border-radius: var(--radius-xs); overflow: hidden; }
+    .spacing-bar { height: 100%; background: var(--blue-400); border-radius: var(--radius-xs); }
+    .spacing-meta { display: flex; gap: 1.5rem; }
+    .spacing-name-text { font-size: 0.75rem; font-weight: 700; color: var(--gray-700); width: 90px; }
+    .spacing-val { font-size: 0.72rem; font-family: monospace; color: var(--gray-500); width: 56px; }
+
+    /* ── Section anchor scroll ── */
+    .ds-anchor { scroll-margin-top: 60px; }
+
+    @media (max-width: 768px) {
+      .ds-body { padding: 2rem 1.5rem; }
+      .ds-header { padding: 2rem 1.5rem; }
+      .ds-nav { padding: 0 1.5rem; overflow-x: auto; }
+      .effects-grid { grid-template-columns: 1fr 1fr; }
+      .semantic-grid { grid-template-columns: 1fr 1fr; }
+      .blur-grid { grid-template-columns: 1fr 1fr; }
+      .type-row { grid-template-columns: 140px 1fr; }
+      .type-size, .type-weight, .type-lh { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="ds-header">
+    <div class="ds-header-inner">
+      <div class="ds-logo">Mathify <span>Design System</span></div>
+      <h1>Style Guide</h1>
+      <p>Typography · Color · Effects · Spacing</p>
+      <div class="ds-version">v1.0 · 2026</div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="ds-nav">
+    <div class="ds-nav-item active" onclick="scrollTo('typography', this)">Typography</div>
+    <div class="ds-nav-item" onclick="scrollTo('colors', this)">Colors</div>
+    <div class="ds-nav-item" onclick="scrollTo('shadows', this)">Shadows</div>
+    <div class="ds-nav-item" onclick="scrollTo('blur', this)">Blur & Overlay</div>
+    <div class="ds-nav-item" onclick="scrollTo('radius', this)">Border Radius</div>
+    <div class="ds-nav-item" onclick="scrollTo('spacing', this)">Spacing</div>
+    <div class="ds-nav-item" onclick="scrollTo('opacity', this)">Opacity</div>
+  </nav>
+
+  <div class="ds-body">
+
+    <!-- ═══════════════ TYPOGRAPHY ═══════════════ -->
+    <section class="ds-section ds-anchor" id="typography">
+      <div class="ds-section-header">
+        <div class="ds-section-title">Typography</div>
+        <div class="ds-section-desc">Font: <strong>Plus Jakarta Sans</strong> — digunakan di seluruh halaman Mathify.</div>
+      </div>
+
+      <!-- Type Scale -->
+      <div class="ds-panel">
+        <div class="ds-panel-title">Type Scale</div>
+        <div style="display:grid; grid-template-columns: 180px 1fr 90px 80px 80px; gap:1rem; padding:0 0 0.75rem; margin-bottom:0.5rem; border-bottom:1px solid var(--gray-100);">
+          <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);">Name</span>
+          <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);">Sample</span>
+          <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);">Size</span>
+          <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);">Weight</span>
+          <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);">Token</span>
+        </div>
+        <div class="type-grid">
+          <!-- Display -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Display / Hero</div>
+              <div class="type-var">Heading besar landing</div>
+            </div>
+            <div class="type-sample" style="font-size:2.25rem;font-weight:800;letter-spacing:-0.03em;line-height:1.15;">Master Mathematics</div>
+            <div class="type-size">36px · 2.25rem</div>
+            <div class="type-weight">800</div>
+            <div class="type-weight"><span class="token blue">--font-size-4xl</span></div>
+          </div>
+
+          <!-- H1 -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Heading 1</div>
+              <div class="type-var">Page title utama</div>
+            </div>
+            <div class="type-sample" style="font-size:1.875rem;font-weight:800;letter-spacing:-0.02em;line-height:1.2;">Explore Topics</div>
+            <div class="type-size">30px · 1.875rem</div>
+            <div class="type-weight">800</div>
+            <div class="type-weight"><span class="token blue">--font-size-3xl</span></div>
+          </div>
+
+          <!-- H2 -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Heading 2</div>
+              <div class="type-var">Section title</div>
+            </div>
+            <div class="type-sample" style="font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;">Why Choose MathFlow?</div>
+            <div class="type-size">24px · 1.5rem</div>
+            <div class="type-weight">800</div>
+            <div class="type-weight"><span class="token blue">--font-size-2xl</span></div>
+          </div>
+
+          <!-- H3 -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Heading 3</div>
+              <div class="type-var">Card title / Sub-section</div>
+            </div>
+            <div class="type-sample" style="font-size:1.25rem;font-weight:800;letter-spacing:-0.01em;">Jenis-jenis Bilangan</div>
+            <div class="type-size">20px · 1.25rem</div>
+            <div class="type-weight">800</div>
+            <div class="type-weight"><span class="token blue">--font-size-xl</span></div>
+          </div>
+
+          <!-- H4 -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Heading 4</div>
+              <div class="type-var">Card name / List title</div>
+            </div>
+            <div class="type-sample" style="font-size:1rem;font-weight:700;">Video Lessons</div>
+            <div class="type-size">16px · 1rem</div>
+            <div class="type-weight">700</div>
+            <div class="type-weight"><span class="token blue">--font-size-md</span></div>
+          </div>
+
+          <!-- Body LG -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Body Large</div>
+              <div class="type-var">Hero description</div>
+            </div>
+            <div class="type-sample" style="font-size:1rem;font-weight:400;color:#374151;line-height:1.75;">Unlock your potential with interactive lessons and personalized AI-driven practice.</div>
+            <div class="type-size">16px · 1rem</div>
+            <div class="type-weight">400</div>
+            <div class="type-weight"><span class="token blue">--font-size-md</span></div>
+          </div>
+
+          <!-- Body -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Body</div>
+              <div class="type-var">Materi / konten utama</div>
+            </div>
+            <div class="type-sample" style="font-size:0.9rem;font-weight:400;color:#374151;line-height:1.85;">Bilangan adalah konsep dasar yang digunakan untuk menghitung, mengukur, dan memberi label pada suatu objek.</div>
+            <div class="type-size">14.4px · 0.9rem</div>
+            <div class="type-weight">400</div>
+            <div class="type-weight"><span class="token blue">--font-size-base</span></div>
+          </div>
+
+          <!-- Body SM -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Body Small</div>
+              <div class="type-var">Caption / deskripsi card</div>
+            </div>
+            <div class="type-sample" style="font-size:0.825rem;font-weight:400;color:#6B7280;line-height:1.65;">Belajar bagaimana arsitek menggunakan Pythagoras di dunia nyata.</div>
+            <div class="type-size">13.2px · 0.825rem</div>
+            <div class="type-weight">400</div>
+            <div class="type-weight"><span class="token blue">--font-size-sm</span></div>
+          </div>
+
+          <!-- Label -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Label</div>
+              <div class="type-var">Button / nav label</div>
+            </div>
+            <div class="type-sample" style="font-size:0.875rem;font-weight:600;">Start Learning Free</div>
+            <div class="type-size">14px · 0.875rem</div>
+            <div class="type-weight">600</div>
+            <div class="type-weight"><span class="token blue">—</span></div>
+          </div>
+
+          <!-- Caption -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Caption / Badge</div>
+              <div class="type-var">Badge, tag, meta info</div>
+            </div>
+            <div class="type-sample" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#9CA3AF;">LEVEL: INTERMEDIATE</div>
+            <div class="type-size">12px · 0.75rem</div>
+            <div class="type-weight">700</div>
+            <div class="type-weight"><span class="token blue">--font-size-xs</span></div>
+          </div>
+
+          <!-- Mono -->
+          <div class="type-row">
+            <div class="type-meta">
+              <div class="type-name">Monospace</div>
+              <div class="type-var">Token / code</div>
+            </div>
+            <div class="type-sample" style="font-size:0.825rem;font-family:'Courier New',monospace;color:#4B5563;background:#F3F4F6;padding:0.3rem 0.6rem;border-radius:4px;display:inline-block;">--blue-500: #2F54EB</div>
+            <div class="type-size">13.2px</div>
+            <div class="type-weight">400</div>
+            <div class="type-weight"><span class="token">monospace</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Font Weights -->
+      <div class="ds-panel">
+        <div class="ds-panel-title">Font Weights</div>
+        <div style="display:flex; gap:2.5rem; flex-wrap:wrap; align-items:baseline;">
+          <div>
+            <div style="font-size:2rem;font-weight:400;color:var(--gray-900);line-height:1.2;">Aa</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--gray-500);margin-top:0.4rem;">Regular — 400</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">font-weight: 400</div>
+          </div>
+          <div>
+            <div style="font-size:2rem;font-weight:500;color:var(--gray-900);line-height:1.2;">Aa</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--gray-500);margin-top:0.4rem;">Medium — 500</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">font-weight: 500</div>
+          </div>
+          <div>
+            <div style="font-size:2rem;font-weight:600;color:var(--gray-900);line-height:1.2;">Aa</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--gray-500);margin-top:0.4rem;">SemiBold — 600</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">font-weight: 600</div>
+          </div>
+          <div>
+            <div style="font-size:2rem;font-weight:700;color:var(--gray-900);line-height:1.2;">Aa</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--gray-500);margin-top:0.4rem;">Bold — 700</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">font-weight: 700</div>
+          </div>
+          <div>
+            <div style="font-size:2rem;font-weight:800;color:var(--gray-900);line-height:1.2;">Aa</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--gray-500);margin-top:0.4rem;">ExtraBold — 800</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">font-weight: 800</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════ COLORS ═══════════════ -->
+    <section class="ds-section ds-anchor" id="colors">
+      <div class="ds-section-header">
+        <div class="ds-section-title">Colors</div>
+        <div class="ds-section-desc">Palet warna utama Mathify — Primary Blue, Neutral Gray, dan Semantic.</div>
+      </div>
+
+      <!-- Primary Blue -->
+      <div class="ds-panel">
+        <div class="ds-panel-title">Primary — Blue</div>
+        <div class="color-row">
+          <div class="color-chip" style="background:#EEF2FF;">
+            <div class="color-chip-label" style="color:#1D4ED8;">
+              <div class="color-chip-name">Blue 50</div>
+              <div class="color-chip-hex">#EEF2FF</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#E0E7FF;">
+            <div class="color-chip-label" style="color:#1D4ED8;">
+              <div class="color-chip-name">Blue 100</div>
+              <div class="color-chip-hex">#E0E7FF</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#C7D2FE;">
+            <div class="color-chip-label" style="color:#1D4ED8;">
+              <div class="color-chip-name">Blue 200</div>
+              <div class="color-chip-hex">#C7D2FE</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#A5B4FC;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Blue 300</div>
+              <div class="color-chip-hex">#A5B4FC</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#818CF8;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Blue 400</div>
+              <div class="color-chip-hex">#818CF8</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#2F54EB; flex:1.6; position:relative;">
+            <div style="position:absolute;top:0.5rem;left:0.5rem;background:rgba(255,255,255,0.2);font-size:0.6rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:3px;color:white;">PRIMARY</div>
+            <div class="color-chip-label" style="color:white; opacity:1 !important;">
+              <div class="color-chip-name">Blue 500</div>
+              <div class="color-chip-hex">#2F54EB</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#1D4FD8;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Blue 600</div>
+              <div class="color-chip-hex">#1D4FD8</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#1D40AF;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Blue 700</div>
+              <div class="color-chip-hex">#1D40AF</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#1E3A8A;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Blue 800</div>
+              <div class="color-chip-hex">#1E3A8A</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#1E3464;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Blue 900</div>
+              <div class="color-chip-hex">#1E3464</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Neutral Gray -->
+      <div class="ds-panel">
+        <div class="ds-panel-title">Neutral — Gray</div>
+        <div class="color-row">
+          <div class="color-chip" style="background:#FFFFFF; border-right:1px solid #E5E7EB;">
+            <div class="color-chip-label" style="color:#374151;">
+              <div class="color-chip-name">White</div>
+              <div class="color-chip-hex">#FFFFFF</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#F9FAFB;">
+            <div class="color-chip-label" style="color:#374151;">
+              <div class="color-chip-name">Gray 50</div>
+              <div class="color-chip-hex">#F9FAFB</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#F3F4F6;">
+            <div class="color-chip-label" style="color:#374151;">
+              <div class="color-chip-name">Gray 100</div>
+              <div class="color-chip-hex">#F3F4F6</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#E5E7EB;">
+            <div class="color-chip-label" style="color:#374151;">
+              <div class="color-chip-name">Gray 200</div>
+              <div class="color-chip-hex">#E5E7EB</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#D1D5DB;">
+            <div class="color-chip-label" style="color:#374151;">
+              <div class="color-chip-name">Gray 300</div>
+              <div class="color-chip-hex">#D1D5DB</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#9CA3AF;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Gray 400</div>
+              <div class="color-chip-hex">#9CA3AF</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#6B7280;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Gray 500</div>
+              <div class="color-chip-hex">#6B7280</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#4B5563;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Gray 600</div>
+              <div class="color-chip-hex">#4B5563</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#374151;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Gray 700</div>
+              <div class="color-chip-hex">#374151</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#1F2937;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Gray 800</div>
+              <div class="color-chip-hex">#1F2937</div>
+            </div>
+          </div>
+          <div class="color-chip" style="background:#111827;">
+            <div class="color-chip-label" style="color:white;">
+              <div class="color-chip-name">Gray 900</div>
+              <div class="color-chip-hex">#111827</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Semantic Colors -->
+      <div class="ds-panel">
+        <div class="ds-panel-title">Semantic Colors</div>
+        <div class="semantic-grid">
+
+          <!-- Success -->
+          <div class="semantic-card">
+            <div class="semantic-swatch" style="background:#DCFCE7;">
+              <span class="semantic-swatch-label" style="color:#065F46;">Light</span>
+            </div>
+            <div class="semantic-swatch" style="background:#10B981; flex:1.5;">
+              <span class="semantic-swatch-label" style="color:white; font-size:0.8rem; font-weight:800;">Success</span>
+            </div>
+            <div class="semantic-swatch" style="background:#065F46;">
+              <span class="semantic-swatch-label" style="color:white;">Dark</span>
+            </div>
+            <div class="semantic-info">
+              <div class="semantic-info-name">✅ Success / Green</div>
+              <div class="semantic-info-usage">Jawaban benar, progress selesai, badge lulus, streak aktif.</div>
+              <div style="margin-top:0.5rem; font-family:monospace; font-size:0.65rem; color:var(--gray-400);">#10B981 · --success</div>
+            </div>
+          </div>
+
+          <!-- Warning -->
+          <div class="semantic-card">
+            <div class="semantic-swatch" style="background:#FEF3C7;">
+              <span class="semantic-swatch-label" style="color:#92400E;">Light</span>
+            </div>
+            <div class="semantic-swatch" style="background:#F59E0B; flex:1.5;">
+              <span class="semantic-swatch-label" style="color:white; font-size:0.8rem; font-weight:800;">Warning</span>
+            </div>
+            <div class="semantic-swatch" style="background:#92400E;">
+              <span class="semantic-swatch-label" style="color:white;">Dark</span>
+            </div>
+            <div class="semantic-info">
+              <div class="semantic-info-name">⚠️ Warning / Orange</div>
+              <div class="semantic-info-usage">Badge intermediate, progress sedang, FAB chat, streak fire.</div>
+              <div style="margin-top:0.5rem; font-family:monospace; font-size:0.65rem; color:var(--gray-400);">#F59E0B · --warning</div>
+            </div>
+          </div>
+
+          <!-- Danger -->
+          <div class="semantic-card">
+            <div class="semantic-swatch" style="background:#FEE2E2;">
+              <span class="semantic-swatch-label" style="color:#991B1B;">Light</span>
+            </div>
+            <div class="semantic-swatch" style="background:#EF4444; flex:1.5;">
+              <span class="semantic-swatch-label" style="color:white; font-size:0.8rem; font-weight:800;">Danger</span>
+            </div>
+            <div class="semantic-swatch" style="background:#991B1B;">
+              <span class="semantic-swatch-label" style="color:white;">Dark</span>
+            </div>
+            <div class="semantic-info">
+              <div class="semantic-info-name">❌ Danger / Red</div>
+              <div class="semantic-info-usage">Jawaban salah, hapus akun, badge "BARU", error state.</div>
+              <div style="margin-top:0.5rem; font-family:monospace; font-size:0.65rem; color:var(--gray-400);">#EF4444 · --danger</div>
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="semantic-card">
+            <div class="semantic-swatch" style="background:#DBEAFE;">
+              <span class="semantic-swatch-label" style="color:#1E40AF;">Light</span>
+            </div>
+            <div class="semantic-swatch" style="background:#3B82F6; flex:1.5;">
+              <span class="semantic-swatch-label" style="color:white; font-size:0.8rem; font-weight:800;">Info</span>
+            </div>
+            <div class="semantic-swatch" style="background:#1E40AF;">
+              <span class="semantic-swatch-label" style="color:white;">Dark</span>
+            </div>
+            <div class="semantic-info">
+              <div class="semantic-info-name">ℹ️ Info / Blue Alt</div>
+              <div class="semantic-info-usage">Informasi tambahan, tooltip, notifikasi netral.</div>
+              <div style="margin-top:0.5rem; font-family:monospace; font-size:0.65rem; color:var(--gray-400);">#3B82F6 · --info</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text Colors Usage -->
+      <div class="ds-panel">
+        <div class="ds-panel-title">Text Color Usage</div>
+        <div style="display:flex; flex-direction:column; gap:0.85rem;">
+          <div style="display:flex; align-items:center; gap:1.5rem;">
+            <div style="width:28px;height:28px;background:#111827;border-radius:50%;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.875rem;font-weight:700;color:#111827;">Gray 900 · #111827</div>
+              <div style="font-size:0.72rem;color:var(--gray-500);">Heading utama, judul halaman, teks penting — contrast tinggi</div>
+            </div>
+            <span class="token">--gray-900</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:1.5rem;">
+            <div style="width:28px;height:28px;background:#374151;border-radius:50%;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.875rem;font-weight:600;color:#374151;">Gray 700 · #374151</div>
+              <div style="font-size:0.72rem;color:var(--gray-500);">Body text materi — readable di background putih</div>
+            </div>
+            <span class="token">--gray-700</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:1.5rem;">
+            <div style="width:28px;height:28px;background:#6B7280;border-radius:50%;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.875rem;font-weight:500;color:#6B7280;">Gray 500 · #6B7280</div>
+              <div style="font-size:0.72rem;color:var(--gray-500);">Deskripsi, caption, placeholder, nav link non-aktif</div>
+            </div>
+            <span class="token">--gray-500</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:1.5rem;">
+            <div style="width:28px;height:28px;background:#9CA3AF;border-radius:50%;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.875rem;font-weight:400;color:#9CA3AF;">Gray 400 · #9CA3AF</div>
+              <div style="font-size:0.72rem;color:var(--gray-500);">Input placeholder, icon non-aktif, sub-label</div>
+            </div>
+            <span class="token">--gray-400</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:1.5rem;">
+            <div style="width:28px;height:28px;background:#2F54EB;border-radius:50%;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.875rem;font-weight:700;color:#2F54EB;">Blue 500 · #2F54EB</div>
+              <div style="font-size:0.72rem;color:var(--gray-500);">Link aktif, highlight brand, badge aktif, breadcrumb current</div>
+            </div>
+            <span class="token">--blue-500</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════ SHADOWS ═══════════════ -->
+    <section class="ds-section ds-anchor" id="shadows">
+      <div class="ds-section-header">
+        <div class="ds-section-title">Shadows</div>
+        <div class="ds-section-desc">Elevation system — dari surface paling datar hingga modal overlay.</div>
+      </div>
+
+      <div class="ds-panel">
+        <div class="ds-panel-title">Neutral Shadows</div>
+        <div class="effects-grid">
+          <div class="effect-card">
+            <div class="effect-preview shadow-xs-preview" style="background:white;"></div>
+            <div class="effect-name">Shadow XS</div>
+            <div class="effect-token">--shadow-xs</div>
+            <div class="effect-value">0 1px 2px rgba(0,0,0,0.05)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Input, badge, tag</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-sm-preview" style="background:white;"></div>
+            <div class="effect-name">Shadow SM</div>
+            <div class="effect-token">--shadow-sm</div>
+            <div class="effect-value">0 1px 3px rgba(0,0,0,0.08)<br>0 1px 2px rgba(0,0,0,0.04)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Card default</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-preview" style="background:white;"></div>
+            <div class="effect-name">Shadow</div>
+            <div class="effect-token">--shadow</div>
+            <div class="effect-value">0 4px 16px rgba(0,0,0,0.08)<br>0 2px 4px rgba(0,0,0,0.04)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Card hover</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-md-preview" style="background:white;"></div>
+            <div class="effect-name">Shadow MD</div>
+            <div class="effect-token">--shadow-md</div>
+            <div class="effect-value">0 8px 24px rgba(0,0,0,0.10)<br>0 2px 6px rgba(0,0,0,0.06)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Dropdown, popover</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-lg-preview" style="background:white;"></div>
+            <div class="effect-name">Shadow LG</div>
+            <div class="effect-token">--shadow-lg</div>
+            <div class="effect-value">0 16px 40px rgba(0,0,0,0.12)<br>0 4px 8px rgba(0,0,0,0.06)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Hero image, modal</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-xl-preview" style="background:white;"></div>
+            <div class="effect-name">Shadow XL</div>
+            <div class="effect-token">--shadow-xl</div>
+            <div class="effect-value">0 24px 64px rgba(0,0,0,0.14)<br>0 8px 16px rgba(0,0,0,0.08)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Floating panel</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ds-panel">
+        <div class="ds-panel-title">Colored Shadows</div>
+        <div class="effects-grid">
+          <div class="effect-card">
+            <div class="effect-preview shadow-blue-sm-preview"></div>
+            <div class="effect-name">Blue SM</div>
+            <div class="effect-token">--shadow-blue-sm</div>
+            <div class="effect-value">0 4px 12px rgba(47,84,235,0.20)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Button primary hover</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-blue-preview"></div>
+            <div class="effect-name">Blue</div>
+            <div class="effect-token">--shadow-blue</div>
+            <div class="effect-value">0 8px 24px rgba(47,84,235,0.28)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">CTA button aktif</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-blue-lg-preview"></div>
+            <div class="effect-name">Blue LG</div>
+            <div class="effect-token">--shadow-blue-lg</div>
+            <div class="effect-value">0 16px 40px rgba(47,84,235,0.32)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Hero section button</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-green-preview"></div>
+            <div class="effect-name">Green</div>
+            <div class="effect-token">--shadow-green</div>
+            <div class="effect-value">0 4px 12px rgba(16,185,129,0.28)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Success state</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-orange-preview"></div>
+            <div class="effect-name">Orange</div>
+            <div class="effect-token">--shadow-orange</div>
+            <div class="effect-value">0 4px 12px rgba(245,158,11,0.28)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">FAB / Chat button</div>
+          </div>
+          <div class="effect-card">
+            <div class="effect-preview shadow-red-preview"></div>
+            <div class="effect-name">Red</div>
+            <div class="effect-token">--shadow-red</div>
+            <div class="effect-value">0 4px 12px rgba(239,68,68,0.28)</div>
+            <div style="font-size:0.7rem;color:var(--gray-400);margin-top:0.4rem;">Danger action</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════ BLUR & OVERLAY ═══════════════ -->
+    <section class="ds-section ds-anchor" id="blur">
+      <div class="ds-section-header">
+        <div class="ds-section-title">Blur &amp; Overlay</div>
+        <div class="ds-section-desc">Backdrop blur untuk navbar, modal, dan glassmorphism effects.</div>
+      </div>
+
+      <div class="ds-panel">
+        <div class="ds-panel-title">Blur Levels</div>
+        <div class="blur-grid">
+          <div>
+            <div class="blur-preview-wrap">
+              <div class="blur-preview-overlay" style="backdrop-filter:blur(0px);">
+                <div class="blur-chip" style="background:rgba(255,255,255,0.15);">No Blur</div>
+              </div>
+            </div>
+            <div class="blur-label">None</div>
+            <div class="blur-token-text">blur(0)</div>
+          </div>
+          <div>
+            <div class="blur-preview-wrap">
+              <div class="blur-preview-overlay" style="backdrop-filter:blur(4px); background:rgba(255,255,255,0.1);">
+                <div class="blur-chip">SM</div>
+              </div>
+            </div>
+            <div class="blur-label">Blur SM</div>
+            <div class="blur-token-text">--blur-sm · blur(4px)</div>
+          </div>
+          <div>
+            <div class="blur-preview-wrap">
+              <div class="blur-preview-overlay" style="backdrop-filter:blur(8px); background:rgba(255,255,255,0.15);">
+                <div class="blur-chip">MD</div>
+              </div>
+            </div>
+            <div class="blur-label">Blur</div>
+            <div class="blur-token-text">--blur · blur(8px)</div>
+          </div>
+          <div>
+            <div class="blur-preview-wrap">
+              <div class="blur-preview-overlay" style="backdrop-filter:blur(16px); background:rgba(255,255,255,0.2);">
+                <div class="blur-chip">LG</div>
+              </div>
+            </div>
+            <div class="blur-label">Blur LG</div>
+            <div class="blur-token-text">--blur-lg · blur(16px)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ds-panel">
+        <div class="ds-panel-title">Overlay Colors</div>
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem;">
+          <div>
+            <div style="height:64px; background:rgba(0,0,0,0.1); border-radius:var(--radius-sm); border:1px solid var(--gray-200); margin-bottom:0.6rem;"></div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--gray-700);">Overlay 10%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">rgba(0,0,0,0.10)</div>
+            <div style="font-size:0.65rem;color:var(--gray-500);margin-top:0.2rem;">Background hover</div>
+          </div>
+          <div>
+            <div style="height:64px; background:rgba(0,0,0,0.3); border-radius:var(--radius-sm); border:1px solid var(--gray-200); margin-bottom:0.6rem;"></div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--gray-700);">Overlay 30%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">rgba(0,0,0,0.30)</div>
+            <div style="font-size:0.65rem;color:var(--gray-500);margin-top:0.2rem;">Video overlay</div>
+          </div>
+          <div>
+            <div style="height:64px; background:rgba(0,0,0,0.5); border-radius:var(--radius-sm); border:1px solid var(--gray-200); margin-bottom:0.6rem;"></div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--gray-700);">Overlay 50%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">rgba(0,0,0,0.50)</div>
+            <div style="font-size:0.65rem;color:var(--gray-500);margin-top:0.2rem;">Modal backdrop</div>
+          </div>
+          <div>
+            <div style="height:64px; background:linear-gradient(to top, rgba(0,0,0,0.72), transparent); border-radius:var(--radius-sm); border:1px solid var(--gray-200); margin-bottom:0.6rem;"></div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--gray-700);">Gradient 72%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">0,0,0 → transparent</div>
+            <div style="font-size:0.65rem;color:var(--gray-500);margin-top:0.2rem;">Subject card overlay</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════ BORDER RADIUS ═══════════════ -->
+    <section class="ds-section ds-anchor" id="radius">
+      <div class="ds-section-header">
+        <div class="ds-section-title">Border Radius</div>
+        <div class="ds-section-desc">Radius scale yang dipakai pada semua komponen Mathify.</div>
+      </div>
+
+      <div class="ds-panel">
+        <div class="ds-panel-title">Radius Scale</div>
+        <div class="radius-grid">
+          <div class="radius-item">
+            <div class="radius-preview" style="border-radius:4px;"></div>
+            <div class="radius-name">XS</div>
+            <div class="radius-token-text">--radius-xs · 4px</div>
+            <div style="font-size:0.65rem;color:var(--gray-400);margin-top:0.2rem;">Tag, badge, chip</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-preview" style="border-radius:8px;"></div>
+            <div class="radius-name">SM</div>
+            <div class="radius-token-text">--radius-sm · 8px</div>
+            <div style="font-size:0.65rem;color:var(--gray-400);margin-top:0.2rem;">Button, input, select</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-preview" style="border-radius:12px;"></div>
+            <div class="radius-name">Base</div>
+            <div class="radius-token-text">--radius · 12px</div>
+            <div style="font-size:0.65rem;color:var(--gray-400);margin-top:0.2rem;">Card, panel utama</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-preview" style="border-radius:16px;"></div>
+            <div class="radius-name">LG</div>
+            <div class="radius-token-text">--radius-lg · 16px</div>
+            <div style="font-size:0.65rem;color:var(--gray-400);margin-top:0.2rem;">Style guide panel</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-preview" style="border-radius:24px;"></div>
+            <div class="radius-name">XL</div>
+            <div class="radius-token-text">--radius-xl · 24px</div>
+            <div style="font-size:0.65rem;color:var(--gray-400);margin-top:0.2rem;">Hero image, modal</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-preview" style="border-radius:9999px;"></div>
+            <div class="radius-name">Full</div>
+            <div class="radius-token-text">--radius-full · 9999px</div>
+            <div style="font-size:0.65rem;color:var(--gray-400);margin-top:0.2rem;">Pill, avatar, toggle</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════ SPACING ═══════════════ -->
+    <section class="ds-section ds-anchor" id="spacing">
+      <div class="ds-section-header">
+        <div class="ds-section-title">Spacing</div>
+        <div class="ds-section-desc">Scale spacing berbasis 4px yang konsisten di seluruh layout dan komponen.</div>
+      </div>
+
+      <div class="ds-panel">
+        <div class="ds-panel-title">Spacing Scale</div>
+        <div class="spacing-list">
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-1</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:4px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">0.25rem</div>
+              <div class="spacing-val">4px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">gap kecil, icon margin</div>
+            </div>
+          </div>
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-2</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:8px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">0.5rem</div>
+              <div class="spacing-val">8px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">gap icon-teks</div>
+            </div>
+          </div>
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-3</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:12px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">0.75rem</div>
+              <div class="spacing-val">12px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">padding badge, nav item</div>
+            </div>
+          </div>
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-4</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:20px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">1rem</div>
+              <div class="spacing-val">16px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">padding button, gap card</div>
+            </div>
+          </div>
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-5</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:30px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">1.25rem</div>
+              <div class="spacing-val">20px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">grid gap, section inner</div>
+            </div>
+          </div>
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-6</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:40px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">1.5rem</div>
+              <div class="spacing-val">24px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">card padding, nav padding</div>
+            </div>
+          </div>
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-8</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:64px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">2rem</div>
+              <div class="spacing-val">32px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">section padding, main content</div>
+            </div>
+          </div>
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-10</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:90px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">2.5rem</div>
+              <div class="spacing-val">40px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">topbar padding lateral</div>
+            </div>
+          </div>
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-12</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:120px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">3rem</div>
+              <div class="spacing-val">48px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">section margin bottom</div>
+            </div>
+          </div>
+          <div class="spacing-item">
+            <div class="spacing-name-text"><span class="token blue">--space-16</span></div>
+            <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:200px;"></div></div>
+            <div class="spacing-meta">
+              <div class="spacing-val">4rem</div>
+              <div class="spacing-val">64px</div>
+              <div style="font-size:0.7rem;color:var(--gray-400);">hero section padding</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ds-divider">
+
+    <!-- ═══════════════ OPACITY ═══════════════ -->
+    <section class="ds-section ds-anchor" id="opacity">
+      <div class="ds-section-header">
+        <div class="ds-section-title">Opacity</div>
+        <div class="ds-section-desc">Nilai opacity yang digunakan untuk overlay, disabled state, dan efek transparan.</div>
+      </div>
+
+      <div class="ds-panel">
+        <div class="ds-panel-title">Opacity Scale</div>
+        <div class="opacity-row">
+          <div class="opacity-item">
+            <div class="opacity-preview" style="opacity:0.1;"></div>
+            <div class="opacity-label">10%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">opacity: 0.1</div>
+            <div style="font-size:0.63rem;color:var(--gray-400);margin-top:0.15rem;">Hover bg</div>
+          </div>
+          <div class="opacity-item">
+            <div class="opacity-preview" style="opacity:0.2;"></div>
+            <div class="opacity-label">20%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">opacity: 0.2</div>
+            <div style="font-size:0.63rem;color:var(--gray-400);margin-top:0.15rem;">Panel glass</div>
+          </div>
+          <div class="opacity-item">
+            <div class="opacity-preview" style="opacity:0.4;"></div>
+            <div class="opacity-label">40%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">opacity: 0.4</div>
+            <div style="font-size:0.63rem;color:var(--gray-400);margin-top:0.15rem;">Disabled</div>
+          </div>
+          <div class="opacity-item">
+            <div class="opacity-preview" style="opacity:0.6;"></div>
+            <div class="opacity-label">60%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">opacity: 0.6</div>
+            <div style="font-size:0.63rem;color:var(--gray-400);margin-top:0.15rem;">Step locked</div>
+          </div>
+          <div class="opacity-item">
+            <div class="opacity-preview" style="opacity:0.75;"></div>
+            <div class="opacity-label">75%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">opacity: 0.75</div>
+            <div style="font-size:0.63rem;color:var(--gray-400);margin-top:0.15rem;">Sub-text panel</div>
+          </div>
+          <div class="opacity-item">
+            <div class="opacity-preview" style="opacity:0.85;"></div>
+            <div class="opacity-label">85%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">opacity: 0.85</div>
+            <div style="font-size:0.63rem;color:var(--gray-400);margin-top:0.15rem;">Navbar blur</div>
+          </div>
+          <div class="opacity-item">
+            <div class="opacity-preview" style="opacity:1;"></div>
+            <div class="opacity-label">100%</div>
+            <div style="font-size:0.65rem;font-family:monospace;color:var(--gray-400);">opacity: 1</div>
+            <div style="font-size:0.63rem;color:var(--gray-400);margin-top:0.15rem;">Full visible</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /ds-body -->
+
+  <script>
+    function scrollTo(id, el) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+      document.querySelectorAll('.ds-nav-item').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // Auto-highlight nav on scroll
+    const sections = ['typography','colors','shadows','blur','radius','spacing','opacity'];
+    const navItems = document.querySelectorAll('.ds-nav-item');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - 120) current = id;
+      });
+      navItems.forEach((nav, i) => {
+        nav.classList.toggle('active', sections[i] === current);
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topik Matematika - Mathify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { display: flex; min-height: 100vh; background: var(--bg-soft); }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar { width: 220px; background: white; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 50; }
+    .sidebar-logo { font-size: 1.3rem; font-weight: 800; color: var(--blue); letter-spacing: -0.02em; padding: 0 1.5rem 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+    .sidebar-nav { flex: 1; padding: 0 0.75rem; display: flex; flex-direction: column; gap: 0.2rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: all 0.15s; }
+    .nav-item:hover { background: var(--bg-soft); color: var(--text); }
+    .nav-item.active { background: var(--blue-light); color: var(--blue); font-weight: 700; }
+    .sidebar-bottom { padding: 0 0.75rem; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.2rem; }
+
+    /* ===== TOPBAR ===== */
+    .topbar { position: fixed; top: 0; left: 220px; right: 0; height: 60px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; z-index: 40; }
+    .search-bar { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.45rem 0.85rem; width: 280px; }
+    .search-bar input { border: none; background: none; outline: none; font-size: 0.875rem; font-family: inherit; color: var(--text); width: 100%; }
+    .search-bar input::placeholder { color: var(--text-light); }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-icon-btn { width: 36px; height: 36px; border: none; background: none; border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.15s; }
+    .topbar-icon-btn:hover { background: var(--bg-soft); color: var(--text); }
+    .user-chip { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; text-decoration: none; }
+    .user-info { text-align: right; }
+    .user-name { font-size: 0.875rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+
+    /* ===== MAIN ===== */
+    .main { margin-left: 220px; margin-top: 60px; flex: 1; padding: 2rem; }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header { margin-bottom: 1.75rem; }
+    .page-header h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.35rem; }
+    .page-header p { font-size: 0.9rem; color: var(--text-muted); max-width: 560px; }
+
+    /* Back button */
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.875rem; font-weight: 600; color: var(--text-muted);
+      background: none; border: none; font-family: inherit;
+      cursor: pointer; margin-bottom: 1.25rem;
+      padding: 0.35rem 0; transition: color 0.15s;
+    }
+    .back-btn:hover { color: var(--blue); }
+
+    /* ===== FILTER TABS ===== */
+    .filter-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+    .filter-tab { padding: 0.45rem 1.1rem; border-radius: 999px; font-size: 0.875rem; font-weight: 600; font-family: inherit; border: 1.5px solid var(--border); background: white; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+    .filter-tab:hover { border-color: var(--blue-mid); color: var(--text); }
+    .filter-tab.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+    /* ===== TOPIK GRID (6 cards) ===== */
+    .topics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+
+    .topic-card {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: pointer; text-decoration: none; display: block;
+    }
+    .topic-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+    .topic-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
+
+    .topic-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .icon-orange { background: #FFF7ED; }
+    .icon-blue   { background: #EEF2FF; }
+    .icon-red    { background: #FEF2F2; }
+    .icon-indigo { background: #EEF2FF; }
+    .icon-green  { background: #ECFDF5; }
+    .icon-purple { background: #F5F3FF; }
+
+    .topic-progress-label { font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px; }
+    .prog-orange  { background: #FEF3C7; color: #92400E; }
+    .prog-blue    { background: var(--blue-light); color: var(--blue); }
+    .prog-green   { background: #D1FAE5; color: #065F46; }
+    .prog-none    { background: var(--bg-gray); color: var(--text-muted); }
+
+    .topic-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text); }
+    .topic-card p { font-size: 0.825rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+    .topic-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+
+    .progress-bar { height: 6px; background: var(--bg-gray); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 999px; }
+    .fill-orange { background: var(--orange); }
+    .fill-blue   { background: var(--blue); }
+    .fill-green  { background: var(--green); }
+    .fill-none   { background: var(--bg-gray); width: 0; }
+
+    /* ===== SUB MATERI GRID (4 cards) ===== */
+    .sub-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+
+    .sub-card {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: pointer; text-decoration: none; display: block;
+    }
+    .sub-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+    .sub-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
+
+    .sub-num {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--blue-light); color: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 800; flex-shrink: 0;
+    }
+
+    .sub-card h4 { font-size: 0.975rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text); }
+    .sub-card p { font-size: 0.825rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+    .sub-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .topics-grid { grid-template-columns: repeat(2, 1fr); }
+      .sub-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .topbar { left: 0; }
+      .main { margin-left: 0; }
+      .topics-grid { grid-template-columns: 1fr; }
+      .sub-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">MathIfy</div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Beranda
+      </a>
+      <a href="topik.html" class="nav-item active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Topik Matematika
+      </a>
+      <a href="quiz-list.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+        Kuis
+      </a>
+      <a href="pengaturan.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        Bantuan
+      </a>
+      <a href="login.html" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Keluar
+      </a>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="search-bar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Cari materi...">
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="topbar-icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </button>
+      <a href="profil.html" class="user-chip">
+        <div class="user-info">
+          <div class="user-name">Budi Santoso</div>
+          <div class="user-role">Siswa Kelas 9</div>
+        </div>
+        <div class="user-avatar">👨‍🎓</div>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <button class="back-btn" id="backBtn" style="display:none;" onclick="showTopikView()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Kembali ke Topik
+      </button>
+      <h2 id="pageTitle">Explore Topics</h2>
+      <p id="pageDesc">Master everything from basic arithmetic to advanced theoretical calculus with interactive visual guides.</p>
+    </div>
+
+    <!-- FILTER TABS -->
+    <div class="filter-row" id="filterRow">
+      <button class="filter-tab active" onclick="filterTopics('all', this)">All</button>
+      <button class="filter-tab" onclick="filterTopics('dasar', this)">Beginner</button>
+      <button class="filter-tab" onclick="filterTopics('menengah', this)">Intermediate</button>
+      <button class="filter-tab" onclick="filterTopics('lanjutan', this)">Advanced</button>
+    </div>
+
+    <!-- TOPIK VIEW -->
+    <div class="topics-grid" id="topikView">
+
+      <div class="topic-card" data-level="dasar" onclick="showSubMateri('bilangan')">
+        <div class="topic-card-top">
+          <div class="topic-icon icon-orange">🔢</div>
+          <span class="topic-progress-label prog-orange">30% Complete</span>
+        </div>
+        <h4>Bilangan</h4>
+        <p>Explore shapes, sizes, relative positions, and the properties of space.</p>
+        <div class="topic-meta">18 Lessons</div>
+        <div class="progress-bar"><div class="progress-fill fill-orange" style="width:30%"></div></div>
+      </div>
+
+      <div class="topic-card" data-level="dasar" onclick="showSubMateri('geometri')">
+        <div class="topic-card-top">
+          <div class="topic-icon icon-blue">📐</div>
+          <span class="topic-progress-label prog-orange">30% Complete</span>
+        </div>
+        <h4>Geometry</h4>
+        <p>Explore shapes, sizes, relative positions, and the properties of space.</p>
+        <div class="topic-meta">18 Lessons</div>
+        <div class="progress-bar"><div class="progress-fill fill-orange" style="width:30%"></div></div>
+      </div>
+
+      <div class="topic-card" data-level="menengah" onclick="showSubMateri('trigonometri')">
+        <div class="topic-card-top">
+          <div class="topic-icon icon-red">📏</div>
+          <span class="topic-progress-label prog-none">Not Started</span>
+        </div>
+        <h4>Trigonometry</h4>
+        <p>Relationships between side lengths and angles of triangles.</p>
+        <div class="topic-meta">12 Lessons</div>
+        <div class="progress-bar"><div class="progress-fill fill-none" style="width:0%"></div></div>
+      </div>
+
+      <div class="topic-card" data-level="menengah" onclick="showSubMateri('aljabar')">
+        <div class="topic-card-top">
+          <div class="topic-icon icon-indigo">🔣</div>
+          <span class="topic-progress-label prog-blue">75% Complete</span>
+        </div>
+        <h4>Aljabar</h4>
+        <p>Master variables, equations, and complex polynomial factoring.</p>
+        <div class="topic-meta">24 Lessons</div>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:75%"></div></div>
+      </div>
+
+      <div class="topic-card" data-level="lanjutan" onclick="showSubMateri('kalkulus')">
+        <div class="topic-card-top">
+          <div class="topic-icon icon-purple">📈</div>
+          <span class="topic-progress-label prog-none">Not Started</span>
+        </div>
+        <h4>Kalkulus</h4>
+        <p>Learn about continuous change, derivatives, and integral theory.</p>
+        <div class="topic-meta">32 Lessons</div>
+        <div class="progress-bar"><div class="progress-fill fill-none" style="width:0%"></div></div>
+      </div>
+
+      <div class="topic-card" data-level="dasar" onclick="showSubMateri('statistika')">
+        <div class="topic-card-top">
+          <div class="topic-icon icon-green">📊</div>
+          <span class="topic-progress-label prog-green">Completed</span>
+        </div>
+        <h4>Statistika</h4>
+        <p>Data collection, organization, analysis, and probability models.</p>
+        <div class="topic-meta">15 Lessons</div>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:100%"></div></div>
+      </div>
+
+    </div>
+
+    <!-- SUB MATERI VIEW -->
+    <div class="sub-grid" id="subView" style="display:none;"></div>
+
+  </main>
+
+  <script>
+    const SUB_MATERI = {
+      bilangan: {
+        label: 'Bilangan', emoji: '🔢',
+        desc: 'Pilih sub materi Bilangan yang ingin dipelajari.',
+        items: [
+          { judul: 'Jenis-jenis Bilangan', desc: 'Mengenal berbagai jenis bilangan yang menjadi fondasi seluruh matematika.', lessons: 4, prog: 30, fill: 'fill-orange', badge: 'prog-orange', badgeText: '30% Complete' },
+          { judul: 'Operasi pada Bilangan Bulat', desc: 'Memahami aturan penjumlahan, pengurangan, perkalian, dan pembagian bilangan bulat.', lessons: 4, prog: 30, fill: 'fill-orange', badge: 'prog-orange', badgeText: '30% Complete' },
+          { judul: 'Faktor, Kelipatan, FPB, dan KPK', desc: 'Memahami konsep faktor dan kelipatan serta cara mencari FPB dan KPK.', lessons: 4, prog: 75, fill: 'fill-blue', badge: 'prog-blue', badgeText: '75% Complete' },
+          { judul: 'Bilangan Berpangkat dan Akar', desc: 'Memahami notasi pangkat, sifat-sifat bilangan berpangkat, dan operasi akar.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' }
+        ]
+      },
+      aljabar: {
+        label: 'Aljabar', emoji: '🔣',
+        desc: 'Pilih sub materi Aljabar yang ingin dipelajari.',
+        items: [
+          { judul: 'Pemahaman Makna Simbol Matematika', desc: 'Mengenal simbol-simbol matematika dan artinya yang bersifat universal.', lessons: 4, prog: 100, fill: 'fill-green', badge: 'prog-green', badgeText: 'Completed' },
+          { judul: 'Bentuk Aljabar dan Operasinya', desc: 'Mengenal suku, koefisien, variabel, konstanta, dan cara mengoperasikan bentuk aljabar.', lessons: 4, prog: 75, fill: 'fill-blue', badge: 'prog-blue', badgeText: '75% Complete' },
+          { judul: 'Persamaan Linear Satu Variabel', desc: 'Memahami konsep persamaan linear dan cara menyelesaikannya secara sistematis.', lessons: 4, prog: 30, fill: 'fill-orange', badge: 'prog-orange', badgeText: '30% Complete' },
+          { judul: 'Fungsi dan Relasi', desc: 'Memahami konsep relasi, fungsi, domain, kodomain, dan cara menyatakan fungsi.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' }
+        ]
+      },
+      geometri: {
+        label: 'Geometri', emoji: '📐',
+        desc: 'Pilih sub materi Geometri yang ingin dipelajari.',
+        items: [
+          { judul: 'Titik, Garis, dan Bidang', desc: 'Memahami konsep dasar geometri yang menjadi fondasi seluruh pembahasan bangun.', lessons: 4, prog: 100, fill: 'fill-green', badge: 'prog-green', badgeText: 'Completed' },
+          { judul: 'Luas dan Keliling Bangun Datar', desc: 'Menghitung luas dan keliling berbagai bangun datar beserta penerapannya.', lessons: 4, prog: 60, fill: 'fill-blue', badge: 'prog-blue', badgeText: '60% Complete' },
+          { judul: 'Teorema Pythagoras', desc: 'Memahami dan menerapkan teorema Pythagoras pada segitiga siku-siku.', lessons: 4, prog: 30, fill: 'fill-orange', badge: 'prog-orange', badgeText: '30% Complete' },
+          { judul: 'Volume dan Luas Permukaan Bangun Ruang', desc: 'Menghitung volume dan luas permukaan kubus, balok, prisma, tabung, dan lainnya.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' }
+        ]
+      },
+      trigonometri: {
+        label: 'Trigonometri', emoji: '📏',
+        desc: 'Pilih sub materi Trigonometri yang ingin dipelajari.',
+        items: [
+          { judul: 'Perbandingan Trigonometri pada Segitiga Siku-siku', desc: 'Memahami definisi sin, cos, tan dan cara menggunakannya.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' },
+          { judul: 'Trigonometri di Semua Kuadran', desc: 'Memahami tanda dan nilai fungsi trigonometri di keempat kuadran bidang koordinat.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' },
+          { judul: 'Aturan Sinus dan Aturan Cosinus', desc: 'Menggunakan aturan sinus dan cosinus untuk menyelesaikan segitiga sembarang.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' },
+          { judul: 'Identitas Trigonometri', desc: 'Memahami dan membuktikan identitas trigonometri dasar serta penggunaannya.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' }
+        ]
+      },
+      statistika: {
+        label: 'Statistika', emoji: '📊',
+        desc: 'Pilih sub materi Statistika yang ingin dipelajari.',
+        items: [
+          { judul: 'Pengumpulan dan Penyajian Data', desc: 'Memahami jenis data, cara mengumpulkan, dan cara menyajikan data secara efektif.', lessons: 4, prog: 100, fill: 'fill-green', badge: 'prog-green', badgeText: 'Completed' },
+          { judul: 'Ukuran Pemusatan Data (Mean, Median, Modus)', desc: 'Menghitung dan menginterpretasikan mean, median, dan modus sebagai ukuran pusat data.', lessons: 4, prog: 100, fill: 'fill-green', badge: 'prog-green', badgeText: 'Completed' },
+          { judul: 'Ukuran Penyebaran Data', desc: 'Memahami range, varians, dan standar deviasi sebagai ukuran seberapa menyebar data.', lessons: 4, prog: 100, fill: 'fill-green', badge: 'prog-green', badgeText: 'Completed' },
+          { judul: 'Peluang Dasar', desc: 'Memahami konsep peluang, ruang sampel, dan cara menghitung peluang suatu kejadian.', lessons: 4, prog: 100, fill: 'fill-green', badge: 'prog-green', badgeText: 'Completed' }
+        ]
+      },
+      kalkulus: {
+        label: 'Kalkulus', emoji: '📈',
+        desc: 'Pilih sub materi Kalkulus yang ingin dipelajari.',
+        items: [
+          { judul: 'Limit Fungsi', desc: 'Memahami konsep limit sebagai fondasi kalkulus dan cara menghitungnya.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' },
+          { judul: 'Turunan (Diferensial)', desc: 'Memahami konsep turunan, aturan-aturan diferensiasi, dan penerapannya.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' },
+          { judul: 'Integral Tak Tentu', desc: 'Memahami konsep integral sebagai kebalikan diferensiasi dan aturan integrasi dasar.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' },
+          { judul: 'Integral Tentu dan Luas Daerah', desc: 'Memahami integral tentu, teorema dasar kalkulus, dan penerapannya untuk luas daerah.', lessons: 4, prog: 0, fill: 'fill-none', badge: 'prog-none', badgeText: 'Not Started' }
+        ]
+      }
+    };
+
+    function showSubMateri(key) {
+      const data = SUB_MATERI[key];
+
+      // Update header
+      document.getElementById('pageTitle').textContent = `${data.emoji} ${data.label}`;
+      document.getElementById('pageDesc').textContent = data.desc;
+      document.getElementById('backBtn').style.display = 'flex';
+      document.getElementById('filterRow').style.display = 'none';
+
+      // Hide topik, show sub
+      document.getElementById('topikView').style.display = 'none';
+      const subView = document.getElementById('subView');
+      subView.style.display = 'grid';
+      subView.innerHTML = '';
+
+      data.items.forEach((item, i) => {
+        const a = document.createElement('a');
+        a.className = 'sub-card';
+        a.href = `materi.html?topik=${key}&sub=${i}`;
+        a.innerHTML = `
+          <div class="sub-card-top">
+            <div class="sub-num">${i + 1}</div>
+            <span class="topic-progress-label ${item.badge}">${item.badgeText}</span>
+          </div>
+          <h4>${item.judul}</h4>
+          <p>${item.desc}</p>
+          <div class="sub-meta">${item.lessons} Latihan Soal</div>
+          <div class="progress-bar"><div class="progress-fill ${item.fill}" style="width:${item.prog}%"></div></div>`;
+        subView.appendChild(a);
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showTopikView() {
+      document.getElementById('pageTitle').textContent = 'Explore Topics';
+      document.getElementById('pageDesc').textContent = 'Master everything from basic arithmetic to advanced theoretical calculus with interactive visual guides.';
+      document.getElementById('backBtn').style.display = 'none';
+      document.getElementById('filterRow').style.display = 'flex';
+      document.getElementById('topikView').style.display = 'grid';
+      document.getElementById('subView').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function filterTopics(level, btn) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.topic-card').forEach(card => {
+        card.style.display = (level === 'all' || card.dataset.level === level) ? 'block' : 'none';
+      });
+    }
+  </script>
+
+</body>
+</html>

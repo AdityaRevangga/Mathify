@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Materi - Mathify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; }
+    body { display: flex; flex-direction: column; min-height: 100vh; background: white; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      height: 52px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky; top: 0; z-index: 40;
+    }
+
+    .search-bar {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--bg-soft); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.4rem 0.85rem; width: 240px;
+    }
+    .search-bar input { border: none; background: none; outline: none; font-size: 0.825rem; font-family: inherit; color: var(--text); width: 100%; }
+    .search-bar input::placeholder { color: var(--text-light); }
+
+    .topbar-right { display: flex; align-items: center; gap: 0.6rem; }
+    .topbar-icon-btn { width: 32px; height: 32px; border: none; background: none; border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+    .topbar-icon-btn:hover { background: var(--bg-soft); }
+    .user-chip { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; cursor: pointer; }
+    .user-info { text-align: right; }
+    .user-name { font-size: 0.8rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .user-role { font-size: 0.7rem; color: var(--text-muted); }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+
+    /* ===== BREADCRUMB ===== */
+    .breadcrumb-bar {
+      padding: 0.6rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.35rem;
+      font-size: 0.8rem; color: var(--text-muted);
+      background: white;
+      position: sticky; top: 52px; z-index: 30;
+    }
+    .breadcrumb-bar a { color: var(--text-muted); text-decoration: none; }
+    .breadcrumb-bar a:hover { color: var(--blue); }
+    .breadcrumb-bar .sep { color: var(--border); }
+    .breadcrumb-bar .current { color: var(--blue); font-weight: 600; }
+
+    /* ===== PAGE BODY ===== */
+    .page-body {
+      display: flex;
+      flex: 1;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .content-area {
+      flex: 1;
+      padding: 2rem 3rem 4rem 2.5rem;
+      min-width: 0;
+    }
+
+    /* ===== VIEW TOGGLE: Materi vs Latihan ===== */
+    .materi-view { display: block; }
+    .latihan-view { display: none; }
+
+    /* ===== MATERI TEXT ===== */
+    .materi-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1.25rem; color: var(--text); line-height: 1.3; }
+    .materi-body { font-size: 0.9rem; color: #374151; line-height: 1.85; }
+    .materi-body p { margin-bottom: 0.9rem; }
+    .materi-body ul { margin: 0.25rem 0 0.9rem 1.15rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .materi-body li { font-size: 0.9rem; line-height: 1.75; }
+    .materi-body strong { font-weight: 700; }
+    .materi-body .sub-heading { font-size: 0.95rem; font-weight: 700; margin: 1.35rem 0 0.45rem; }
+
+    /* ===== LATIHAN SOAL (plain text style like Figma) ===== */
+    .latihan-soal-wrap { padding-top: 0.5rem; }
+
+    .soal-item { margin-bottom: 1.75rem; }
+    .soal-label { font-size: 0.875rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .soal-text { font-size: 0.875rem; color: var(--text); margin-bottom: 0.6rem; line-height: 1.55; }
+
+    .soal-opsi { list-style: none; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.3rem; }
+    .soal-opsi li {
+      font-size: 0.875rem; color: var(--text);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-xs);
+      border: 1px solid transparent;
+      cursor: pointer; transition: all 0.13s;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .soal-opsi li:hover:not(.disabled) { background: var(--blue-light); border-color: var(--blue-mid); }
+    .soal-opsi li.correct { background: #DCFCE7; border-color: #86EFAC; color: #166534; font-weight: 600; }
+    .soal-opsi li.wrong   { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; }
+    .soal-opsi li.reveal  { background: #DCFCE7; border-color: #86EFAC; color: #166534; }
+
+    .soal-jawaban {
+      display: none;
+      font-size: 0.85rem; color: #374151; line-height: 1.65;
+      padding: 0.6rem 0;
+      border-top: 1px solid var(--border);
+      margin-top: 0.5rem;
+    }
+    .soal-jawaban strong { color: var(--text); }
+
+    .soal-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+    /* ===== MATERI TERKAIT ===== */
+    .related-section { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-title { font-size: 0.95rem; font-weight: 800; margin-bottom: 1.1rem; }
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; }
+    .related-card { border-radius: var(--radius); overflow: hidden; text-decoration: none; display: block; transition: transform 0.15s; }
+    .related-card:hover { transform: translateY(-2px); }
+    .related-thumb { height: 80px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; position: relative; }
+    .related-duration { position: absolute; bottom: 0.35rem; right: 0.35rem; background: rgba(0,0,0,0.75); color: white; font-size: 0.65rem; font-weight: 600; padding: 0.1rem 0.35rem; border-radius: 3px; }
+    .related-body { padding: 0.65rem 0.75rem; background: var(--bg-soft); border: 1px solid var(--border); border-top: none; }
+    .related-level { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.25rem; }
+    .level-menengah { color: var(--orange); }
+    .level-dasar    { color: var(--green); }
+    .level-lanjutan { color: var(--blue); }
+    .related-body h4 { font-size: 0.78rem; font-weight: 700; margin-bottom: 0.2rem; line-height: 1.4; color: var(--text); }
+    .related-body p  { font-size: 0.72rem; color: var(--text-muted); line-height: 1.45; }
+
+    /* ===== STEPS SIDEBAR ===== */
+    .steps-sidebar {
+      width: 300px;
+      min-width: 300px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border);
+      background: white;
+      padding: 1.5rem 1.25rem;
+      position: sticky;
+      top: 88px;
+      height: calc(100vh - 88px);
+      overflow-y: auto;
+    }
+
+    .steps-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.1rem;
+    }
+    .steps-header-title { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+    .steps-badge { background: var(--green); color: white; font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 999px; }
+
+    /* Step items */
+    .step-item {
+      display: flex; align-items: flex-start; gap: 0.7rem;
+      padding: 0.7rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.3rem;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .step-item:hover { background: var(--bg-soft); }
+    .step-item.active { background: var(--blue-light); }
+    .step-item.no-click { cursor: default; }
+    .step-item.no-click:hover { background: transparent; }
+
+    .step-icon {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+    }
+    .s-done    { background: var(--green); color: white; }
+    .s-active  { background: var(--blue);  color: white; }
+    .s-locked  { background: #E5E7EB; color: #9CA3AF; }
+
+    .step-info { flex: 1; min-width: 0; }
+    .step-name { font-size: 0.8rem; font-weight: 700; line-height: 1.3; color: var(--text); margin-bottom: 0.15rem; word-break: break-word; }
+    .step-item.active .step-name { color: var(--blue); }
+    .step-sub  { font-size: 0.7rem; color: var(--text-muted); }
+    .step-item.active .step-sub { color: var(--blue); opacity: 0.8; }
+
+    /* Lanjutkan button */
+    .btn-lanjut {
+      width: 100%; margin-top: 1rem; padding: 0.75rem;
+      background: var(--blue); color: white; border: none;
+      border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 700;
+      font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-lanjut:hover { background: var(--blue-hover); }
+
+    /* Chat FAB */
+    .chat-fab {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      width: 44px; height: 44px; background: var(--orange); border: none;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.1rem;
+      box-shadow: 0 4px 14px rgba(245,158,11,0.4);
+      cursor: pointer; z-index: 99; transition: transform 0.2s;
+    }
+    .chat-fab:hover { transform: scale(1.08); }
+
+    @media (max-width: 900px) { .steps-sidebar { display: none; } }
+    @media (max-width: 600px) { .content-area { padding: 1.25rem 1rem 3rem; } .related-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="search-bar">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Cari materi...">
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="topbar-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </button>
+      <a href="profil.html" class="user-chip">
+        <div class="user-info">
+          <div class="user-name">Budi Santoso</div>
+          <div class="user-role">Siswa Kelas 9</div>
+        </div>
+        <div class="user-avatar">👨‍🎓</div>
+      </a>
+    </div>
+  </header>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb-bar">
+    <a href="topik.html">Matematika</a>
+    <span class="sep">›</span>
+    <a href="topik.html" id="bcTopik">—</a>
+    <span class="sep">›</span>
+    <span class="current" id="bcSub">—</span>
+  </div>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+
+    <!-- MAIN CONTENT -->
+    <div class="content-area">
+
+      <!-- MATERI VIEW -->
+      <div class="materi-view" id="materiView">
+        <h1 class="materi-title" id="materiTitle">Memuat...</h1>
+        <div class="materi-body" id="materiBody"></div>
+
+        <!-- Materi Terkait -->
+        <div class="related-section">
+          <h3 class="related-title">Materi Terkait</h3>
+          <div class="related-grid">
+            <a href="video.html" class="related-card">
+              <div class="related-thumb" style="background:#1e293b;">📐<span class="related-duration">12:30</span></div>
+              <div class="related-body"><div class="related-level level-menengah">MENENGAH</div><h4>Aplikasi Pythagoras di Dunia Nyata</h4><p>Belajar bagaimana arsitek menggunakan Pythagoras...</p></div>
+            </a>
+            <a href="video.html" class="related-card">
+              <div class="related-thumb" style="background:#0f172a;">🔢<span class="related-duration">08:45</span></div>
+              <div class="related-body"><div class="related-level level-dasar">DASAR</div><h4>Triple Pythagoras yang Harus Dihafal</h4><p>Kumpulan angka sakti yang sering muncul di ujian!</p></div>
+            </a>
+            <a href="video.html" class="related-card">
+              <div class="related-thumb" style="background:#172554;">📊<span class="related-duration">15:20</span></div>
+              <div class="related-body"><div class="related-level level-lanjutan">LANJUTAN</div><h4>Trigonometri Dasar &amp; Pythagoras</h4><p>Hubungan antara sudut dan panjang sisi segitiga.</p></div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- LATIHAN SOAL VIEW -->
+      <div class="latihan-view" id="latihanView">
+        <div class="latihan-soal-wrap" id="latihanList"></div>
+        <!-- Materi Terkait -->
+        <div class="related-section">
+          <h3 class="related-title">Materi Terkait</h3>
+          <div class="related-grid">
+            <a href="video.html" class="related-card">
+              <div class="related-thumb" style="background:#1e293b;">📐<span class="related-duration">12:30</span></div>
+              <div class="related-body"><div class="related-level level-menengah">MENENGAH</div><h4>Aplikasi Pythagoras di Dunia Nyata</h4><p>Belajar bagaimana arsitek menggunakan Pythagoras...</p></div>
+            </a>
+            <a href="video.html" class="related-card">
+              <div class="related-thumb" style="background:#0f172a;">🔢<span class="related-duration">08:45</span></div>
+              <div class="related-body"><div class="related-level level-dasar">DASAR</div><h4>Triple Pythagoras yang Harus Dihafal</h4><p>Kumpulan angka sakti yang sering muncul di ujian!</p></div>
+            </a>
+            <a href="video.html" class="related-card">
+              <div class="related-thumb" style="background:#172554;">📊<span class="related-duration">15:20</span></div>
+              <div class="related-body"><div class="related-level level-lanjutan">LANJUTAN</div><h4>Trigonometri Dasar &amp; Pythagoras</h4><p>Hubungan antara sudut dan panjang sisi segitiga.</p></div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STEPS SIDEBAR -->
+    <aside class="steps-sidebar">
+      <div class="steps-header">
+        <span class="steps-header-title">Langkah Pembelajaran</span>
+        <span class="steps-badge" id="progressBadge">65% Selesai</span>
+      </div>
+
+      <!-- Step 1: Materi -->
+      <div class="step-item" id="step1" onclick="showMateri()">
+        <div class="step-icon s-done" id="icon1">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="step-info">
+          <div class="step-name" id="step1Name">—</div>
+          <div class="step-sub">05:20 Menit</div>
+        </div>
+      </div>
+
+      <!-- Step 2: Video -->
+      <div class="step-item" id="step2" onclick="location.href='video.html'">
+        <div class="step-icon s-active" id="icon2">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <div class="step-info">
+          <div class="step-name">Video Pembelajaran</div>
+          <div class="step-sub">18:20 Menit</div>
+        </div>
+      </div>
+
+      <!-- Step 3: Latihan Soal -->
+      <div class="step-item" id="step3" onclick="showLatihan()">
+        <div class="step-icon s-locked" id="icon3">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="step-info">
+          <div class="step-name">Latihan Soal</div>
+          <div class="step-sub" id="step3Sub">5 Pertanyaan</div>
+        </div>
+      </div>
+
+      <!-- Step 4: Kuis Akhir -->
+      <div class="step-item no-click" id="step4">
+        <div class="step-icon s-locked" id="icon4">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+        </div>
+        <div class="step-info">
+          <div class="step-name">Kuis Akhir Modul</div>
+          <div class="step-sub">10 Menit • 100 Poin</div>
+        </div>
+      </div>
+
+      <!-- Button -->
+      <button class="btn-lanjut" id="btnLanjut">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
+        <span id="btnLanjutText">Lanjutkan Sekarang</span>
+      </button>
+    </aside>
+
+  </div>
+
+  <button class="chat-fab">💬</button>
+
+  <script>
+    // ========== DATA MATERI ==========
+    const DATA = {
+      bilangan: { label: 'Bilangan', subMateri: [
+        { judul: 'Jenis-jenis Bilangan', isi: `<p>Bilangan adalah konsep dasar yang digunakan untuk menghitung, mengukur, dan memberi label. Ada beberapa jenis bilangan yang perlu dipahami:</p><p><strong>Bilangan asli</strong> adalah bilangan bulat positif mulai dari 1, 2, 3, dan seterusnya.</p><p><strong>Bilangan cacah</strong> adalah bilangan asli yang ditambah dengan nol, dimulai dari 0, 1, 2, 3, dan seterusnya.</p><p><strong>Bilangan bulat</strong> mencakup semua bilangan cacah ditambah bilangan negatif seperti −1, −2, −3.</p><p><strong>Bilangan rasional</strong> adalah bilangan yang dapat ditulis dalam bentuk pecahan p/q di mana q ≠ 0. Contoh: 1/2, 3/4, 0,75.</p><p><strong>Bilangan irasional</strong> adalah bilangan yang tidak bisa ditulis sebagai pecahan sederhana. Contoh: √2 = 1,41421... dan π = 3,14159...</p><p><strong>Bilangan real</strong> adalah gabungan dari semua bilangan rasional dan irasional.</p>`,
+          latihan: [
+            { soal: 'Manakah yang termasuk bilangan irasional?', opsi: ['A. 0,5','B. √9','C. √7','D. 3/4'], jwb: 2, cara: 'Jawaban: C — √7\nCara: √9 = 3 yang merupakan bilangan bulat, jadi bukan irasional. √7 tidak bisa disederhanakan menjadi pecahan atau bilangan bulat, desimalnya 2,6457... tidak berulang dan tidak berhenti, sehingga termasuk bilangan irasional.' },
+            { soal: 'Bilangan −5 termasuk ke dalam kelompok…', opsi: ['A. Bilangan asli','B. Bilangan cacah','C. Bilangan bulat','D. Bilangan irasional'], jwb: 2, cara: 'Jawaban: C — Bilangan bulat\nCara: Bilangan bulat mencakup semua bilangan positif, nol, dan negatif tanpa pecahan. Karena −5 adalah bilangan negatif tanpa koma, ia masuk kelompok bilangan bulat.' },
+            { soal: 'Urutan kelompok bilangan dari yang paling sempit hingga paling luas adalah…', opsi: ['A. Asli → Cacah → Bulat → Rasional → Real','B. Real → Rasional → Bulat → Cacah → Asli','C. Bulat → Asli → Cacah → Real → Rasional','D. Asli → Bulat → Cacah → Real → Rasional'], jwb: 0, cara: 'Jawaban: A\nCara: Setiap kelompok mencakup kelompok sebelumnya. Bilangan asli ⊂ cacah ⊂ bulat ⊂ rasional ⊂ real.' }
+          ]
+        },
+        { judul: 'Operasi pada Bilangan Bulat', isi: `<p>Ketika mengoperasikan bilangan bulat, ada aturan tanda yang wajib dipahami.</p><p>Pada <strong>penjumlahan dan pengurangan</strong>: bilangan positif bergerak ke kanan, bilangan negatif bergerak ke kiri. Contoh: 5 + (−3) = 2.</p><p>Pada <strong>perkalian dan pembagian</strong>:</p><ul><li>Positif × Positif = Positif</li><li>Negatif × Negatif = Positif</li><li>Positif × Negatif = Negatif</li><li>Negatif × Positif = Negatif</li></ul><p><strong>Urutan pengerjaan (PEMDAS):</strong> Kurung → Pangkat → Kali/Bagi → Tambah/Kurang.</p>`,
+          latihan: [
+            { soal: 'Hasil dari (−6) × (−3) adalah…', opsi: ['A. −18','B. −9','C. 18','D. 9'], jwb: 2, cara: 'Jawaban: C — 18\nCara: Negatif dikali negatif menghasilkan positif. 6 × 3 = 18.' },
+            { soal: 'Hasil dari −20 ÷ 4 + 3 adalah…', opsi: ['A. −2','B. −8','C. 2','D. 8'], jwb: 0, cara: 'Jawaban: A — −2\nCara: Kerjakan pembagian dulu: −20 ÷ 4 = −5. Kemudian −5 + 3 = −2.' },
+            { soal: 'Hasil dari 3 × (−2) − (−4) adalah…', opsi: ['A. −10','B. −2','C. 2','D. 10'], jwb: 1, cara: 'Jawaban: B — −2\nCara: 3 × (−2) = −6. Kemudian −6 − (−4) = −6 + 4 = −2.' }
+          ]
+        },
+        { judul: 'Faktor, Kelipatan, FPB, dan KPK', isi: `<p><strong>Faktor</strong> suatu bilangan adalah bilangan-bilangan yang dapat membagi bilangan tersebut secara habis.</p><p><strong>Kelipatan</strong> suatu bilangan adalah hasil perkalian bilangan tersebut dengan bilangan asli.</p><p><strong>FPB</strong> (Faktor Persekutuan Terbesar) adalah faktor terbesar yang dimiliki bersama. Contoh FPB dari 24 dan 36: 24 = 2³ × 3, 36 = 2² × 3². FPB = 2² × 3 = <strong>12</strong>.</p><p><strong>KPK</strong> (Kelipatan Persekutuan Terkecil) adalah kelipatan terkecil yang dimiliki bersama. KPK dari 24 dan 36 = 2³ × 3² = <strong>72</strong>.</p>`,
+          latihan: [
+            { soal: 'FPB dari 18 dan 30 adalah…', opsi: ['A. 3','B. 6','C. 9','D. 90'], jwb: 1, cara: 'Jawaban: B — 6\nCara: 18 = 2 × 3² dan 30 = 2 × 3 × 5. FPB = 2 × 3 = 6.' },
+            { soal: 'KPK dari 4 dan 6 adalah…', opsi: ['A. 2','B. 12','C. 24','D. 48'], jwb: 1, cara: 'Jawaban: B — 12\nCara: 4 = 2² dan 6 = 2 × 3. KPK = 2² × 3 = 12.' },
+            { soal: 'Dua lampu berkedip bersama. Lampu A tiap 6 detik, lampu B tiap 8 detik. Keduanya berkedip bersama lagi setelah berapa detik?', opsi: ['A. 14','B. 24','C. 48','D. 2'], jwb: 1, cara: 'Jawaban: B — 24 detik\nCara: KPK dari 6 dan 8. 6 = 2 × 3, 8 = 2³. KPK = 2³ × 3 = 24 detik.' }
+          ]
+        },
+        { judul: 'Bilangan Berpangkat dan Akar', isi: `<p>Bilangan berpangkat aⁿ berarti a dikalikan dengan dirinya sendiri sebanyak n kali. Contoh: 2⁵ = 32.</p><p class="sub-heading">Sifat-sifat penting:</p><ul><li>aᵐ × aⁿ = aᵐ⁺ⁿ</li><li>aᵐ ÷ aⁿ = aᵐ⁻ⁿ</li><li>(aᵐ)ⁿ = aᵐˣⁿ</li><li>a⁰ = 1</li><li>a⁻ⁿ = 1/aⁿ</li></ul><p><strong>Akar</strong> adalah kebalikan pemangkatan. √49 = 7 karena 7² = 49.</p><p>Bentuk akar: √8 = √(4 × 2) = 2√2.</p>`,
+          latihan: [
+            { soal: 'Hasil dari 3⁴ ÷ 3² adalah…', opsi: ['A. 3','B. 6','C. 9','D. 27'], jwb: 2, cara: 'Jawaban: C — 9\nCara: 3⁴ ÷ 3² = 3⁴⁻² = 3² = 9.' },
+            { soal: 'Nilai dari 5⁰ + 2⁻¹ adalah…', opsi: ['A. 0','B. 1/2','C. 1,5','D. 3'], jwb: 2, cara: 'Jawaban: C — 1,5\nCara: 5⁰ = 1 dan 2⁻¹ = 1/2. Maka 1 + 1/2 = 1,5.' },
+            { soal: 'Bentuk sederhana dari √72 adalah…', opsi: ['A. 6√2','B. 4√3','C. 3√8','D. 8√3'], jwb: 0, cara: 'Jawaban: A — 6√2\nCara: 72 = 36 × 2. √72 = √36 × √2 = 6√2.' }
+          ]
+        }
+      ]},
+      aljabar: { label: 'Aljabar dan Fungsi', subMateri: [
+        { judul: 'Pemahaman makna simbol matematika', isi: `<p>Simbol matematika adalah tanda atau lambang yang mewakili nilai, operasi, hubungan, atau konsep tertentu dalam matematika. Berbeda dengan kata-kata biasa, simbol bersifat universal — artinya sama di seluruh dunia tanpa tergantung bahasa. Contoh paling sederhana adalah simbol + yang berarti "ditambahkan", - berarti "dikurangi", dan = berarti "sama dengan" atau "hasilnya adalah".</p><p>Ada empat simbol operasi yang paling sering dijumpai:</p><ul><li>+ (tambah) — menggabungkan dua nilai menjadi satu jumlah total.</li><li>- (kurang) — menghitung selisih antara dua nilai.</li><li>× atau · (kali) — menghitung hasil perkalian dua nilai.</li><li>÷ atau / (bagi) — membagi satu nilai dengan nilai lain.</li></ul><p>Dalam aljabar, perkalian sering ditulis tanpa simbol sama sekali. Misalnya, 3y artinya 3 dikali y, dan ab artinya a dikali b.</p><p>Simbol relasi digunakan untuk membandingkan dua nilai atau ekspresi:</p><ul><li>= berarti "sama dengan"</li><li>≠ berarti "tidak sama dengan"</li><li>&gt; berarti "lebih besar dari"</li><li>&lt; berarti "lebih kecil dari"</li><li>≥ berarti "lebih besar atau sama dengan"</li><li>≤ berarti "lebih kecil atau sama dengan"</li></ul><p>Contoh kalimat matematika: 2x + 5 &gt; 11 artinya "dua kali x ditambah 5 hasilnya lebih besar dari 11".</p><p>Dalam aljabar, huruf digunakan untuk mewakili nilai yang belum diketahui (variabel) atau nilai yang tetap (konstanta). Variabel paling umum adalah x, y, dan z. Konstanta adalah nilai tetap seperti angka 2, −7, atau π (pi = 3,14). Ketika kita menulis f(x), artinya fungsi f yang nilainya tergantung pada variabel x.</p><p class="sub-heading">Subbab 5 — Simbol pengelompokan</p><p>Tanda kurung digunakan untuk menentukan urutan pengerjaan:</p><ul><li>( ) — tanda kurung biasa, dikerjakan paling dalam terlebih dahulu.</li><li>[ ] — tanda kurung siku, biasanya digunakan di luar tanda kurung biasa.</li><li>{ } — tanda kurung kurawal, digunakan di tingkat paling luar atau dalam penulisan himpunan.</li></ul><p>Contoh: 2 × (3 + 4) = 2 × 7 = 14, bukan 6 + 4 = 10.</p><p>Simbol lainnya yang sering muncul:</p><ul><li>Σ (sigma) — berarti "jumlah dari" sejumlah nilai sekaligus.</li><li>√ — akar kuadrat; √25 = 5.</li><li>^ atau superscript — pangkat; x² artinya x dikuadratkan.</li><li>|x| — nilai mutlak; selalu menghasilkan nilai positif. |−5| = 5.</li><li>∞ — tak hingga; digunakan untuk menggambarkan nilai yang tidak terbatas.</li></ul>`,
+          latihan: [
+            { soal: 'Simbol ≠ dalam matematika berarti…', opsi: ['A. Lebih besar dari','B. Lebih kecil dari','C. Tidak sama dengan','D. Sama dengan'], jwb: 2, cara: 'Jawaban: C — Tidak sama dengan\nCara: Simbol ≠ berasal dari tanda = yang dicoret dengan garis miring. Artinya kedua nilai yang dibandingkan tidak memiliki hasil yang sama. Contoh: 3 ≠ 5 berarti 3 tidak sama dengan 5.' },
+            { soal: 'Jika ditulis 3y, maka operasi yang dimaksud adalah…', opsi: ['A. 3 ditambah y','B. 3 dikurangi y','C. 3 dibagi y','D. 3 dikali y'], jwb: 3, cara: 'Jawaban: D — 3 dikali y\nCara: Dalam aljabar, ketika sebuah angka ditulis langsung di depan variabel tanpa simbol apapun di antaranya, itu berarti perkalian. Jadi 3y = 3 × y. Jika y = 4, maka 3y = 3 × 4 = 12.' },
+            { soal: 'Hasil dari 2 × (5 + 3) adalah…', opsi: ['A. 13','B. 16','C. 11','D. 10'], jwb: 1, cara: 'Jawaban: B — 16\nCara: Kerjakan bagian dalam tanda kurung terlebih dahulu sesuai aturan urutan operasi. 5 + 3 = 8, kemudian 2 × 8 = 16. Jika tanda kurung diabaikan dan dikerjakan dari kiri, 2 × 5 = 10, lalu 10 + 3 = 13 — itu jawaban yang salah.' }
+          ]
+        },
+        { judul: 'Bentuk Aljabar dan Operasinya', isi: `<p>Bentuk aljabar adalah ekspresi matematika yang terdiri dari variabel, koefisien, dan konstanta. Contoh: 3x² − 5x + 7.</p><p class="sub-heading">Bagian-bagian bentuk aljabar:</p><ul><li><strong>Suku</strong>: bagian yang dipisahkan oleh + atau −.</li><li><strong>Koefisien</strong>: angka yang mengalikan variabel. Pada 3x², koefisiennya adalah 3.</li><li><strong>Variabel</strong>: huruf yang mewakili nilai yang belum diketahui.</li><li><strong>Konstanta</strong>: suku yang tidak memiliki variabel.</li><li><strong>Suku sejenis</strong>: suku yang memiliki variabel dan pangkat yang sama.</li></ul><p>Hanya suku sejenis yang dapat dijumlahkan atau dikurangkan langsung. Contoh: 4x + 3x = 7x.</p><p>Perkalian bentuk aljabar menggunakan sifat distributif: a(b + c) = ab + ac.</p>`,
+          latihan: [
+            { soal: 'Dari bentuk 5x² − 3x + 8, koefisien dari suku x adalah…', opsi: ['A. 5','B. −3','C. 3','D. 8'], jwb: 1, cara: 'Jawaban: B — −3\nCara: Koefisien adalah angka yang berada tepat di depan variabel. Suku −3x memiliki koefisien −3, termasuk tanda negatifnya.' },
+            { soal: 'Hasil penjumlahan (3x² + 2x − 1) + (x² − 5x + 4) adalah…', opsi: ['A. 4x² + 7x + 3','B. 4x² − 3x + 3','C. 4x² − 3x − 3','D. 2x² − 3x + 3'], jwb: 1, cara: 'Jawaban: B — 4x² − 3x + 3\nCara: 3x² + x² = 4x², 2x + (−5x) = −3x, −1 + 4 = 3.' },
+            { soal: 'Hasil dari 3x(2x − 5) adalah…', opsi: ['A. 6x − 15','B. 6x² − 15x','C. 6x² − 15','D. 5x² − 15x'], jwb: 1, cara: 'Jawaban: B — 6x² − 15x\nCara: 3x × 2x = 6x² dan 3x × (−5) = −15x.' }
+          ]
+        },
+        { judul: 'Persamaan Linear Satu Variabel (PLSV)', isi: `<p>Persamaan linear satu variabel adalah persamaan yang memuat satu variabel dengan pangkat tertinggi 1. Bentuk umumnya: ax + b = c, di mana a ≠ 0.</p><p class="sub-heading">Langkah-langkah menyelesaikan PLSV:</p><ul><li>Pindahkan semua suku variabel ke satu ruas dan konstanta ke ruas lain.</li><li>Sederhanakan setiap ruas.</li><li>Isolasi variabel dengan bagi atau kali kedua ruas.</li><li>Cek jawaban dengan substitusi kembali.</li></ul><p>Contoh: 3x − 7 = 14 → 3x = 21 → x = 7. Cek: 3(7) − 7 = 14. ✓</p>`,
+          latihan: [
+            { soal: 'Penyelesaian dari 2x + 5 = 17 adalah…', opsi: ['A. x = 4','B. x = 6','C. x = 11','D. x = 7'], jwb: 1, cara: 'Jawaban: B — x = 6\nCara: 2x = 17 − 5 = 12. x = 6. Cek: 2(6) + 5 = 17. ✓' },
+            { soal: 'Penyelesaian dari 5x − 3 = 2x + 9 adalah…', opsi: ['A. x = 2','B. x = 3','C. x = 4','D. x = 6'], jwb: 2, cara: 'Jawaban: C — x = 4\nCara: 5x − 2x = 9 + 3 → 3x = 12 → x = 4.' },
+            { soal: 'Umur Rina 3 tahun lebih tua dari Dina. Jumlah umur mereka 27 tahun. Umur Dina adalah…', opsi: ['A. 10 tahun','B. 12 tahun','C. 15 tahun','D. 9 tahun'], jwb: 1, cara: 'Jawaban: B — 12 tahun\nCara: Dina = x, Rina = x + 3. x + (x+3) = 27 → 2x = 24 → x = 12.' }
+          ]
+        },
+        { judul: 'Fungsi dan Relasi', isi: `<p><strong>Relasi</strong> adalah hubungan yang memasangkan anggota satu himpunan dengan anggota himpunan lain.</p><p><strong>Fungsi</strong> adalah relasi khusus di mana setiap input dipasangkan dengan tepat satu output.</p><p class="sub-heading">Terminologi:</p><ul><li><strong>Domain</strong>: himpunan semua nilai input.</li><li><strong>Kodomain</strong>: himpunan semua nilai output yang mungkin.</li><li><strong>Range</strong>: himpunan nilai output yang benar-benar dihasilkan.</li></ul><p>Contoh: f(x) = 2x + 3. Jika domain = {1, 2, 3}, maka range = {5, 7, 9}.</p>`,
+          latihan: [
+            { soal: 'Manakah yang merupakan fungsi?', opsi: ['A. {(1,2), (1,3), (2,4)}','B. {(1,2), (2,2), (3,2)}','C. {(1,2), (2,3), (1,4)}','D. {(1,2), (2,3), (2,4)}'], jwb: 1, cara: 'Jawaban: B\nCara: Syarat fungsi: setiap input muncul tepat satu kali. Pada A dan C, input 1 muncul dua kali. Pada D, input 2 muncul dua kali. Pada B, setiap input muncul tepat sekali — valid.' },
+            { soal: 'Diketahui f(x) = 3x − 4. Nilai dari f(5) adalah…', opsi: ['A. 7','B. 11','C. 15','D. 19'], jwb: 1, cara: 'Jawaban: B — 11\nCara: f(5) = 3(5) − 4 = 15 − 4 = 11.' },
+            { soal: 'Diketahui g(x) = x² + 1. Jika g(a) = 10, maka nilai a adalah…', opsi: ['A. 2','B. 3','C. 4','D. 9'], jwb: 1, cara: 'Jawaban: B — 3\nCara: a² + 1 = 10 → a² = 9 → a = 3.' }
+          ]
+        }
+      ]},
+      geometri: { label: 'Geometri', subMateri: [
+        { judul: 'Titik, Garis, dan Bidang', isi: `<p><strong>Titik</strong> tidak memiliki ukuran, hanya menunjukkan posisi. Dilambangkan dengan huruf kapital: A, B, C.</p><p><strong>Garis</strong> adalah kumpulan titik yang berjajar lurus tanpa batas ke dua arah. Sinar garis punya satu ujung. Ruas garis punya dua ujung.</p><p><strong>Bidang</strong> adalah permukaan datar yang meluas tanpa batas, ditentukan oleh minimal tiga titik yang tidak segaris.</p><p class="sub-heading">Hubungan antar garis:</p><ul><li>Sejajar (∥): tidak berpotongan</li><li>Berpotongan: bertemu di satu titik</li><li>Tegak lurus (⊥): membentuk sudut 90°</li></ul><p><strong>Jenis sudut:</strong> lancip (&lt;90°), siku-siku (=90°), tumpul (90°–180°), lurus (=180°), refleks (&gt;180°).</p>`,
+          latihan: [{ soal: 'Dua sinar garis yang berpangkal di titik yang sama membentuk…', opsi: ['A. Ruas garis','B. Bidang','C. Sudut','D. Garis'], jwb: 2, cara: 'Jawaban: C — Sudut.' }, { soal: 'Jika sudut A = 65°, maka sudut A termasuk jenis sudut…', opsi: ['A. Siku-siku','B. Tumpul','C. Lancip','D. Lurus'], jwb: 2, cara: 'Jawaban: C — Lancip. 65° < 90°.' }, { soal: 'Berapa titik minimal untuk menentukan sebuah bidang secara pasti?', opsi: ['A. 1','B. 2','C. 3','D. 4'], jwb: 2, cara: 'Jawaban: C — 3 titik (yang tidak segaris).' }] },
+        { judul: 'Luas dan Keliling Bangun Datar', isi: `<p><strong>Keliling</strong> = total panjang sisi. <strong>Luas</strong> = ukuran daerah yang dicakup.</p><ul><li>Persegi: K = 4s, L = s²</li><li>Persegi panjang: K = 2(p+l), L = p×l</li><li>Segitiga: L = ½ × a × t</li><li>Lingkaran: K = 2πr, L = πr²</li><li>Trapesium: L = ½ × (a+b) × t</li></ul>`,
+          latihan: [{ soal: 'Luas lingkaran dengan jari-jari 7 cm (π = 22/7) adalah…', opsi: ['A. 44 cm²','B. 154 cm²','C. 308 cm²','D. 77 cm²'], jwb: 1, cara: 'Jawaban: B — 154 cm²\nCara: πr² = (22/7) × 49 = 154 cm².' }, { soal: 'Trapesium dengan sisi sejajar 8 cm dan 12 cm, tinggi 5 cm. Luasnya…', opsi: ['A. 40 cm²','B. 50 cm²','C. 60 cm²','D. 100 cm²'], jwb: 1, cara: 'Jawaban: B — 50 cm²\nCara: ½ × (8+12) × 5 = 50 cm².' }, { soal: 'Keliling persegi panjang = 44 cm, panjang 14 cm. Lebarnya…', opsi: ['A. 6 cm','B. 8 cm','C. 10 cm','D. 16 cm'], jwb: 1, cara: 'Jawaban: B — 8 cm\nCara: 44 = 2(14+l) → l = 8 cm.' }] },
+        { judul: 'Teorema Pythagoras', isi: `<p>Pada segitiga siku-siku: <strong>c² = a² + b²</strong> di mana c adalah hipotenusa.</p><p>Triple Pythagoras umum: (3,4,5), (5,12,13), (8,15,17).</p>`,
+          latihan: [{ soal: 'Segitiga siku-siku dengan sisi 9 cm dan 12 cm. Hipotenusanya…', opsi: ['A. 13 cm','B. 15 cm','C. 21 cm','D. 18 cm'], jwb: 1, cara: 'Jawaban: B — 15 cm. √(81+144) = √225 = 15.' }, { soal: 'Hipotenusa 13 cm, satu sisi 5 cm. Sisi yang lain…', opsi: ['A. 8 cm','B. 10 cm','C. 12 cm','D. 11 cm'], jwb: 2, cara: 'Jawaban: C — 12 cm. √(169−25) = √144 = 12.' }, { soal: 'Tangga 10 m bersandar di dinding. Kaki tangga 6 m dari dinding. Tinggi yang dicapai…', opsi: ['A. 7 m','B. 8 m','C. 9 m','D. 4 m'], jwb: 1, cara: 'Jawaban: B — 8 m. √(100−36) = √64 = 8.' }] },
+        { judul: 'Volume dan Luas Permukaan Bangun Ruang', isi: `<ul><li>Kubus (s): V = s³, LP = 6s²</li><li>Balok (p,l,t): V = plt, LP = 2(pl+pt+lt)</li><li>Tabung (r,t): V = πr²t, LP = 2πr(r+t)</li><li>Kerucut (r,t,l): V = ⅓πr²t</li><li>Bola (r): V = (4/3)πr³, LP = 4πr²</li></ul>`,
+          latihan: [{ soal: 'Volume balok 8×5×3 cm…', opsi: ['A. 60 cm³','B. 79 cm³','C. 120 cm³','D. 240 cm³'], jwb: 2, cara: 'Jawaban: C — 120 cm³. 8×5×3 = 120.' }, { soal: 'Luas permukaan kubus rusuk 6 cm…', opsi: ['A. 36 cm²','B. 150 cm²','C. 216 cm²','D. 180 cm²'], jwb: 2, cara: 'Jawaban: C — 216 cm². 6×36 = 216.' }, { soal: 'Volume tabung r=7 cm, t=10 cm (π=22/7)…', opsi: ['A. 1540 cm³','B. 770 cm³','C. 440 cm³','D. 3080 cm³'], jwb: 0, cara: 'Jawaban: A — 1540 cm³. (22/7)×49×10 = 1540.' }] }
+      ]},
+      trigonometri: { label: 'Trigonometri', subMateri: [
+        { judul: 'Perbandingan Trigonometri pada Segitiga Siku-siku', isi: `<p>SOH-CAH-TOA: sin = depan/miring, cos = samping/miring, tan = depan/samping.</p><p class="sub-heading">Sudut istimewa:</p><ul><li>sin 30° = 1/2, cos 30° = ½√3, tan 30° = 1/√3</li><li>sin 45° = cos 45° = ½√2, tan 45° = 1</li><li>sin 60° = ½√3, cos 60° = 1/2, tan 60° = √3</li></ul>`, latihan: [{ soal: 'Sisi depan A = 5 cm, sisi miring = 13 cm. Nilai sin A…', opsi: ['A. 5/12','B. 12/13','C. 5/13','D. 13/5'], jwb: 2, cara: 'Jawaban: C — 5/13.' }, { soal: 'Nilai tan 60° adalah…', opsi: ['A. 1/2','B. √3','C. ½√3','D. 1'], jwb: 1, cara: 'Jawaban: B — √3.' }, { soal: 'Tangga membentuk sudut 30° dengan lantai, panjang 6 m. Tinggi yang dicapai…', opsi: ['A. 3 m','B. 3√3 m','C. 2 m','D. 6√3 m'], jwb: 0, cara: 'Jawaban: A — 3 m. 6 × sin 30° = 6 × ½ = 3 m.' }] },
+        { judul: 'Trigonometri di Semua Kuadran', isi: `<p>Kuadran I: semua positif. Kuadran II: sin positif. Kuadran III: tan positif. Kuadran IV: cos positif.</p><p>Ingat: <strong>Semua Siswa Tahu Cara</strong>.</p>`, latihan: [{ soal: 'Nilai sin 150°…', opsi: ['A. −1/2','B. ½√3','C. 1/2','D. −½√3'], jwb: 2, cara: 'Jawaban: C — 1/2. Kuadran II, sin positif, referensi 30°.' }, { soal: 'Nilai cos 240°…', opsi: ['A. 1/2','B. −1/2','C. ½√3','D. −½√3'], jwb: 1, cara: 'Jawaban: B — −1/2. Kuadran III, cos negatif, referensi 60°.' }, { soal: 'Tanda tan di kuadran IV…', opsi: ['A. Positif','B. Negatif','C. Nol','D. Tak terdefinisi'], jwb: 1, cara: 'Jawaban: B — Negatif. Di kuadran IV hanya cos yang positif.' }] },
+        { judul: 'Aturan Sinus dan Aturan Cosinus', isi: `<p><strong>Aturan sinus:</strong> a/sin A = b/sin B = c/sin C (pakai saat AAS/ASA/SSA)</p><p><strong>Aturan cosinus:</strong> a² = b² + c² − 2bc cos A (pakai saat SSS/SAS)</p><p><strong>Luas segitiga:</strong> L = ½ × b × c × sin A</p>`, latihan: [{ soal: 'Sudut A=30°, B=60°, sisi a=5 cm. Panjang sisi b…', opsi: ['A. 5','B. 5√3','C. 10','D. 5√2'], jwb: 1, cara: 'Jawaban: B — 5√3.' }, { soal: 'b=6, c=10, sudut A=30°. Luas segitiga…', opsi: ['A. 15','B. 30','C. 60','D. 18'], jwb: 0, cara: 'Jawaban: A — 15 cm². ½×6×10×sin30° = 15.' }, { soal: 'Untuk menyelesaikan segitiga dengan 3 sisi diketahui, pakai…', opsi: ['A. Aturan sinus','B. Aturan cosinus','C. Pythagoras','D. Perbandingan biasa'], jwb: 1, cara: 'Jawaban: B — Aturan cosinus digunakan untuk kasus SSS.' }] },
+        { judul: 'Identitas Trigonometri', isi: `<p><strong>Identitas Pythagoras:</strong> sin²θ + cos²θ = 1, 1 + tan²θ = sec²θ.</p><p><strong>Sudut ganda:</strong> sin 2θ = 2 sin θ cos θ, cos 2θ = 1 − 2sin²θ.</p>`, latihan: [{ soal: 'Jika sin θ = 3/5, nilai cos²θ…', opsi: ['A. 4/5','B. 9/25','C. 16/25','D. 4/25'], jwb: 2, cara: 'Jawaban: C — 16/25. cos²θ = 1 − 9/25 = 16/25.' }, { soal: 'Nilai sin 2(45°)…', opsi: ['A. 1','B. ½√2','C. ½','D. √2'], jwb: 0, cara: 'Jawaban: A — 1. sin 90° = 1.' }, { soal: 'Sederhana: (1 − sin²θ) / cos θ…', opsi: ['A. cos θ','B. sin θ','C. tan θ','D. sec θ'], jwb: 0, cara: 'Jawaban: A — cos θ. (1−sin²θ) = cos²θ, dibagi cos θ = cos θ.' }] }
+      ]},
+      statistika: { label: 'Statistika', subMateri: [
+        { judul: 'Pengumpulan dan Penyajian Data', isi: `<p>Data <strong>kualitatif</strong>: berbentuk kategori. Data <strong>kuantitatif</strong>: berbentuk angka (diskrit atau kontinu).</p><p class="sub-heading">Cara penyajian:</p><ul><li>Tabel frekuensi</li><li>Diagram batang: membandingkan kategori</li><li>Diagram garis: tren waktu</li><li>Pie chart: proporsi</li><li>Histogram: data kontinu berkelompok</li></ul>`, latihan: [{ soal: '"Nilai ujian siswa" termasuk jenis data…', opsi: ['A. Kualitatif diskrit','B. Kuantitatif diskrit','C. Kualitatif kontinu','D. Kuantitatif kontinu'], jwb: 1, cara: 'Jawaban: B — Kuantitatif diskrit.' }, { soal: 'Diagram paling tepat untuk tren penjualan bulanan…', opsi: ['A. Pie chart','B. Batang','C. Garis','D. Histogram'], jwb: 2, cara: 'Jawaban: C — Diagram garis.' }, { soal: '25% dari 120 siswa menyukai matematika. Jumlahnya…', opsi: ['A. 25','B. 30','C. 40','D. 45'], jwb: 1, cara: 'Jawaban: B — 30 siswa. 0,25 × 120 = 30.' }] },
+        { judul: 'Ukuran Pemusatan Data', isi: `<p><strong>Mean</strong> = Σxᵢ / n (sensitif terhadap outlier).</p><p><strong>Median</strong> = nilai tengah setelah diurutkan (tidak terpengaruh outlier).</p><p><strong>Modus</strong> = nilai yang paling sering muncul.</p>`, latihan: [{ soal: 'Data: 70,80,75,90,85,80,95,80. Modus…', opsi: ['A. 80','B. 82','C. 85','D. 75'], jwb: 0, cara: 'Jawaban: A — 80 (muncul 3 kali).' }, { soal: 'Data: 12,15,11,18,14,16,13. Median…', opsi: ['A. 13','B. 14','C. 15','D. 16'], jwb: 1, cara: 'Jawaban: B — 14 (nilai ke-4 setelah diurutkan).' }, { soal: 'Rata-rata 6 siswa = 75. Satu siswa baru masuk nilai 82. Rata-rata baru…', opsi: ['A. 76','B. 77','C. 78','D. 79'], jwb: 0, cara: 'Jawaban: A — 76. (450+82)/7 = 76.' }] },
+        { judul: 'Ukuran Penyebaran Data', isi: `<p><strong>Range</strong> = max − min. <strong>Varians</strong> = Σ(xᵢ−x̄)²/n. <strong>Standar deviasi</strong> = √varians.</p><p>IQR = Q3 − Q1.</p>`, latihan: [{ soal: 'Data: 10,14,18,22,26. Range…', opsi: ['A. 14','B. 16','C. 18','D. 12'], jwb: 1, cara: 'Jawaban: B — 16. 26−10=16.' }, { soal: 'Varians = 25. Standar deviasi…', opsi: ['A. 5','B. 12,5','C. 625','D. 50'], jwb: 0, cara: 'Jawaban: A — 5. √25 = 5.' }, { soal: 'Kelas A SD=3 dan kelas B SD=12, rata-rata sama. Pernyataan yang benar…', opsi: ['A. Setara','B. Kelas A lebih seragam','C. Kelas B lebih seragam','D. B lebih berprestasi'], jwb: 1, cara: 'Jawaban: B — SD kecil berarti data lebih seragam.' }] },
+        { judul: 'Peluang Dasar', isi: `<p>P(A) = n(A) / n(S). Komplemen: P(Aᶜ) = 1 − P(A).</p><p>Saling bebas: P(A dan B) = P(A) × P(B).</p>`, latihan: [{ soal: 'Dadu dilempar. Peluang muncul angka genap…', opsi: ['A. 1/6','B. 1/3','C. 1/2','D. 2/3'], jwb: 2, cara: 'Jawaban: C — 1/2. {2,4,6} dari {1,2,3,4,5,6}.' }, { soal: 'Peluang hujan = 0,3. Peluang tidak hujan…', opsi: ['A. 0,3','B. 0,7','C. 0,5','D. 1,3'], jwb: 1, cara: 'Jawaban: B — 0,7. 1−0,3=0,7.' }, { soal: 'P(A)=0,8, P(B)=0,7, saling bebas. P(A dan B)…', opsi: ['A. 0,56','B. 0,75','C. 0,94','D. 1,5'], jwb: 0, cara: 'Jawaban: A — 0,56. 0,8×0,7=0,56.' }] }
+      ]},
+      kalkulus: { label: 'Kalkulus', subMateri: [
+        { judul: 'Limit Fungsi', isi: `<p>Limit menggambarkan nilai yang didekati fungsi saat variabelnya mendekati suatu nilai. Notasi: lim(x→a) f(x) = L.</p><p class="sub-heading">Cara menghitung:</p><ul><li>Substitusi langsung</li><li>Bentuk 0/0: faktorkan, sederhanakan</li><li>Bentuk ∞/∞: bagi dengan pangkat tertinggi</li></ul>`, latihan: [{ soal: 'lim(x→3) (x²−9)/(x−3) = …', opsi: ['A. 0','B. 3','C. 6','D. tidak ada'], jwb: 2, cara: 'Jawaban: C — 6. (x−3)(x+3)/(x−3) = x+3. Substitusi x=3: 6.' }, { soal: 'lim(x→2) (3x²−x+1) = …', opsi: ['A. 9','B. 11','C. 13','D. 7'], jwb: 1, cara: 'Jawaban: B — 11. 3(4)−2+1=11.' }, { soal: 'lim(x→∞) (3x²+2x)/(x²−1) = …', opsi: ['A. 0','B. 2','C. 3','D. ∞'], jwb: 2, cara: 'Jawaban: C — 3. Bagi x²: (3+2/x)/(1−1/x²) → 3.' }] },
+        { judul: 'Turunan (Diferensial)', isi: `<p>Turunan f'(x) menyatakan laju perubahan fungsi. Secara geometris: kemiringan garis singgung.</p><p class="sub-heading">Aturan:</p><ul><li>d/dx(c) = 0</li><li>d/dx(xⁿ) = nxⁿ⁻¹</li><li>Aturan rantai: d/dx[f(g(x))] = f'(g(x)) × g'(x)</li></ul>`, latihan: [{ soal: "f(x) = 5x³−4x²+3. Turunannya…", opsi: ["A. 15x²−8x+3","B. 15x²−8x","C. 5x²−4x","D. 15x²+8x"], jwb: 1, cara: "Jawaban: B — 15x²−8x." }, { soal: "f(x) = (2x+3)⁴. Turunannya…", opsi: ["A. 4(2x+3)³","B. 8(2x+3)³","C. 4(2x+3)⁴","D. 2(2x+3)³"], jwb: 1, cara: "Jawaban: B — 8(2x+3)³. Aturan rantai." }, { soal: "f(x) = 6x²−3x+1 di x=2. Nilai f'(2)…", opsi: ["A. 21","B. 24","C. 18","D. 15"], jwb: 0, cara: "Jawaban: A — 21. f'(x)=12x−3, f'(2)=21." }] },
+        { judul: 'Integral Tak Tentu', isi: `<p>∫f(x)dx = F(x) + C, di mana C adalah konstanta integrasi.</p><p class="sub-heading">Aturan:</p><ul><li>∫c dx = cx + C</li><li>∫xⁿ dx = xⁿ⁺¹/(n+1) + C</li></ul>`, latihan: [{ soal: '∫(3x²+2x) dx = …', opsi: ['A. x³+x²+C','B. 6x+2','C. x³+x+C','D. 3x³+x²+C'], jwb: 0, cara: 'Jawaban: A — x³+x²+C.' }, { soal: '∫5 dx = …', opsi: ['A. 5x','B. 5x+C','C. 5','D. 0'], jwb: 1, cara: 'Jawaban: B — 5x+C.' }, { soal: '∫8x⁷ dx = …', opsi: ['A. 56x⁶','B. x⁸','C. 8x⁸+C','D. x⁸+C'], jwb: 3, cara: 'Jawaban: D — x⁸+C. 8×x⁸/8 = x⁸.' }] },
+        { judul: 'Integral Tentu dan Luas Daerah', isi: `<p>∫[a ke b] f(x) dx = F(b) − F(a).</p><p>Luas antara dua kurva: ∫[a ke b] [f(x)−g(x)] dx, saat f(x) ≥ g(x).</p>`, latihan: [{ soal: '∫[0 ke 2] 3x² dx = …', opsi: ['A. 6','B. 8','C. 12','D. 4'], jwb: 1, cara: 'Jawaban: B — 8. [x³] dari 0 ke 2 = 8.' }, { soal: 'Luas di bawah y=x² antara x=0 dan x=3…', opsi: ['A. 6','B. 9','C. 27','D. 3'], jwb: 1, cara: 'Jawaban: B — 9. [x³/3] dari 0 ke 3 = 9.' }, { soal: '∫[−1 ke 2] (x+2) dx = …', opsi: ['A. 7,5','B. 6','C. 9','D. 4,5'], jwb: 0, cara: 'Jawaban: A — 7,5. [x²/2+2x] = (2+4)−(0,5−2) = 6+1,5 = 7,5.' }] }
+      ]}
+    };
+
+    // ========== INIT ==========
+    const params  = new URLSearchParams(window.location.search);
+    const topikKey = params.get('topik') || 'aljabar';
+    const subIdx   = parseInt(params.get('sub') || '0');
+    const topik    = DATA[topikKey] || DATA.aljabar;
+    const sub      = topik.subMateri[subIdx] || topik.subMateri[0];
+
+    // Breadcrumb
+    document.getElementById('bcTopik').textContent = topik.label;
+    document.getElementById('bcSub').textContent   = sub.judul;
+    document.title = `${sub.judul} - Mathify`;
+
+    // Step 1 name
+    document.getElementById('step1Name').textContent = sub.judul;
+    document.getElementById('step3Sub').textContent  = `${sub.latihan.length} Pertanyaan`;
+
+    // Render materi
+    document.getElementById('materiTitle').textContent = sub.judul;
+    document.getElementById('materiBody').innerHTML    = sub.isi;
+
+    // Render latihan soal (plain text style)
+    const latihanList = document.getElementById('latihanList');
+    sub.latihan.forEach((q, qi) => {
+      const div = document.createElement('div');
+      div.className = 'soal-item';
+      div.innerHTML = `
+        <div class="soal-label">Soal ${qi + 1}</div>
+        <div class="soal-text">${q.soal}</div>
+        <ul class="soal-opsi" id="opsi-${qi}">
+          ${q.opsi.map((o, oi) => `<li onclick="jawab(${qi},${oi},${q.jwb})">${o}</li>`).join('')}
+        </ul>
+        <div class="soal-jawaban" id="jwb-${qi}"><strong>${q.cara.split('\n')[0]}</strong><br>${q.cara.split('\n').slice(1).join('<br>')}</div>
+        ${qi < sub.latihan.length - 1 ? '<hr class="soal-divider">' : ''}`;
+      latihanList.appendChild(div);
+    });
+
+    // ========== STATE ==========
+    let currentStep = 'materi'; // 'materi' | 'latihan'
+
+    function setActiveStep(step) {
+      // Reset all
+      ['step1','step2','step3','step4'].forEach(id => {
+        document.getElementById(id).classList.remove('active');
+      });
+
+      if (step === 'materi') {
+        document.getElementById('step1').classList.add('active');
+        document.getElementById('icon1').className = 'step-icon s-done';
+        document.getElementById('icon1').innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+        document.getElementById('icon2').className = 'step-icon s-active';
+        document.getElementById('icon3').className = 'step-icon s-locked';
+        document.getElementById('btnLanjutText').textContent = 'Lanjutkan Sekarang';
+        document.getElementById('btnLanjut').onclick = () => showLatihan();
+      } else if (step === 'latihan') {
+        document.getElementById('step3').classList.add('active');
+        document.getElementById('icon1').className = 'step-icon s-done';
+        document.getElementById('icon2').className = 'step-icon s-done';
+        document.getElementById('icon2').innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+        document.getElementById('icon3').className = 'step-icon s-active';
+        document.getElementById('icon3').innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>`;
+        document.getElementById('btnLanjutText').textContent = 'Mulai Kuis Sekarang';
+        document.getElementById('btnLanjut').onclick = () => {
+          location.href = `quiz-soal.html?topik=${topikKey}&sub=${subIdx}`;
+        };
+      }
+    }
+
+    function showMateri() {
+      currentStep = 'materi';
+      document.getElementById('materiView').style.display  = 'block';
+      document.getElementById('latihanView').style.display = 'none';
+      setActiveStep('materi');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showLatihan() {
+      currentStep = 'latihan';
+      document.getElementById('materiView').style.display  = 'none';
+      document.getElementById('latihanView').style.display = 'block';
+      setActiveStep('latihan');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Init state
+    setActiveStep('materi');
+    document.getElementById('btnLanjut').onclick = () => showLatihan();
+
+    // Answer handler
+    window.jawab = function(qi, chosen, correct) {
+      const items = document.querySelectorAll(`#opsi-${qi} li`);
+      items.forEach(li => { li.classList.add('disabled'); li.onclick = null; });
+      items[chosen].classList.add(chosen === correct ? 'correct' : 'wrong');
+      if (chosen !== correct) items[correct].classList.add('reveal');
+      document.getElementById(`jwb-${qi}`).style.display = 'block';
+    };
+  </script>
+
+</body>
+</html>
