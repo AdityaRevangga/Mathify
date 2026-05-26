@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="book-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2F54EB" />
+      <stop offset="100%" stop-color="#1D3FBF" />
+    </linearGradient>
+    <linearGradient id="page-grad" x1="16" y1="16" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#EEF2FF" />
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#2F54EB" flood-opacity="0.3" />
+    </filter>
+  </defs>
+  
+  <!-- Book base/cover with shadow -->
+  <path d="M6 50 C 18 53, 30 47, 32 46 C 34 47, 46 53, 58 50 V 14 C 46 17, 34 11, 32 10 C 30 11, 18 17, 6 14 Z" fill="url(#book-grad)" filter="url(#shadow)" />
+  
+  <!-- Book pages -->
+  <path d="M8 46 C 18 49, 28 44, 31 43 V 13 C 28 14, 18 19, 8 16 Z" fill="url(#page-grad)" />
+  <path d="M56 46 C 46 49, 36 44, 33 43 V 13 C 36 14, 46 19, 56 16 Z" fill="url(#page-grad)" />
+  
+  <!-- Math symbols in the pages -->
+  <!-- Plus symbol on left page -->
+  <path d="M14 26 H 24 M19 21 V 31" stroke="#2F54EB" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- Square root symbol on right page -->
+  <path d="M38 29 L 41 23 H 48 M41 23 L 43 28 L 45 20" stroke="#2F54EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Math book page lines (subtle) -->
+  <path d="M10 35 H 28 M10 40 H 28" stroke="#C7D2FE" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M36 35 H 54 M36 40 H 54" stroke="#C7D2FE" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Ribbon bookmark -->
+  <path d="M31 10 V 32 L 33.5 29 L 36 32 V 10" fill="#EF4444" />
+</svg>

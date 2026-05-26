@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathify - Master Mathematics</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ===== HERO ===== */
+    .hero-section {
+      background: linear-gradient(160deg, #F0F4FF 0%, #FFFFFF 60%);
+      padding: 5rem 6%;
+    }
+
+    .hero-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.01em;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 .highlight { color: var(--blue); }
+
+    .hero p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 2.25rem;
+      max-width: 440px;
+    }
+
+    .hero-cta { display: flex; gap: 0.85rem; flex-wrap: wrap; }
+
+    .hero-image-wrap {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(47,84,235,0.12);
+      aspect-ratio: 4/3;
+      background: #E8EDF5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-img-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      color: #94A3B8;
+      font-size: 0.875rem;
+    }
+
+    .hero-img-placeholder .img-icon {
+      width: 64px;
+      height: 64px;
+      background: #CBD5E1;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    /* ===== WHY SECTION ===== */
+    .why-section {
+      background: var(--bg-soft);
+      padding: 5.5rem 6%;
+    }
+
+    .why-inner { max-width: 1160px; margin: 0 auto; }
+
+    .why-header { text-align: center; margin-bottom: 3.5rem; }
+    .why-header h2 { font-size: 1.875rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    .why-header p { color: var(--text-muted); max-width: 500px; margin: 0 auto; font-size: 1rem; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+
+    .feature-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem 1.5rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { box-shadow: var(--shadow); transform: translateY(-3px); }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .feature-icon.blue { background: #EEF2FF; }
+    .feature-icon.orange { background: #FFF7ED; }
+    .feature-icon.green { background: #ECFDF5; }
+    .feature-icon.purple { background: #F5F3FF; }
+
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.65; }
+
+    /* ===== SUBJECTS ===== */
+    .subjects-section {
+      padding: 5.5rem 6%;
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    .subjects-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 2rem;
+    }
+
+    .subjects-header-left h2 { font-size: 1.875rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.35rem; }
+    .subjects-header-left p { color: var(--text-muted); font-size: 0.9rem; }
+
+    .view-all-link {
+      color: var(--blue);
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: gap 0.15s;
+      white-space: nowrap;
+    }
+    .view-all-link:hover { gap: 0.55rem; }
+
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .subject-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 3/4;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .subject-card:hover { transform: scale(1.02); }
+
+    .subject-bg {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .subject-card:nth-child(1) .subject-bg { background: linear-gradient(145deg, #FF8A65, #FF5722); }
+    .subject-card:nth-child(2) .subject-bg { background: linear-gradient(145deg, #4DB6AC, #00695C); }
+    .subject-card:nth-child(3) .subject-bg { background: linear-gradient(145deg, #CE93D8, #7B1FA2); }
+    .subject-card:nth-child(4) .subject-bg { background: linear-gradient(145deg, #90A4AE, #37474F); }
+
+    .subject-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+      padding: 1.5rem 1.1rem 1.1rem;
+      color: white;
+    }
+
+    .subject-overlay h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .subject-overlay .lesson-count { font-size: 0.8rem; opacity: 0.85; display: flex; align-items: center; gap: 0.3rem; }
+
+    .subject-arrow {
+      position: absolute;
+      bottom: 1rem; right: 1rem;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: white;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: #0F172A;
+      color: #94A3B8;
+      padding: 4.5rem 6% 2rem;
+    }
+
+    .footer-inner { max-width: 1160px; margin: 0 auto; }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.8fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid #1E293B;
+    }
+
+    .footer-brand-name { font-size: 1.35rem; font-weight: 800; color: white; margin-bottom: 0.85rem; }
+    .footer-brand p { font-size: 0.875rem; line-height: 1.75; max-width: 230px; }
+
+    .footer-social { display: flex; gap: 0.6rem; margin-top: 1.5rem; }
+
+    .social-icon {
+      width: 34px; height: 34px;
+      border: 1px solid #334155;
+      border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; color: #94A3B8;
+      transition: all 0.2s;
+    }
+    .social-icon:hover { border-color: #64748B; color: white; background: #1E293B; }
+
+    .footer-col h5 {
+      font-size: 0.75rem; font-weight: 700; color: white;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.25rem;
+    }
+
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+    .footer-col ul a { font-size: 0.875rem; color: #94A3B8; transition: color 0.15s; }
+    .footer-col ul a:hover { color: white; }
+
+    .newsletter-desc { font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.6; }
+
+    .newsletter-form { display: flex; gap: 0.5rem; }
+
+    .newsletter-form input {
+      flex: 1; min-width: 0;
+      padding: 0.6rem 0.9rem;
+      background: #1E293B; border: 1px solid #334155;
+      border-radius: var(--radius-sm); color: white;
+      font-size: 0.875rem; font-family: inherit; outline: none;
+    }
+    .newsletter-form input::placeholder { color: #475569; }
+    .newsletter-form input:focus { border-color: var(--blue); }
+
+    .newsletter-form button {
+      width: 38px; height: 38px; flex-shrink: 0;
+      background: var(--blue); border: none;
+      border-radius: var(--radius-sm); color: white;
+      font-size: 1rem; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .newsletter-form button:hover { background: var(--blue-hover); }
+
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1.75rem; font-size: 0.8rem; color: #475569;
+    }
+
+    .footer-bottom-links { display: flex; gap: 1.5rem; }
+    .footer-bottom-links a { color: #475569; transition: color 0.15s; }
+    .footer-bottom-links a:hover { color: #94A3B8; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .subjects-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    }
+
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero-image-wrap { aspect-ratio: 16/9; }
+      .subjects-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .footer-top { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .subjects-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">Mathify</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="#">Courses</a></li>
+      <li><a href="#">Pricing</a></li>
+      <li><a href="#">About Us</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="nav-search-btn" aria-label="Search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+      <a href="login.html" class="btn btn-ghost">Log In</a>
+      <a href="register.html" class="btn btn-primary">Sign Up</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="hero-inner">
+      <div class="hero">
+        <div class="hero-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Revolutionizing K-12 Math Education
+        </div>
+        <h1>Master Mathematics<br>with <span class="highlight">Mathify</span></h1>
+        <p>Unlock your potential with interactive lessons, personalized AI-driven practice, and a curriculum designed to turn math anxiety into mathematical mastery.</p>
+        <div class="hero-cta">
+          <a href="register.html" class="btn btn-primary btn-lg">Start Learning Free</a>
+          <a href="#" class="btn btn-outline btn-lg">View Curriculum</a>
+        </div>
+      </div>
+      <div class="hero-image-wrap">
+        <!-- Ganti src dengan gambar asli dari Figma -->
+        <div class="hero-img-placeholder">
+          <div class="img-icon">📐</div>
+          <span>Hero Image</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE MATHFLOW -->
+  <section class="why-section">
+    <div class="why-inner">
+      <div class="why-header">
+        <h2>Why Choose MathFlow?</h2>
+        <p>We combine pedagogy with cutting-edge technology to create a learning experience that actually sticks.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2F54EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Video Lessons</h3>
+          <p>High-definition walkthroughs of complex concepts, broken down into digestible 5-minute modules.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon orange">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <h3>Smart Quizzes</h3>
+          <p>Adaptive assessments that adjust difficulty based on your performance to ensure mastery.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/></svg>
+          </div>
+          <h3>Step-by-Step</h3>
+          <p>Don't just get the answer; understand the logic behind every single step of the calculation.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon purple">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3>Live Tracking</h3>
+          <p>Visual analytics for students and parents to track growth and identify areas needing focus.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPLORE SUBJECTS -->
+  <section>
+    <div class="subjects-section">
+      <div class="subjects-header">
+        <div class="subjects-header-left">
+          <h2>Explore Subjects</h2>
+          <p>From fundamental arithmetic to advanced calculus,<br>we cover the full K-12 spectrum with curated pathways.</p>
+        </div>
+        <a href="#" class="view-all-link">
+          View all 24 subjects
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="subjects-grid">
+        <div class="subject-card">
+          <div class="subject-bg">🔢</div>
+          <div class="subject-overlay">
+            <h3>Bilangan</h3>
+            <div class="lesson-count">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              31 Lessons
+            </div>
+          </div>
+          <div class="subject-arrow">›</div>
+        </div>
+        <div class="subject-card">
+          <div class="subject-bg">📈</div>
+          <div class="subject-overlay">
+            <h3>Aljabar dan Fungsi</h3>
+            <div class="lesson-count">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              21 Lessons
+            </div>
+          </div>
+          <div class="subject-arrow">›</div>
+        </div>
+        <div class="subject-card">
+          <div class="subject-bg">📐</div>
+          <div class="subject-overlay">
+            <h3>Trigonometry</h3>
+            <div class="lesson-count">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              76 Lessons
+            </div>
+          </div>
+          <div class="subject-arrow">›</div>
+        </div>
+        <div class="subject-card">
+          <div class="subject-bg">🔷</div>
+          <div class="subject-overlay">
+            <h3>Geometry</h3>
+            <div class="lesson-count">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              19 Lessons
+            </div>
+          </div>
+          <div class="subject-arrow">›</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-brand-name">Mathify</div>
+          <p>Empowering the next generation of mathematicians through accessible, engaging, and highly effective digital education.</p>
+          <div class="footer-social">
+            <a href="#" class="social-icon" aria-label="Twitter">𝕏</a>
+            <a href="#" class="social-icon" aria-label="Instagram">ig</a>
+            <a href="#" class="social-icon" aria-label="YouTube">▶</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h5>Celerates</h5>
+          <ul>
+            <li><a href="#">Our Team</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Learning</h5>
+          <ul>
+            <li><a href="#">All Courses</a></li>
+            <li><a href="#">Smart Quizzes</a></li>
+            <li><a href="#">Video Library</a></li>
+            <li><a href="#">Study Planner</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Newsletter</h5>
+          <p class="newsletter-desc">Get the latest math tips and course updates.</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Your email address">
+            <button aria-label="Subscribe">→</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Mathify Academy. All rights reserved.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
