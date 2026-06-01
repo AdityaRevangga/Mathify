@@ -7,6 +7,7 @@ const topicRoutes = require('./routes/topicRoutes');
 const materialRoutes = require('./routes/materialRoutes');
 const videoRoutes = require('./routes/videoRoutes');
 const quizRoutes = require('./routes/quizRoutes');
+const userRoutes = require('./routes/userRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -22,6 +23,7 @@ app.use('/api/topics', topicRoutes);
 app.use('/api/topics/:topicId/materials', materialRoutes);
 app.use('/api/topics/:topicId/materials/:materialId/videos', videoRoutes);
 app.use('/api/topics/:topicId/materials/:materialId/quizzes', quizRoutes);
+app.use('/api/users', userRoutes);
 
 // Quiz results - accessible directly
 const quizController = require('./controllers/quizController');

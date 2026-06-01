@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
+import AdminRoute from './AdminRoute';
 import DashboardLayout from '../layouts/DashboardLayout';
 import AuthLayout from '../layouts/AuthLayout';
 import MateriLayout from '../layouts/MateriLayout';
@@ -15,6 +16,12 @@ import QuizListPage from '../pages/QuizListPage';
 import ProfilePage from '../pages/ProfilePage';
 import SettingsPage from '../pages/SettingsPage';
 import HelpPage from '../pages/HelpPage';
+
+// Admin Pages
+import AdminTopicsPage from '../pages/admin/AdminTopicsPage';
+import AdminMaterialsPage from '../pages/admin/AdminMaterialsPage';
+import AdminQuizzesPage from '../pages/admin/AdminQuizzesPage';
+import AdminUsersPage from '../pages/admin/AdminUsersPage';
 
 const AppRouter = () => {
   return (
@@ -35,6 +42,14 @@ const AppRouter = () => {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/help" element={<HelpPage />} />
+
+          {/* Admin Protected Routes */}
+          <Route element={<AdminRoute />}>
+            <Route path="/admin/topics" element={<AdminTopicsPage />} />
+            <Route path="/admin/materials" element={<AdminMaterialsPage />} />
+            <Route path="/admin/quizzes" element={<AdminQuizzesPage />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+          </Route>
         </Route>
 
         {/* Reading Material Layout (Topbar only, no sidebar) */}

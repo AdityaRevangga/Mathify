@@ -82,12 +82,21 @@ export const authAPI = {
 export const topicsAPI = {
   getAll: () => api.get('/api/topics'),
   getById: (id) => api.get(`/api/topics/${id}`),
+  create: (data) => api.post('/api/topics', data),
+  update: (id, data) => api.put(`/api/topics/${id}`, data),
+  delete: (id) => api.delete(`/api/topics/${id}`),
 };
 
 export const materialsAPI = {
   getByTopic: (topicId) => api.get(`/api/topics/${topicId}/materials`),
   getById: (topicId, materialId) => api.get(`/api/topics/${topicId}/materials/${materialId}`),
   getSteps: (topicId, materialId) => api.get(`/api/topics/${topicId}/materials/${materialId}/steps`),
+  create: (topicId, data) => api.post(`/api/topics/${topicId}/materials`, data),
+  update: (topicId, id, data) => api.put(`/api/topics/${topicId}/materials/${id}`, data),
+  delete: (topicId, id) => api.delete(`/api/topics/${topicId}/materials/${id}`),
+  createStep: (topicId, materialId, data) => api.post(`/api/topics/${topicId}/materials/${materialId}/steps`, data),
+  updateStep: (topicId, stepId, data) => api.put(`/api/topics/${topicId}/materials/steps/${stepId}`, data),
+  deleteStep: (topicId, stepId) => api.delete(`/api/topics/${topicId}/materials/steps/${stepId}`),
 };
 
 export const practiceAPI = {
@@ -108,6 +117,22 @@ export const quizzesAPI = {
     api.get(`/api/topics/${topicId}/materials/${materialId}/quizzes/${quizId}/results`),
   getDiscussions: (topicId, materialId, quizId) =>
     api.get(`/api/topics/${topicId}/materials/${materialId}/quizzes/${quizId}/discussions`),
+  create: (topicId, materialId, data) =>
+    api.post(`/api/topics/${topicId}/materials/${materialId}/quizzes`, data),
+  update: (topicId, materialId, id, data) =>
+    api.put(`/api/topics/${topicId}/materials/${materialId}/quizzes/${id}`, data),
+  delete: (topicId, materialId, id) =>
+    api.delete(`/api/topics/${topicId}/materials/${materialId}/quizzes/${id}`),
+  createQuestion: (topicId, materialId, quizId, data) =>
+    api.post(`/api/topics/${topicId}/materials/${materialId}/quizzes/${quizId}/questions`, data),
+  updateQuestion: (topicId, materialId, questionId, data) =>
+    api.put(`/api/topics/${topicId}/materials/${materialId}/quizzes/questions/${questionId}`, data),
+  deleteQuestion: (topicId, materialId, questionId) =>
+    api.delete(`/api/topics/${topicId}/materials/${materialId}/quizzes/questions/${questionId}`),
+  createDiscussion: (topicId, materialId, quizId, questionId, data) =>
+    api.post(`/api/topics/${topicId}/materials/${materialId}/quizzes/questions/${questionId}/discussions`, data),
+  updateDiscussion: (topicId, materialId, quizId, discussionId, data) =>
+    api.put(`/api/topics/${topicId}/materials/${materialId}/quizzes/discussions/${discussionId}`, data),
 };
 
 export const resultsAPI = {
@@ -127,6 +152,12 @@ export const resultsAPI = {
 
 export const leaderboardAPI = {
   getLeaderboard: () => api.get('/api/leaderboard'),
+};
+
+export const usersAPI = {
+  getAll: () => api.get('/api/users'),
+  update: (id, data) => api.put(`/api/users/${id}`, data),
+  delete: (id) => api.delete(`/api/users/${id}`),
 };
 
 export default api;

@@ -80,6 +80,32 @@ const User = {
     const result = await db.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
     return result.rows[0];
   },
+
+  async findAll() {
+    const result = await db.query(
+      `SELECT id, username, email, full_name, jenjang, avatar_url, role, xp, streak, study_duration, last_active, created_at 
+       FROM users ORDER BY created_at DESC`
+    );
+    return result.rows;
+  },
+
+  async updateAdmin(id, { full_name, username, email, jenjang, role, xp, streak, study_duration }) {
+    const result = await db.query(
+      `UPDATE users SET 
+        full_name = COALESCE($1, full_name),
+        username = COALESCE($2, username), 
+        email = COALESCE($3, email),
+        jenjang = COALESCE($4, jenjang),
+        role = COALESCE($5, role),
+        xp = COALESCE($6, xp),
+        streak = COALESCE($7, streak),
+        study_duration = COALESCE($8, study_duration)
+       WHERE id = $9 
+       RETURNING id, username, email, full_name, jenjang, role, xp, streak, study_duration, last_active, created_at`,
+      [full_name, username, email, jenjang, role, xp, streak, study_duration, id]
+    );
+    return result.rows[0];
+  },
 };
 
 module.exports = User;

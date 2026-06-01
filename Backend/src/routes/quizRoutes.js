@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const quizController = require('../controllers/quizController');
-const { adminOnly, allRoles } = require('../middleware/auth');
+const { adminOnly, allRoles, optionalAuth } = require('../middleware/auth');
 
 // Quiz - Public untuk read
 router.get('/', quizController.index);
-router.get('/:id', quizController.show);
+router.get('/:id', optionalAuth, quizController.show);
 
 // Quiz - Admin only untuk CRUD
 router.post('/', adminOnly, quizController.create);

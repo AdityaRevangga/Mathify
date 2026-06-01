@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Sidebar = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async (e) => {
@@ -96,6 +96,71 @@ const Sidebar = () => {
           </svg>
           Pengaturan
         </NavLink>
+        {user?.role === 'admin' && (
+          <>
+            <div 
+              style={{ 
+                padding: '1.25rem 1.5rem 0.5rem', 
+                fontSize: '0.72rem', 
+                fontWeight: 700, 
+                color: 'var(--text-light)', 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.05em',
+                borderTop: '1px solid var(--border)',
+                marginTop: '1rem',
+                marginBottom: '0.25rem'
+              }}
+            >
+              Panel Admin
+            </div>
+            <NavLink
+              to="/admin/topics"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+              Kelola Topik
+            </NavLink>
+            <NavLink
+              to="/admin/materials"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+              Kelola Materi
+            </NavLink>
+            <NavLink
+              to="/admin/quizzes"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>
+              Kelola Kuis
+            </NavLink>
+            <NavLink
+              to="/admin/users"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              Kelola Pengguna
+            </NavLink>
+          </>
+        )}
       </nav>
       <div className="sidebar-bottom">
         <NavLink

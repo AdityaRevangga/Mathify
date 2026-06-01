@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
         setUser(userData);
-        return { success: true };
+        return { success: true, user: userData };
       } else {
         return { success: false, message: response.data.message || 'Login gagal' };
       }

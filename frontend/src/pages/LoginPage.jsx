@@ -16,7 +16,11 @@ const LoginPage = () => {
     setError('');
     const result = await login(email, password);
     if (result.success) {
-      navigate('/');
+      if (result.user?.role === 'admin') {
+        navigate('/admin/topics');
+      } else {
+        navigate('/');
+      }
     } else {
       setError(result.message || 'Email atau password salah');
     }

@@ -20,7 +20,8 @@ const quizController = {
         return res.status(404).json({ success: false, message: 'Quiz tidak ditemukan' });
       }
       const questions = await QuizQuestion.findByQuizId(quiz.id);
-      // Sembunyikan jawaban benar saat menampilkan quiz
+      // Sembunyikan jawaban benar saat menampilkan quiz (kecuali untuk admin)
+      const showAnswers = req.user?.role === 'admin';
       const safeQuestions = questions.map(q => ({
         id: q.id,
         quiz_id: q.quiz_id,
@@ -30,6 +31,7 @@ const quizController = {
         option_c: q.option_c,
         option_d: q.option_d,
         sort_order: q.sort_order,
+        ...(showAnswers ? { correct_answer: q.correct_answer } : {}),
       }));
       res.json({ success: true, data: { quiz, questions: safeQuestions } });
     } catch (error) {
