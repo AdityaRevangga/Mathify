@@ -1,836 +1,143 @@
-# 🧮 Mathify - Platform Pembelajaran Matematika Online
+# 📐 Mathify - Platform Pembelajaran Matematika Online (Monorepo)
 
-Mathify adalah platform pembelajaran matematika online yang menyediakan materi step-by-step, video pembelajaran, quiz interaktif, dan pembahasan soal.
+**Mathify** adalah platform pembelajaran matematika online interaktif kelas dunia yang dirancang khusus untuk mempermudah siswa memahami materi matematika (terutama konsep Aljabar dan Persamaan Linear) dengan metode gamifikasi yang modern, terstruktur, dan premium. 
 
-## 📋 Daftar Isi
-
-- [Teknologi](#teknologi)
-- [Struktur Project](#struktur-project)
-- [Setup & Instalasi](#setup--instalasi)
-- [Database Schema](#database-schema)
-- [API Endpoints](#api-endpoints)
-- [Langkah Pembuatan](#langkah-pembuatan)
+Proyek ini menggunakan struktur **Monorepo** untuk menyatukan aplikasi **Frontend (React.js + Vite)** dan **Backend (Node.js + Express.js + PostgreSQL)** secara berdampingan sehingga memudahkan proses pengembangan, pengujian, dan penyebaran aplikasi.
 
 ---
 
-## 🛠 Teknologi
+## 🚀 Fitur Utama (Key Features)
 
-| Teknologi | Versi | Fungsi |
-|-----------|-------|--------|
-| Node.js | 18+ | Runtime JavaScript |
-| Express.js | 4.x | Web Framework |
-| PostgreSQL | 14+ | Database Relasional |
-| pg | 8.x | PostgreSQL client untuk Node.js |
-| bcryptjs | 2.x | Hashing password |
-| jsonwebtoken | 9.x | Autentikasi JWT |
-| cors | 2.x | Cross-Origin Resource Sharing |
-| dotenv | 16.x | Environment variables |
+*   **🎮 Gamifikasi & Progres Dinamis:** Dilengkapi dengan fitur XP (Experience Points), *daily streak*, pelacakan progres per topik secara *real-time*, dan visualisasi progres yang interaktif di Dashboard.
+*   **📚 Kurikulum Aljabar Lengkap:** Menyediakan 5 Topik Utama dan 11 Sub-Materi Aljabar yang kaya akan konten edukatif, lengkap dengan ilustrasi HTML, rumus, dan visualisasi interaktif.
+*   **🎬 Video Pembelajaran Terintegrasi:** Setiap materi dilengkapi dengan video tutorial interaktif menggunakan *responsive embedded YouTube player* untuk mendukung metode belajar visual.
+*   **✨ Premium Practice Interface:** Area latihan soal interaktif dengan pilihan jawaban dinamis yang memberikan respons warna *real-time* (Hijau untuk jawaban benar, Merah untuk salah) lengkap dengan pembahasan penjelasan instan setelah dijawab.
+*   **📝 Ujian Kuis Interaktif:** Dilengkapi dengan 11 Kuis unik untuk menguji pemahaman di setiap sub-materi dengan batas waktu (*time limit*) dan ambang batas kelulusan (*passing score*).
+*   **👤 Manajemen Akun & Sinkronisasi Profil:** Fitur registrasi dan login yang aman menggunakan enkripsi JWT, sinkronisasi jenjang sekolah (SD, SMP, SMA, Kuliah), hingga fitur **Hapus Akun secara Permanen (Danger Zone)** yang menghapus seluruh data user dari database PostgreSQL secara bersih.
+*   **🌐 Kompatibilitas Tunneling (Localtunnel/Ngrok Ready):** Konfigurasi Vite & Axios yang dioptimalkan untuk mempermudah pengujian di luar jaringan lokal menggunakan *tunneling* tanpa terblokir oleh *host security policy*.
 
 ---
 
-## 📁 Struktur Project
+## 🛠️ Teknologi yang Digunakan (Tech Stack)
 
-```
-mathify/
-├── server.js                    # Entry point aplikasi
-├── package.json                 # Dependencies & scripts
-├── .env                         # Environment variables (TIDAK di-commit)
-├── .gitignore                   # Git ignore rules
-├── migrations/
-│   ├── 001_init.sql             # Schema database (CREATE TABLE)
-│   └── 002_seed_data.sql        # Data awal untuk testing
-├── src/
-│   ├── app.js                   # Express app configuration
-│   ├── config/
-│   │   └── database.js          # Koneksi PostgreSQL (Pool)
-│   ├── middleware/
-│   │   ├── auth.js              # JWT authentication middleware
-│   │   └── errorHandler.js      # Global error handler
-│   ├── models/
-│   │   ├── User.js              # Model user
-│   │   ├── Topic.js             # Model topik matematika
-│   │   ├── Material.js          # Model materi
-│   │   ├── MaterialStep.js      # Model step-by-step materi
-│   │   ├── Video.js             # Model video pembelajaran
-│   │   ├── Quiz.js              # Model quiz
-│   │   ├── QuizQuestion.js      # Model soal quiz
-│   │   ├── QuizDiscussion.js    # Model pembahasan quiz
-│   │   ├── QuizResult.js        # Model hasil quiz
-│   │   └── RefreshToken.js      # Model refresh token
-│   ├── controllers/
-│   │   ├── authController.js    # Login, Register, Profile, Refresh, Logout
-│   │   ├── topicController.js  # CRUD Topik
-│   │   ├── materialController.js# CRUD Materi & Steps
-│   │   ├── videoController.js   # CRUD Video
-│   │   └── quizController.js    # CRUD Quiz, Submit, Hasil, Pembahasan
-│   └── routes/
-│       ├── authRoutes.js        # /api/auth/*
-│       ├── topicRoutes.js       # /api/topics/*
-│       ├── materialRoutes.js    # /api/topics/:topicId/materials/*
-│       ├── videoRoutes.js       # /api/topics/:topicId/materials/:materialId/videos/*
-│       └── quizRoutes.js        # /api/topics/:topicId/materials/:materialId/quizzes/*
-└── README.md                    # Dokumentasi ini
+### **Frontend (Client)**
+*   **Core:** React.js (Vite 6)
+*   **Styling:** Vanilla CSS (Desain modern *custom*, transisi halus, *responsive UI*, dan *dark/light details*)
+*   **Routing:** React Router v6
+*   **State & API Call:** React Context API & Axios
+
+### **Backend (Server)**
+*   **Core:** Node.js, Express.js
+*   **Autentikasi:** JSON Web Token (JWT) & BcryptJS untuk enkripsi password
+*   **Database:** PostgreSQL (Driver `pg`)
+*   **Utilitas:** Concurrently (untuk menjalankan frontend & backend bersamaan)
+
+---
+
+## 📂 Struktur Folder Proyek
+
+```text
+Mathify/
+├── Backend/               # Server API Node.js + Express
+│   ├── migrations/        # File SQL inisialisasi tabel & benih data (seed)
+│   ├── src/               # Logika kode backend (controllers, models, routes)
+│   ├── .env               # Konfigurasi database & JWT backend (lokal)
+│   ├── server.js          # Entry point server backend
+│   └── setup-db.js        # Script inisialisasi & seeding PostgreSQL otomatis
+├── frontend/              # Web Client React.js + Vite
+│   ├── public/            # Aset statik publik frontend
+│   ├── src/               # Komponen, halaman, gaya CSS, konteks, & API service
+│   ├── .env               # Konfigurasi URL API backend
+│   └── vite.config.js     # Konfigurasi Vite & proxy dev server
+├── package.json           # Skrip Monorepo Root (Concurrently)
+└── README.md              # Dokumentasi proyek (File ini)
 ```
 
 ---
 
-## 🚀 Setup & Instalasi
+## ⚙️ Persyaratan Sistem & Prasyarat
+Sebelum menjalankan aplikasi, pastikan komputer Anda telah terinstal:
+1.  **Node.js** (Rekomendasi versi LTS terbaru)
+2.  **PostgreSQL** (Pastikan layanannya berjalan aktif di komputer lokal Anda)
 
-### Prasyarat
+---
 
-1. **Node.js** versi 18 atau lebih baru terinstall
-2. **PostgreSQL** versi 14 atau lebih baru terinstall dan berjalan
+## 💻 Panduan Instalasi & Cara Menjalankan Aplikasi
 
-### Langkah Instalasi
+Ikuti 5 langkah mudah berikut untuk memulai aplikasi dari awal:
 
-#### 1. Clone / Masuk ke folder project
-
+### **1. Buka Folder Utama**
+Buka terminal (Command Prompt / PowerShell) di komputer Anda, lalu arahkan ke direktori root proyek:
 ```bash
-cd mathify
+cd path/to/Mathify
 ```
 
-#### 2. Install dependencies
+### **2. Konfigurasi File Lingkungan (`.env`)**
 
+*   **Pada folder `Backend/.env`:**
+    Buka file tersebut dan sesuaikan kredensial PostgreSQL lokal Anda:
+    ```env
+    PORT=3000
+    DB_HOST=localhost
+    DB_PORT=5432
+    DB_USER=postgres
+    DB_PASSWORD=Isi_Password_PostgreSQL_Anda  # Ubah sesuai password PostgreSQL Anda
+    DB_NAME=mathify
+    JWT_SECRET=mathify_secret
+    ```
+
+*   **Pada folder `frontend/.env`:**
+    Pastikan diarahkan ke port API backend Anda:
+    ```env
+    VITE_API_URL=http://localhost:3000
+    ```
+
+### **3. Install Semua Dependensi (Packages)**
+Di terminal utama (direktori root `Mathify`), jalankan perintah berikut untuk menginstall library monorepo secara otomatis:
 ```bash
 npm install
 ```
 
-Ini akan menginstall semua package yang ada di `package.json`:
-- express, cors, dotenv, pg, bcryptjs, jsonwebtoken (dependencies)
-- nodemon (devDependencies - untuk hot reload saat development)
-
-#### 3. Buat database PostgreSQL
-
-Buka terminal / pgAdmin / psql, lalu jalankan:
-
-```sql
-CREATE DATABASE mathify;
-```
-
-#### 4. Konfigurasi environment variables
-
-Edit file `.env` sesuai konfigurasi database Anda:
-
-```env
-PORT=3000
-NODE_ENV=development
-
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=your_password_here
-DB_NAME=mathify
-
-JWT_SECRET=your_jwt_secret_key_change_in_production
-JWT_EXPIRES_IN=30m
-JWT_REFRESH_EXPIRES_IN=7d
-```
-
-**Penting:** Ganti `DB_PASSWORD` dengan password PostgreSQL Anda, dan `JWT_SECRET` dengan string acak yang aman.
-
-#### 5. Jalankan migrasi database
-
+### **4. Jalankan Inisialisasi Database (Setup & Seeding)**
+Jalankan perintah berikut untuk membuat database `mathify`, menyusun tabel-tabel relasional, dan mengimpor seluruh data pembelajaran serta akun dummy bawaan ke database secara otomatis:
 ```bash
-# Menggunakan script npm (menjalankan 001_init.sql)
-npm run migrate
-
-# Atau manual menggunakan psql
-psql -U postgres -d mathify -f migrations/001_init.sql
-
-# Untuk data awal (seed data)
-psql -U postgres -d mathify -f migrations/002_seed_data.sql
+npm run setup-db
 ```
+*(Pastikan PostgreSQL Anda aktif sebelum menjalankan perintah ini. Jika berhasil, terminal akan menampilkan pesan `=== SETUP COMPLETED SUCCESSFULLY ===`)*
 
-#### 6. Jalankan server
-
+### **5. Jalankan Aplikasi secara Concurrently (Sekaligus)**
+Untuk menjalankan server backend Express (port 3000) dan frontend React Vite (port 5173) secara bersamaan dalam satu terminal, cukup jalankan:
 ```bash
-# Development mode (dengan nodemon, auto-restart)
 npm run dev
-
-# Production mode
-npm start
 ```
-
-Server akan berjalan di `http://localhost:3000`
-
-#### 7. Verifikasi
-
-Buka browser atau gunakan curl:
-
-```bash
-curl http://localhost:3000/api/health
-```
-
-Response:
-```json
-{
-  "success": true,
-  "message": "Mathify API is running",
-  "timestamp": "2025-01-01T00:00:00.000Z"
-}
-```
+Setelah aplikasi berjalan, buka browser Anda dan akses: **`http://localhost:5173`**
 
 ---
 
-## 🗄 Database Schema
+## 👥 Akun Uji Coba Default (Seeded Accounts)
 
-### Entity Relationship Diagram
+Untuk mempermudah pengujian seluruh fitur dan penyusunan laporan, Anda dapat menggunakan kredensial dummy bawaan database berikut tanpa harus mendaftar dari awal:
 
-```
-users ─────────────────────────────────────────┐
-    │                                          │
-    │ 1                                        │
-    ▼ N                                        │
-quiz_results ◄───── quizzes ◄───── materials ◄───── topics
-                      │               │
-                      │ 1             │ 1
-                      ▼ N             ▼ N
-               quiz_questions    material_steps
-                      │               │
-                      │ 1             │ 1
-                      ▼ 1             ▼ N
-              quiz_discussions     videos
-
-users ──1:N──► refresh_tokens
-```
-
-### Tabel-tabel
-
-| Tabel | Deskripsi |
-|-------|-----------|
-| `users` | Data pengguna (username, email, password hash, role) |
-| `topics` | Topik matematika (Aljabar, Geometri, dll) |
-| `materials` | Materi pembelajaran dalam setiap topik |
-| `material_steps` | Detail materi step-by-step |
-| `videos` | Video pembelajaran untuk setiap materi |
-| `quizzes` | Quiz untuk setiap materi |
-| `quiz_questions` | Soal-soal quiz (pilihan ganda A/B/C/D) |
-| `quiz_discussions` | Pembahasan untuk setiap soal quiz |
-| `quiz_results` | Hasil pengerjaan quiz oleh user |
-| `refresh_tokens` | Refresh token untuk memperbarui access token |
+| Peran (Role) | Email | Username | Password | Deskripsi Fitur Uji |
+|---|---|---|---|---|
+| **Siswa 1 (Student)** | `siswa1@mathify.com` | `siswa1` | `siswa1` | Mencoba dashboard gamifikasi penuh, belajar materi, menjawab latihan, mengerjakan kuis, dan melihat poin XP/streak. |
+| **Siswa 2 (Student)** | `siswa2@mathify.com` | `siswa2` | `siswa2` | Alternatif akun siswa lain untuk simulasi persaingan poin belajar. |
+| **Guru (Teacher)** | `guru1@mathify.com` | `guru1` | `guru1` | Akun pendidik untuk meninjau materi pembelajaran. |
+| **Admin** | `admin1@mathify.com` | `admin1` | `admin1` | Akun administrator platform. |
 
 ---
 
-## 📡 API Endpoints
-
-### Base URL: `/api`
-
----
-
-### 🔐 Authentication
-
-| Method | Endpoint | Auth | Deskripsi |
-|--------|----------|------|-----------|
-| POST | `/api/auth/register` | ❌ | Registrasi user baru |
-| POST | `/api/auth/login` | ❌ | Login dan dapatkan access + refresh token |
-| GET | `/api/auth/me` | ✅ | Dapatkan profil user saat ini |
-| POST | `/api/auth/refresh` | ❌ | Perbarui access token menggunakan refresh token |
-| POST | `/api/auth/logout` | ❌ | Logout (revoke refresh token) |
-| POST | `/api/auth/logout-all` | ✅ | Logout dari semua perangkat |
-
-#### Register
-
-```http
-POST /api/auth/register
-Content-Type: application/json
-
-{
-  "username": "siswa1",
-  "email": "siswa1@email.com",
-  "password": "password123",
-  "full_name": "Siswa Satu"
-}
-```
-
-Response:
-```json
-{
-  "success": true,
-  "message": "Registrasi berhasil",
-  "data": {
-    "user": {
-      "id": 1,
-      "username": "siswa1",
-      "email": "siswa1@email.com",
-      "full_name": "Siswa Satu",
-      "role": "student"
-    },
-    "accessToken": "eyJhbGciOiJIUzI1NiIs...",
-    "refreshToken": "a1b2c3d4e5f6..."
-  }
-}
-```
-
-#### Login
-
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "siswa1@email.com",
-  "password": "password123"
-}
-```
-
-Response: Sama seperti register, berisi user data + `accessToken` + `refreshToken`.
-
-#### Get Profile
-
-```http
-GET /api/auth/me
-Authorization: Bearer <accessToken>
-```
-
-#### Refresh Token
-
-Ketika access token sudah kadaluarsa (30 menit), gunakan refresh token untuk mendapat token baru tanpa perlu login ulang.
-
-```http
-POST /api/auth/refresh
-Content-Type: application/json
-
-{
-  "refreshToken": "a1b2c3d4e5f6..."
-}
-```
-
-Response:
-```json
-{
-  "success": true,
-  "message": "Token berhasil diperbarui",
-  "data": {
-    "accessToken": "eyJhbGciOiJIUzI1NiIs...",
-    "refreshToken": "x9y8z7w6v5u4..."
-  }
-}
-```
-
-**Catatan:** Setiap refresh menghasilkan refresh token baru (rotation). Token lama langsung di-revoke.
-
-#### Logout
-
-```http
-POST /api/auth/logout
-Content-Type: application/json
-
-{
-  "refreshToken": "a1b2c3d4e5f6..."
-}
-```
-
-#### Logout dari Semua Perangkat
-
-```http
-POST /api/auth/logout-all
-Authorization: Bearer <accessToken>
-```
-
-Response:
-```json
-{
-  "success": true,
-  "message": "Berhasil logout dari semua perangkat"
-}
-```
+## 📸 Panduan Screenshot untuk Kebutuhan Dokumen Laporan
+Jika Anda sedang menyusun laporan akademik atau proyek, sangat direkomendasikan untuk mengambil tangkapan layar (*screenshot*) pada bagian-bagian berikut:
+1.  **Struktur Kode Monorepo:** Menampilkan susunan folder `/frontend` dan `/Backend` yang berdampingan di editor VS Code Anda.
+2.  **Hasil Setup Database (`setup-db.js`):** Bukti terminal saat sukses mengeksekusi `npm run setup-db` yang memuat log tabel terbuat.
+3.  **Halaman Autentikasi Modern:** Halaman login dengan desain bertema matematika dan kaca transparan (*glassmorphism*).
+4.  **Halaman Dashboard:** Memperlihatkan grafik progres, tingkatan level belajar, jumlah XP, dan *weekly missions*.
+5.  **Tampilan Pembelajaran & Video Player:** Konten tulisan interaktif dengan navigasi langkah-langkah (*steps*) dan pemutar video YouTube terintegrasi.
+6.  **Fitur Penilaian Latihan Langsung:** Screenshot ketika mengklik jawaban latihan soal di mana tombol pilihan berubah warna menjadi hijau (jika benar) atau merah (jika salah) beserta teks pembahasan di bawahnya.
+7.  **Sertifikasi Kuis Akhir:** Halaman ringkasan setelah menyelesaikan kuis 5 soal yang mencantumkan skor akhir kelulusan dan waktu tempuh.
+8.  **Manajemen Profil & Danger Zone:** Halaman akun tempat pengguna mengganti profil atau menguji fitur penghapusan akun permanen.
 
 ---
 
-### Role-Based Access Control (RBAC)
-
-Mathify menggunakan sistem role untuk mengatur akses fitur:
-
-| Role | Deskripsi |
-|------|-----------|
-| `admin` | Administrator - bisa mengelola semua konten (CRUD topics, materials, videos, quizzes, discussions) |
-| `student` | Siswa - bisa membaca konten, mengerjakan quiz, melihat hasil dan pembahasan |
-
-#### Ringkasan Akses per Role
-
-| Fitur | Public | Student | Admin |
-|-------|--------|---------|-------|
-| Lihat topics, materials, videos, quizzes |  |  |  |
-| Lihat pembahasan quiz |  |  |  |
-| Submit quiz |  |  |  |
-| Lihat hasil quiz sendiri |  |  |  |
-| CRUD topics, materials, videos |  |  |  |
-| CRUD quiz & questions |  |  |  |
-| CRUD pembahasan |  |  |  |
-
-#### Membuat Admin Pertama
-
-Untuk membuat akun admin, jalankan SQL langsung di database:
-
-```sql
--- Hash password dengan bcrypt terlebih dahulu
-INSERT INTO users (username, email, password, full_name, role)
-VALUES ('admin', 'admin@mathify.com', '$2a$10$...', 'Admin', 'admin');
-```
-
-Atau ubah role user yang sudah ada:
-```sql
-UPDATE users SET role = 'admin' WHERE email = 'email@example.com';
-```
-
----
-
-### 📚 Topics (Topik Matematika)
-
-| Method | Endpoint | Akses | Deskripsi |
-|--------|----------|-------|-----------|
-| GET | `/api/topics` | Public | Daftar semua topik aktif |
-| GET | `/api/topics/:id` | Public | Detail satu topik |
-| POST | `/api/topics` | Admin | Buat topik baru |
-| PUT | `/api/topics/:id` | Admin | Update topik |
-| DELETE | `/api/topics/:id` | Admin | Hapus topik |
-
-#### Create Topic
-
-```http
-POST /api/topics
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "name": "Aljabar",
-  "slug": "aljabar",
-  "description": "Pelajari operasi matematika menggunakan simbol dan variabel",
-  "icon_url": "📊",
-  "sort_order": 1
-}
-```
-
----
-
-### 📖 Materials (Materi)
-
-| Method | Endpoint | Akses | Deskripsi |
-|--------|----------|-------|-----------|
-| GET | `/api/topics/:topicId/materials` | Public | Daftar materi dalam topik |
-| GET | `/api/topics/:topicId/materials/:id` | Public | Detail materi + steps |
-| POST | `/api/topics/:topicId/materials` | Admin | Buat materi baru |
-| PUT | `/api/topics/:topicId/materials/:id` | Admin | Update materi |
-| DELETE | `/api/topics/:topicId/materials/:id` | Admin | Hapus materi |
-
-#### Detail Materi (Step-by-step)
-
-```http
-GET /api/topics/1/materials/1
-```
-
-Response:
-```json
-{
-  "success": true,
-  "data": {
-    "material": {
-      "id": 1,
-      "topic_id": 1,
-      "title": "Persamaan Linear Satu Variabel",
-      "slug": "persamaan-linear-satu-variabel",
-      "description": "...",
-      "topic_name": "Aljabar"
-    },
-    "steps": [
-      {
-        "id": 1,
-        "step_number": 1,
-        "title": "Apa itu Persamaan Linear?",
-        "content": "Persamaan linear satu variabel adalah...",
-        "image_url": null
-      },
-      {
-        "id": 2,
-        "step_number": 2,
-        "title": "Memahami Bentuk Umum",
-        "content": "Bentuk umum persamaan linear...",
-        "image_url": null
-      }
-    ]
-  }
-}
-```
-
----
-
-### 📝 Material Steps (Detail Step-by-step)
-
-| Method | Endpoint | Akses | Deskripsi |
-|--------|----------|-------|-----------|
-| GET | `/api/topics/:topicId/materials/:materialId/steps` | Public | Daftar semua step |
-| POST | `/api/topics/:topicId/materials/:materialId/steps` | Admin | Tambah step baru |
-| PUT | `/api/topics/:topicId/materials/steps/:stepId` | Admin | Update step |
-| DELETE | `/api/topics/:topicId/materials/steps/:stepId` | Admin | Hapus step |
-
-#### Create Step
-
-```http
-POST /api/topics/1/materials/1/steps
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "step_number": 1,
-  "title": "Apa itu Persamaan Linear?",
-  "content": "Persamaan linear satu variabel adalah...",
-  "image_url": "https://example.com/image.png",
-  "sort_order": 1
-}
-```
-
----
-
-### 🎥 Videos (Video Pembelajaran)
-
-| Method | Endpoint | Akses | Deskripsi |
-|--------|----------|-------|-----------|
-| GET | `/api/topics/:topicId/materials/:materialId/videos` | Public | Daftar video |
-| GET | `/api/topics/:topicId/materials/:materialId/videos/:id` | Public | Detail video |
-| POST | `/api/topics/:topicId/materials/:materialId/videos` | Admin | Tambah video |
-| PUT | `/api/topics/:topicId/materials/:materialId/videos/:id` | Admin | Update video |
-| DELETE | `/api/topics/:topicId/materials/:materialId/videos/:id` | Admin | Hapus video |
-
-#### Create Video
-
-```http
-POST /api/topics/1/materials/1/videos
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "title": "Pengenalan Persamaan Linear",
-  "description": "Video pembelajaran dasar persamaan linear",
-  "video_url": "https://www.youtube.com/embed/example1",
-  "thumbnail_url": "https://img.youtube.com/vi/example1/mqdefault.jpg",
-  "duration": 600,
-  "sort_order": 1
-}
-```
-
----
-
-### ❓ Quiz
-
-| Method | Endpoint | Akses | Deskripsi |
-|--------|----------|-------|-----------|
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes` | Public | Daftar quiz |
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes/:id` | Public | Detail quiz + soal (tanpa jawaban) |
-| POST | `/api/topics/:topicId/materials/:materialId/quizzes` | Admin | Buat quiz baru |
-| PUT | `/api/topics/:topicId/materials/:materialId/quizzes/:id` | Admin | Update quiz |
-| DELETE | `/api/topics/:topicId/materials/:materialId/quizzes/:id` | Admin | Hapus quiz |
-
-#### Detail Quiz (Soal tanpa jawaban benar)
-
-```http
-GET /api/topics/1/materials/1/quizzes/1
-```
-
-Response:
-```json
-{
-  "success": true,
-  "data": {
-    "quiz": {
-      "id": 1,
-      "title": "Quiz Persamaan Linear Satu Variabel",
-      "description": "Uji pemahaman kamu...",
-      "time_limit": 15,
-      "passing_score": 70
-    },
-    "questions": [
-      {
-        "id": 1,
-        "question_text": "Bentuk umum persamaan linear satu variabel adalah...",
-        "option_a": "ax² + b = 0",
-        "option_b": "ax + b = 0",
-        "option_c": "ax + by = 0",
-        "option_d": "a/x + b = 0"
-      }
-    ]
-  }
-}
-```
-
-**Catatan:** Field `correct_answer` sengaja disembunyikan saat menampilkan quiz agar tidak bisa dicurangi.
-
----
-
-### 📝 Quiz Questions (Soal Quiz)
-
-| Method | Endpoint | Akses | Deskripsi |
-|--------|----------|-------|-----------|
-| POST | `/api/topics/:topicId/materials/:materialId/quizzes/:id/questions` | Admin | Tambah soal |
-| PUT | `/api/topics/:topicId/materials/:materialId/quizzes/questions/:questionId` | Admin | Update soal |
-| DELETE | `/api/topics/:topicId/materials/:materialId/quizzes/questions/:questionId` | Admin | Hapus soal |
-
-#### Create Question
-
-```http
-POST /api/topics/1/materials/1/quizzes/1/questions
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "question_text": "Bentuk umum persamaan linear satu variabel adalah...",
-  "option_a": "ax² + b = 0",
-  "option_b": "ax + b = 0",
-  "option_c": "ax + by = 0",
-  "option_d": "a/x + b = 0",
-  "correct_answer": "b",
-  "sort_order": 1
-}
-```
-
----
-
-### ✅ Submit Quiz & Hasil
-
-| Method | Endpoint | Akses | Deskripsi |
-|--------|----------|-------|-----------|
-| POST | `/api/topics/:topicId/materials/:materialId/quizzes/:id/submit` | Login | Submit jawaban quiz |
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes/:id/results` | Login | Riwayat hasil quiz per quiz |
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes/results/:resultId` | Login | Detail hasil quiz |
-| GET | `/api/my-results` | Login | Semua hasil quiz user |
-
-#### Submit Quiz
-
-```http
-POST /api/topics/1/materials/1/quizzes/1/submit
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "time_taken": 120,
-  "answers": [
-    { "question_id": 1, "selected_answer": "b" },
-    { "question_id": 2, "selected_answer": "a" },
-    { "question_id": 3, "selected_answer": "c" },
-    { "question_id": 4, "selected_answer": "c" },
-    { "question_id": 5, "selected_answer": "b" }
-  ]
-}
-```
-
-Response:
-```json
-{
-  "success": true,
-  "message": "Quiz berhasil disubmit",
-  "data": {
-    "result": {
-      "id": 1,
-      "score": 80,
-      "total_questions": 5,
-      "correct_answers": 4,
-      "time_taken": 120,
-      "passed": true,
-      "answers": [
-        {
-          "question_id": 1,
-          "selected_answer": "b",
-          "correct_answer": "b",
-          "is_correct": true
-        },
-        {
-          "question_id": 2,
-          "selected_answer": "a",
-          "correct_answer": "b",
-          "is_correct": false
-        }
-      ]
-    }
-  }
-}
-```
-
-**Logika penilaian:**
-- `score` = (jawaban benar / total soal) × 100
-- `passed` = `true` jika `score >= passing_score` quiz
-### 💡 Pembahasan Quiz
-
-| Method | Endpoint | Akses | Deskripsi |
-|--------|----------|-------|-----------|
-| GET | `/api/topics/:topicId/materials/:materialId/quizzes/:id/discussions` | Public | Pembahasan semua soal dalam quiz |
-| POST | `/api/topics/:topicId/materials/:materialId/quizzes/questions/:questionId/discussions` | Admin | Tambah pembahasan |
-| PUT | `/api/topics/:topicId/materials/:materialId/quizzes/discussions/:discussionId` | Admin | Update pembahasan |
-
-#### Get Discussions
-
-```http
-GET /api/topics/1/materials/1/quizzes/1/discussions
-```
-
-Response:
-```json
-{
-  "success": true,
-  "data": {
-    "discussions": [
-      {
-        "id": 1,
-        "question_id": 1,
-        "question_text": "Bentuk umum persamaan linear satu variabel adalah...",
-        "option_a": "ax² + b = 0",
-        "option_b": "ax + b = 0",
-        "option_c": "ax + by = 0",
-        "option_d": "a/x + b = 0",
-        "correct_answer": "b",
-        "explanation": "Persamaan linear satu variabel memiliki bentuk umum ax + b = 0...",
-        "image_url": null
-      }
-    ]
-  }
-}
-```
-
----
-
-## 🏗 Langkah Pembuatan
-
-Berikut adalah langkah-langkah pembuatan backend Mathify secara berurutan:
-
-### Langkah 1: Inisialisasi Project
-
-```bash
-cd mathify
-npm init -y
-```
-
-Membuat `package.json` sebagai file konfigurasi project Node.js. Kemudian edit package.json untuk menambahkan scripts dan dependencies.
-
-### Langkah 2: Install Dependencies
-
-```bash
-npm install express cors dotenv pg bcryptjs jsonwebtoken
-npm install --save-dev nodemon
-```
-
-- **express**: Framework web untuk membuat REST API
-- **cors**: Mengizinkan request dari domain lain (frontend)
-- **dotenv**: Membaca konfigurasi dari file `.env`
-- **pg**: Driver PostgreSQL untuk Node.js
-- **bcryptjs**: Mengenkripsi password agar aman
-- **jsonwebtoken**: Membuat dan memverifikasi token JWT untuk autentikasi
-- **nodemon**: Auto-restart server saat file berubah (development)
-
-### Langkah 3: Buat Struktur Folder
-
-```
-src/
-├── config/        → Konfigurasi database
-├── middleware/    → Middleware (auth, error handler)
-├── models/        → Query database (data access layer)
-├── controllers/   → Logic bisnis (request handler)
-└── routes/        → Definisi endpoint API
-migrations/        → SQL schema & seed data
-```
-
-Pemisahan folder mengikuti pola **MVC (Model-View-Controller)** yang dimodifikasi untuk API:
-- **Model**: Berinteraksi langsung dengan database
-- **Controller**: Menghandle request, memanggil model, mengembalikan response
-- **Routes**: Mendefinisikan URL endpoint dan menghubungkannya ke controller
-
-### Langkah 4: Konfigurasi Environment Variables
-
-Membuat file `.env` untuk menyimpan konfigurasi sensitif (password database, JWT secret) agar tidak hardcoded di source code. File ini ditambahkan ke `.gitignore`.
-
-### Langkah 5: Setup Database Connection
-
-Membuat `src/config/database.js` menggunakan **pg.Pool** untuk connection pooling. Pool mengelola kumpulan koneksi database yang bisa digunakan ulang, lebih efisien daripada membuat koneksi baru setiap request.
-
-### Langkah 6: Buat Database Schema (Migration)
-
-Membuat `migrations/001_init.sql` yang berisi:
-- 9 tabel: users, topics, materials, material_steps, videos, quizzes, quiz_questions, quiz_discussions, quiz_results
-- Relasi antar tabel menggunakan FOREIGN KEY
-- Index untuk optimasi query performa
-
-**Relasi utama:**
-- Topic → Materials (1:N)
-- Material → Steps (1:N)
-- Material → Videos (1:N)
-- Material → Quizzes (1:N)
-- Quiz → Questions (1:N)
-- Question → Discussion (1:1)
-- Quiz + User → Results (N:M)
-
-### Langkah 7: Buat Seed Data
-
-Membuat `migrations/002_seed_data.sql` dengan data contoh:
-- 5 topik: Aljabar, Geometri, Aritmatika, Statistika, Trigonometri
-- 7 materi dengan pembagian per topik
-- Langkah-langkah materi untuk "Persamaan Linear" dan "Bangun Datar"
-- 3 video pembelajaran
-- 2 quiz dengan masing-masing 5 soal pilihan ganda
-- Pembahasan untuk setiap soal quiz
-
-### Langkah 8: Buat Middleware
-
-- **auth.js**: Middleware yang memverifikasi JWT token dari header `Authorization: Bearer <token>`. Jika valid, informasi user disimpan di `req.user`. Jika tidak valid, return 401.
-- **errorHandler.js**: Global error handler yang menangkap semua error, termasuk PostgreSQL error codes (23505 untuk duplicate, 23503 untuk foreign key violation).
-
-### Langkah 9: Buat Models
-
-Setiap model berisi fungsi-fungsi CRUD yang menjalankan SQL query menggunakan `db.query()`:
-- **User**: create, findByEmail, findByUsername, findById, verifyPassword
-- **Topic**: findAll, findById, findBySlug, create, update, delete
-- **Material**: findByTopicId, findById, findBySlug, create, update, delete
-- **MaterialStep**: findByMaterialId, findById, create, update, delete
-- **Video**: findByMaterialId, findById, create, update, delete
-- **Quiz**: findByMaterialId, findById, create, update, delete
-- **QuizQuestion**: findByQuizId, findById, create, update, delete, countByQuizId
-- **QuizDiscussion**: findByQuestionId, findByQuizId, create, update, delete
-- **QuizResult**: create, findByUserAndQuiz, findByUserId, findById, getBestScore
-
-Menggunakan **parameterized queries** ($1, $2, dst) untuk mencegah SQL injection.
-
-### Langkah 10: Buat Controllers
-
-Controller menghandle request dari client:
-- **authController**: Register (validasi + hash password + generate token), Login (verifikasi password + generate token), Me (get profil dari token)
-- **topicController**: CRUD standar untuk topik
-- **materialController**: CRUD materi + CRUD material steps (nested resource)
-- **videoController**: CRUD video pembelajaran
-- **quizController**: CRUD quiz + CRUD questions + submit quiz + hasil quiz + pembahasan
-
-**Logika Submit Quiz:**
-1. Ambil semua soal dari database
-2. Bandingkan jawaban user dengan correct_answer
-3. Hitung skor = (benar / total) × 100
-4. Tentukan passed = skor >= passing_score
-5. Simpan hasil ke quiz_results dengan answers dalam format JSONB
-
-### Langkah 11: Buat Routes
-
-Mendefinisikan endpoint API dan menghubungkannya ke controller:
-- **authRoutes**: `/api/auth/*`
-- **topicRoutes**: `/api/topics/*`
-- **materialRoutes**: `/api/topics/:topicId/materials/*` (nested route dengan mergeParams)
-- **videoRoutes**: `/api/topics/:topicId/materials/:materialId/videos/*`
-- **quizRoutes**: `/api/topics/:topicId/materials/:materialId/quizzes/*`
-
-Route menggunakan **nested resource pattern** agar URL merepresentasikan hubungan hierarki: Topic → Material → Video/Quiz.
-
-### Langkah 12: Buat App & Server Entry Point
-
-- **app.js**: Konfigurasi Express (cors, json parser, routes, 404 handler, error handler)
-- **server.js**: Menjalankan server pada PORT yang dikonfigurasi
-
-### Langkah 13: Testing
-
-Jalankan server dan test endpoint menggunakan Postman / curl / Thunder Client.
-
----
-
-## 📌 Catatan Penting
-
-1. **Keamanan Password**: Password di-hash menggunakan bcryptjs sebelum disimpan ke database, tidak pernah disimpan plain text.
-2. **Dual Token (Access + Refresh)**:
-   - **Access Token**: Berusia pendek (30m), digunakan untuk akses API. Dikirim di header `Authorization: Bearer <accessToken>`.
-   - **Refresh Token**: Berusia panjang (7d), disimpan di database. Digunakan untuk mendapat access token baru tanpa login ulang.
-   - Saat refresh, token lama di-revoke dan diganti token baru (**rotation**) untuk mencegah replay attack.
-3. **SQL Injection Prevention**: Semua query menggunakan parameterized queries ($1, $2).
-4. **Quiz Security**: Endpoint detail quiz menyembunyikan `correct_answer`, baru terlihat saat submit dan pembahasan.
-5. **CORS**: Diaktifkan untuk mengizinkan frontend mengakses API dari domain/port berbeda.
-6. **Logout**: Refresh token di-revoke dari database saat logout, sehingga token yang dicuri tidak bisa digunakan lagi.
+📐 **Mathify** - *Belajar Matematika Jadi Lebih Mudah, Menyenangkan, dan Premium!*
