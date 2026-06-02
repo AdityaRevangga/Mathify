@@ -88,7 +88,11 @@ const MaterialPage = () => {
     } else if (currentView === 'video') {
       setCurrentView('latihan');
     } else if (currentView === 'latihan') {
-      navigate(`/quiz`);
+      if (quizzes && quizzes.length > 0) {
+        navigate('/quiz', { state: { autoStartQuizId: quizzes[0].id } });
+      } else {
+        navigate(`/quiz`);
+      }
     }
   };
 
