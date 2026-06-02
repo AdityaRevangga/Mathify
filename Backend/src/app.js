@@ -69,9 +69,23 @@ const client = new Client({
 })
 
 client.connect()
-  .then(() => {
+  .then(async () => {
     console.log('✅ PostgreSQL Connected')
     console.log('🔗 Buka aplikasi Mathify di browser Anda: http://localhost:5173')
+    
+    // Auto-migrate: check and add 'type' column to 'materials' table if missing
+    try {
+      const res = await client.query(
+        "SELECT column_name FROM information_schema.columns WHERE table_name='materials' AND column_name='type'"
+      );
+      if (res.rowCount === 0) {
+        console.log('⏳ Kolom "type" tidak ditemukan di tabel "materials". Menambahkan kolom...');
+        await client.query("ALTER TABLE materials ADD COLUMN type VARCHAR(50) DEFAULT 'theory'");
+        console.log('✅ Kolom "type" berhasil ditambahkan ke tabel "materials".');
+      }
+    } catch (e) {
+      console.error('⚠ Gagal memeriksa/menambahkan kolom "type" secara otomatis:', e.message);
+    }
   })
   .catch(err => {
     console.error('❌ Database Error:', err.message)
