@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api, { topicsAPI, materialsAPI, quizzesAPI, resultsAPI, leaderboardAPI } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import QuizCard from '../components/QuizCard';
@@ -6,6 +7,8 @@ import '../styles/quiz-list.css';
 
 const QuizListPage = () => {
   const { user, updateUserLocalState } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [quizzes, setQuizzes] = useState([]);
   const [results, setResults] = useState([]);
@@ -19,6 +22,7 @@ const QuizListPage = () => {
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [userSelections, setUserSelections] = useState({}); // { questionId: selectedOption }
   const [currentFeedback, setCurrentFeedback] = useState(null); // { isCorrect, explanation, correctAnswer }
+  const [quizDiscussions, setQuizDiscussions] = useState([]); // Array of discussions
 
   // Play details
   const [secondsLeft, setSecondsLeft] = useState(600); // 10 minutes
@@ -76,6 +80,18 @@ const QuizListPage = () => {
     loadQuizzesAndResults();
   }, [playState]);
 
+  // Auto-start quiz if navigated with autoStartQuizId
+  useEffect(() => {
+    if (quizzes.length > 0 && location.state?.autoStartQuizId && playState === 'list') {
+      const quizToStart = quizzes.find(q => q.id === location.state.autoStartQuizId);
+      if (quizToStart) {
+        handleStartQuizIntro(quizToStart);
+        // Clear the state so it doesn't auto-start again on back/refresh
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    }
+  }, [quizzes, location.state, playState, navigate]);
+
   // Timer effect
   useEffect(() => {
     if (timerActive && secondsLeft > 0) {
@@ -105,6 +121,20 @@ const QuizListPage = () => {
         setUserSelections({});
         setCurrentFeedback(null);
         setSecondsLeft(600);
+
+        // Fetch discussions
+        try {
+          const discRes = await quizzesAPI.getDiscussions(activeQuiz.topic_id, activeQuiz.material_id, activeQuiz.id);
+          if (discRes.data?.success) {
+            setQuizDiscussions(discRes.data.data.discussions || []);
+          } else {
+            setQuizDiscussions([]);
+          }
+        } catch (e) {
+          console.error('Failed to load discussions:', e);
+          setQuizDiscussions([]);
+        }
+
         setPlayState('play');
         setTimerActive(true);
       }
@@ -539,10 +569,15 @@ const QuizListPage = () => {
                       <div className="result-explanation">
                         <strong>Pembahasan Soal:</strong>
                         <br />
-                        {isCorrect 
-                          ? 'Jawaban Anda benar! Konsep ini membuktikan keakuratan pemahaman matematika visual Anda.' 
-                          : `Jawaban benar adalah ${correctAns?.toUpperCase()}. Silakan periksa kembali metode penyelesaian yang telah diajarkan di modul materi.`
-                        }
+                        {(() => {
+                          const discussion = quizDiscussions.find(d => d.question_id === q.id);
+                          if (discussion && discussion.explanation) {
+                            return discussion.explanation;
+                          }
+                          return isCorrect 
+                            ? 'Jawaban Anda benar! Konsep ini membuktikan keakuratan pemahaman matematika visual Anda.' 
+                            : `Jawaban benar adalah ${correctAns?.toUpperCase()}. Silakan periksa kembali metode penyelesaian yang telah diajarkan di modul materi.`;
+                        })()}
                       </div>
                     </div>
                   );
