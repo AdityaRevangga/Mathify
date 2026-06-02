@@ -47,7 +47,8 @@ const QuizListPage = () => {
               ...q,
               topic_id: topic.id,
               material_id: mat.id,
-              topic_slug: topic.slug
+              topic_slug: topic.slug,
+              topic_name: topic.name
             }));
             loadedQuizzes.push(...mappedQuizzes);
           }
@@ -244,22 +245,20 @@ const QuizListPage = () => {
             </button>
           </div>
 
-          {/* GROUPED BY TOPICS */}
-          {['aljabar', 'geometri', 'aritmatika', 'statistika', 'trigonometri'].map((topicSlug) => {
+          {/* GROUPED BY TOPICS (DYNAMICS) */}
+          {Array.from(new Set(filteredQuizzes.map(q => q.topic_slug))).map((topicSlug) => {
             const topicQuizzes = filteredQuizzes.filter(q => q.topic_slug === topicSlug);
             if (topicQuizzes.length === 0) return null;
 
-            const topicName = topicSlug === 'aljabar' ? 'Aljabar' 
-              : topicSlug === 'geometri' ? 'Geometri'
-              : topicSlug === 'aritmatika' ? 'Aritmatika'
-              : topicSlug === 'statistika' ? 'Statistika'
-              : 'Trigonometri';
+            const firstQuiz = topicQuizzes[0];
+            const topicName = firstQuiz.topic_name || (topicSlug.charAt(0).toUpperCase() + topicSlug.slice(1));
               
             const topicEmoji = topicSlug === 'aljabar' ? '📊'
               : topicSlug === 'geometri' ? '📐'
               : topicSlug === 'aritmatika' ? '🔢'
               : topicSlug === 'statistika' ? '📈'
-              : '📏';
+              : topicSlug === 'trigonometri' ? '📏'
+              : '📐';
 
             return (
               <div key={topicSlug} className="topic-quiz-group" style={{ marginBottom: '2.5rem' }}>

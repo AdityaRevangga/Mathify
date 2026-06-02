@@ -97,6 +97,19 @@ export const materialsAPI = {
   createStep: (topicId, materialId, data) => api.post(`/api/topics/${topicId}/materials/${materialId}/steps`, data),
   updateStep: (topicId, stepId, data) => api.put(`/api/topics/${topicId}/materials/steps/${stepId}`, data),
   deleteStep: (topicId, stepId) => api.delete(`/api/topics/${topicId}/materials/steps/${stepId}`),
+  
+  // Practice Questions (Latihan Soal) CRUD
+  getPractice: (topicId, materialId) => api.get(`/api/topics/${topicId}/materials/${materialId}/practice`),
+  createPractice: (topicId, materialId, data) => api.post(`/api/topics/${topicId}/materials/${materialId}/practice`, data),
+  updatePractice: (topicId, practiceId, data) => api.put(`/api/topics/${topicId}/materials/practice/${practiceId}`, data),
+  deletePractice: (topicId, practiceId) => api.delete(`/api/topics/${topicId}/materials/practice/${practiceId}`),
+};
+
+export const videosAPI = {
+  getByMaterial: (topicId, materialId) => api.get(`/api/topics/${topicId}/materials/${materialId}/videos`),
+  create: (topicId, materialId, data) => api.post(`/api/topics/${topicId}/materials/${materialId}/videos`, data),
+  update: (topicId, materialId, id, data) => api.put(`/api/topics/${topicId}/materials/${materialId}/videos/${id}`, data),
+  delete: (topicId, materialId, id) => api.delete(`/api/topics/${topicId}/materials/${materialId}/videos/${id}`),
 };
 
 export const practiceAPI = {

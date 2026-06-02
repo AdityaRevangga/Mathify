@@ -28,11 +28,11 @@ const materialController = {
   async create(req, res, next) {
     try {
       const { topicId } = req.params;
-      const { title, slug, description, sort_order } = req.body;
+      const { title, slug, description, type, sort_order } = req.body;
       if (!title || !slug) {
         return res.status(400).json({ success: false, message: 'Judul dan slug wajib diisi' });
       }
-      const material = await Material.create({ topic_id: topicId, title, slug, description, sort_order });
+      const material = await Material.create({ topic_id: topicId, title, slug, description, type, sort_order });
       res.status(201).json({ success: true, message: 'Materi berhasil dibuat', data: { material } });
     } catch (error) {
       next(error);
@@ -119,6 +119,88 @@ const materialController = {
         [req.params.materialId]
       );
       res.json({ success: true, data: { practiceQuestions: result.rows } });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async createPractice(req, res, next) {
+    try {
+      const { materialId } = req.params;
+      const { question_text, option_a, option_b, option_c, option_d, correct_answer, explanation, sort_order } = req.body;
+      if (!question_text || !option_a || !option_b || !option_c || !option_d || correct_answer === undefined) {
+        return res.status(400).json({ success: false, message: 'Semua field latihan soal wajib diisi' });
+      }
+      const db = require('../config/database');
+      const result = await db.query(
+        `INSERT INTO practice_questions 
+        (material_id, question_text, option_a, option_b, option_c, option_d, correct_answer, explanation, sort_order)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+        [
+          materialId,
+          question_text,
+          option_a,
+          option_b,
+          option_c,
+          option_d,
+          parseInt(correct_answer),
+          explanation || '',
+          parseInt(sort_order) || 0
+        ]
+      );
+      res.status(201).json({ success: true, message: 'Latihan soal berhasil ditambahkan', data: { practiceQuestion: result.rows[0] } });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async updatePractice(req, res, next) {
+    try {
+      const { practiceId } = req.params;
+      const { question_text, option_a, option_b, option_c, option_d, correct_answer, explanation, sort_order } = req.body;
+      
+      const db = require('../config/database');
+      const result = await db.query(
+        `UPDATE practice_questions SET
+          question_text = COALESCE($1, question_text),
+          option_a = COALESCE($2, option_a),
+          option_b = COALESCE($3, option_b),
+          option_c = COALESCE($4, option_c),
+          option_d = COALESCE($5, option_d),
+          correct_answer = COALESCE($6, correct_answer),
+          explanation = COALESCE($7, explanation),
+          sort_order = COALESCE($8, sort_order)
+         WHERE id = $9 RETURNING *`,
+        [
+          question_text,
+          option_a,
+          option_b,
+          option_c,
+          option_d,
+          correct_answer !== undefined ? parseInt(correct_answer) : null,
+          explanation,
+          sort_order !== undefined ? parseInt(sort_order) : null,
+          practiceId
+        ]
+      );
+      if (result.rows.length === 0) {
+        return res.status(404).json({ success: false, message: 'Latihan soal tidak ditemukan' });
+      }
+      res.json({ success: true, message: 'Latihan soal berhasil diperbarui', data: { practiceQuestion: result.rows[0] } });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async deletePractice(req, res, next) {
+    try {
+      const { practiceId } = req.params;
+      const db = require('../config/database');
+      const result = await db.query('DELETE FROM practice_questions WHERE id = $1 RETURNING *', [practiceId]);
+      if (result.rows.length === 0) {
+        return res.status(404).json({ success: false, message: 'Latihan soal tidak ditemukan' });
+      }
+      res.json({ success: true, message: 'Latihan soal berhasil dihapus' });
     } catch (error) {
       next(error);
     }

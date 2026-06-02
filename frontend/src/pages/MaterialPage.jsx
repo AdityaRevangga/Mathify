@@ -84,21 +84,11 @@ const MaterialPage = () => {
 
   const handleLanjutkan = () => {
     if (currentView === 'materi') {
-      if (videos.length > 0) {
-        setCurrentView('video');
-      } else {
-        setCurrentView('latihan');
-      }
+      setCurrentView('video');
     } else if (currentView === 'video') {
       setCurrentView('latihan');
     } else if (currentView === 'latihan') {
-      // Start quiz or navigate to Kuis
-      if (quizzes.length > 0) {
-        // Go directly to quiz view if exists
-        navigate(`/quiz`);
-      } else {
-        navigate(`/quiz`);
-      }
+      navigate(`/quiz`);
     }
   };
 
@@ -275,29 +265,27 @@ const MaterialPage = () => {
             </div>
           </div>
 
-          {/* Step 2: Tonton Video (if exists) */}
-          {videos.length > 0 && (
-            <div 
-              className={`step-item ${currentView === 'video' ? 'active' : ''}`}
-              onClick={() => setCurrentView('video')}
-            >
-              <div className={`step-icon ${currentView === 'materi' ? 's-locked' : currentView === 'video' ? 's-active' : 's-done'}`}>
-                {currentView === 'latihan' ? '✓' : '2'}
-              </div>
-              <div className="step-info">
-                <div className="step-name">Tonton Video Pembelajaran</div>
-                <div className="step-sub">{videos.length} Video</div>
-              </div>
+          {/* Step 2: Tonton Video */}
+          <div 
+            className={`step-item ${currentView === 'video' ? 'active' : ''}`}
+            onClick={() => setCurrentView('video')}
+          >
+            <div className={`step-icon ${currentView === 'materi' ? 's-locked' : currentView === 'video' ? 's-active' : 's-done'}`}>
+              {(currentView === 'latihan' || currentView === 'kuis') ? '✓' : '2'}
             </div>
-          )}
+            <div className="step-info">
+              <div className="step-name">Tonton Video Pembelajaran</div>
+              <div className="step-sub">{videos.length > 0 ? 'Video Tersedia' : 'Belum Ada Video'}</div>
+            </div>
+          </div>
 
           {/* Step 3: Latihan Soal */}
           <div 
             className={`step-item ${currentView === 'latihan' ? 'active' : ''}`}
             onClick={() => setCurrentView('latihan')}
           >
-            <div className={`step-icon ${currentView !== 'latihan' ? 's-locked' : 's-active'}`}>
-              {videos.length > 0 ? '3' : '2'}
+            <div className={`step-icon ${(currentView === 'materi' || currentView === 'video') ? 's-locked' : currentView === 'latihan' ? 's-active' : 's-done'}`}>
+              {currentView === 'kuis' ? '✓' : '3'}
             </div>
             <div className="step-info">
               <div className="step-name">Latihan Soal</div>
@@ -307,7 +295,7 @@ const MaterialPage = () => {
 
           {/* Step 4: Kuis Akhir */}
           <div className="step-item no-click">
-            <div className="step-icon s-locked">
+            <div className={`step-icon ${currentView === 'kuis' ? 's-active' : 's-locked'}`}>
               🔒
             </div>
             <div className="step-info">
