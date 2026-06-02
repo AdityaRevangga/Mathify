@@ -151,11 +151,11 @@ const TopicsPage = () => {
             Kembali ke Topik
           </button>
         )}
-        <h2>{selectedTopic ? selectedTopic.name : "Explore Topics"}</h2>
+        <h2>{selectedTopic ? selectedTopic.name : "Jelajahi Topik Matematika"}</h2>
         <p>
           {selectedTopic 
             ? selectedTopic.description 
-            : "Master everything from basic arithmetic to advanced theoretical calculus with interactive visual guides."
+            : "Kuasai berbagai konsep matematika mulai dari aljabar dasar hingga kalkulus dengan panduan visual yang interaktif."
           }
         </p>
       </div>
