@@ -29,10 +29,16 @@ const Topic = {
   },
 
   async create({ name, slug, description, icon_url, sort_order }) {
+    let order = sort_order;
+    if (order === undefined || order === null) {
+      const maxResult = await db.query('SELECT MAX(sort_order) as max_order FROM topics');
+      const maxOrder = maxResult.rows[0].max_order;
+      order = maxOrder !== null && maxOrder !== undefined ? maxOrder + 1 : 1;
+    }
     const result = await db.query(
       `INSERT INTO topics (name, slug, description, icon_url, sort_order)
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [name, slug, description, icon_url, sort_order || 0]
+      [name, slug, description, icon_url, order]
     );
     return result.rows[0];
   },

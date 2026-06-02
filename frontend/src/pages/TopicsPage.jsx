@@ -62,20 +62,37 @@ const TopicsPage = () => {
     }
   };
 
-  const getTopicStyle = (topicSlug) => {
-    switch (topicSlug?.toLowerCase()) {
+  const getTopicStyle = (topic) => {
+    const slug = typeof topic === 'string' ? topic : topic?.slug;
+    const iconUrl = typeof topic === 'object' ? topic?.icon_url : null;
+    const key = (iconUrl || slug || '').toLowerCase();
+
+    switch (key) {
+      case 'code':
       case 'aljabar':
         return { emoji: '📊', color: 'blue', level: 'menengah', levelText: 'Intermediate' };
+      case 'triangle':
       case 'geometri':
         return { emoji: '📐', color: 'blue', level: 'dasar', levelText: 'Beginner' };
+      case 'calculator':
       case 'aritmatika':
         return { emoji: '🔢', color: 'orange', level: 'dasar', levelText: 'Beginner' };
+      case 'trending':
       case 'statistika':
         return { emoji: '📈', color: 'purple', level: 'menengah', levelText: 'Intermediate' };
+      case 'ruler':
       case 'trigonometri':
         return { emoji: '📏', color: 'red', level: 'lanjutan', levelText: 'Advanced' };
+      case 'book':
+        return { emoji: '📚', color: 'green', level: 'dasar', levelText: 'Beginner' };
+      case 'abacus':
+        return { emoji: '🧮', color: 'orange', level: 'menengah', levelText: 'Intermediate' };
+      case 'lightbulb':
+        return { emoji: '💡', color: 'purple', level: 'dasar', levelText: 'Beginner' };
+      case 'science':
+        return { emoji: '🧪', color: 'red', level: 'lanjutan', levelText: 'Advanced' };
       default:
-        return { emoji: '📐', color: 'blue', level: 'dasar', levelText: 'Beginner' };
+        return { emoji: '📚', color: 'green', level: 'dasar', levelText: 'Beginner' };
     }
   };
 
@@ -110,7 +127,7 @@ const TopicsPage = () => {
   // Filter topics based on activeFilter and getTopicStyle level mapping
   const filteredTopics = topics.filter(topic => {
     if (activeFilter === 'all') return true;
-    const { level } = getTopicStyle(topic.slug);
+    const { level } = getTopicStyle(topic);
     return level === activeFilter;
   });
 
@@ -134,11 +151,11 @@ const TopicsPage = () => {
             Kembali ke Topik
           </button>
         )}
-        <h2>{selectedTopic ? selectedTopic.name : "Explore Topics"}</h2>
+        <h2>{selectedTopic ? selectedTopic.name : "Jelajahi Topik Matematika"}</h2>
         <p>
           {selectedTopic 
             ? selectedTopic.description 
-            : "Master everything from basic arithmetic to advanced theoretical calculus with interactive visual guides."
+            : "Kuasai berbagai konsep matematika mulai dari aljabar dasar hingga kalkulus dengan panduan visual yang interaktif."
           }
         </p>
       </div>
@@ -175,7 +192,7 @@ const TopicsPage = () => {
 
           <div className="topics-grid">
             {filteredTopics.map((topic) => {
-              const { emoji, color, level } = getTopicStyle(topic.slug);
+              const { emoji, color, level } = getTopicStyle(topic);
               const progress = getTopicProgress(topic.id);
               // Count lessons (materials) dynamically from database
               const lessonsCount = topic.material_count || 0;

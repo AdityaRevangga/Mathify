@@ -242,7 +242,7 @@ const AdminQuizzesPage = () => {
       option_b: q.option_b || '',
       option_c: q.option_c || '',
       option_d: q.option_d || '',
-      correct_answer: q.correct_answer || 'A',
+      correct_answer: (q.correct_answer || 'A').toUpperCase(),
       sort_order: q.sort_order || 1,
       explanation: matchingDisc ? matchingDisc.explanation : ''
     });
@@ -276,7 +276,7 @@ const AdminQuizzesPage = () => {
       option_b: qFormData.option_b,
       option_c: qFormData.option_c,
       option_d: qFormData.option_d,
-      correct_answer: qFormData.correct_answer,
+      correct_answer: qFormData.correct_answer.toLowerCase(),
       sort_order: qFormData.sort_order
     };
 
@@ -665,7 +665,7 @@ const AdminQuizzesPage = () => {
                       {/* Options listing */}
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem', marginBottom: '0.75rem' }}>
                         {['a', 'b', 'c', 'd'].map(opt => {
-                          const isCorrect = q.correct_answer === opt.toUpperCase();
+                          const isCorrect = q.correct_answer?.toUpperCase() === opt.toUpperCase();
                           return (
                             <div
                               key={opt}
