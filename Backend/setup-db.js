@@ -20,7 +20,7 @@ async function setup() {
     database: process.env.DB_NAME || 'mathify'
   });
 
-  // 1. Connect to default 'postgres' database to check if PostgreSQL is running and create 'mathify' database
+  // 1. Connect to default 'postgres' database
   const pgClient = new Client({
     ...dbConfig,
     database: 'postgres'
@@ -31,14 +31,14 @@ async function setup() {
     console.log('Successfully connected to PostgreSQL default database.');
   } catch (error) {
     console.error('\nERROR: Cannot connect to PostgreSQL!');
-    console.error('Please make sure PostgreSQL is running on your machine and that your credentials in the root .env file are correct.');
+    console.error('Please make sure PostgreSQL is running and credentials in .env are correct.');
     console.error('Error Details:', error.message);
     process.exit(1);
   }
 
   const dbName = process.env.DB_NAME || 'mathify';
-  
-  // Check if database exists
+
+  // Check if database exists, create if not
   try {
     const res = await pgClient.query(`SELECT 1 FROM pg_database WHERE datname = $1`, [dbName]);
     if (res.rowCount === 0) {
@@ -56,7 +56,7 @@ async function setup() {
     await pgClient.end();
   }
 
-  // 2. Connect to the 'mathify' database to run migrations
+  // 2. Connect to 'mathify' database
   console.log(`\nConnecting to "${dbName}" database...`);
   const client = new Client({
     ...dbConfig,
@@ -84,55 +84,115 @@ async function setup() {
     process.exit(1);
   }
 
-  // 4. Custom Seeding with Properly Bcrypt-Hashed Passwords
+  // 4. Seed users jika belum ada
   try {
-    console.log('\nChecking if database needs seeding...');
     const userCheck = await client.query('SELECT COUNT(*) FROM users');
     const userCount = parseInt(userCheck.rows[0].count);
 
-    if (userCount > 0) {
-      console.log('Database already has users. Skipping seed to prevent duplicate errors.');
-      console.log('You can log in with your registered account or seed again after dropping tables.');
-    } else {
-      console.log('Seeding database with default users and courses...');
-      
-      // Hash passwords for seed users
+    if (userCount === 0) {
+      console.log('\nSeeding default users...');
+
       const pSiswa1 = await bcrypt.hash('siswa1', 10);
       const pSiswa2 = await bcrypt.hash('siswa2', 10);
-      const pGuru1 = await bcrypt.hash('guru1', 10);
+      const pGuru1  = await bcrypt.hash('guru1', 10);
       const pAdmin1 = await bcrypt.hash('admin1', 10);
 
-      // Insert Users
       await client.query(`
         INSERT INTO users (username, email, password, full_name, role, xp, streak, study_duration, last_active) VALUES
-        ('siswa1', 'siswa1@mathify.com', $1, 'Ahmad Rizki', 'student', 2500, 12, 64800, NOW() - INTERVAL '1 day'),
-        ('siswa2', 'siswa2@mathify.com', $2, 'Siti Nurhaliza', 'student', 1850, 3, 36000, NOW() - INTERVAL '1 day'),
-        ('guru1', 'guru1@mathify.com', $3, 'Budi Santoso', 'teacher', 1600, 2, 21600, NOW() - INTERVAL '1 day'),
-        ('admin1', 'admin1@mathify.com', $4, 'Admin Mathify', 'admin', 0, 0, 0, NOW());
+        ('siswa1', 'siswa1@mathify.com', $1, 'Ahmad Rizki',    'student', 2500, 12, 64800, NOW() - INTERVAL '1 day'),
+        ('siswa2', 'siswa2@mathify.com', $2, 'Siti Nurhaliza', 'student', 1850,  3, 36000, NOW() - INTERVAL '1 day'),
+        ('guru1',  'guru1@mathify.com',  $3, 'Budi Santoso',   'teacher', 1600,  2, 21600, NOW() - INTERVAL '1 day'),
+        ('admin1', 'admin1@mathify.com', $4, 'Admin Mathify',  'admin',      0,  0,     0, NOW());
       `, [pSiswa1, pSiswa2, pGuru1, pAdmin1]);
+
       console.log('✔ Users seeded (with secure bcrypt passwords and realistic stats).');
-
-      // Run the rest of the seed sql but skip the users part
-      const seedSqlPath = path.join(__dirname, 'migrations', '002_seed_data.sql');
-      let seedSql = fs.readFileSync(seedSqlPath, 'utf8');
-      
-      // Strip the USERS insert block from 002_seed_data.sql since we already did it with hashed passwords
-      seedSql = seedSql.replace(/INSERT INTO users[\s\S]*?\([\s\S]*?\);/i, '-- Skipped default user insert');
-
-      await client.query(seedSql);
-      console.log('✔ Topics, Materials, Steps, Videos, Quizzes, Questions, and Discussions seeded successfully!');
-      
       console.log('\nDefault credentials you can use to log in:');
       console.log('1. Siswa:  siswa1@mathify.com  | Password: siswa1');
       console.log('2. Siswa:  siswa2@mathify.com  | Password: siswa2');
       console.log('3. Guru:   guru1@mathify.com   | Password: guru1');
+    } else {
+      console.log('\nUsers already exist. Skipping user seed.');
     }
   } catch (error) {
-    console.error('Error during seeding:', error.message);
-  } finally {
-    await client.end();
-    console.log('\n=== SETUP COMPLETED SUCCESSFULLY ===');
+    console.error('Error during user seeding:', error.message);
   }
+
+  // 5. Jalankan 002_seed_data.sql jika topik belum ada
+  try {
+    const topicCheck = await client.query(`SELECT COUNT(*) FROM topics WHERE slug = 'aljabar'`);
+    const exists = parseInt(topicCheck.rows[0].count) > 0;
+
+    if (!exists) {
+      console.log('\nRunning seed: 002_seed_data.sql...');
+      const seedSqlPath = path.join(__dirname, 'migrations', '002_seed_data.sql');
+      let seedSql = fs.readFileSync(seedSqlPath, 'utf8');
+      // Skip INSERT users karena sudah di-handle di atas
+      seedSql = seedSql.replace(/INSERT INTO users[\s\S]*?\([\s\S]*?\);/i, '-- Skipped default user insert');
+      await client.query(seedSql);
+      console.log('✔ 002_seed_data.sql seeded successfully!');
+    } else {
+      console.log('✔ 002_seed_data.sql already seeded. Skipping.');
+    }
+  } catch (error) {
+    console.error('Error running 002_seed_data.sql:', error.message);
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // 6. AUTO-RUN semua file seed 003, 004, 005, dst
+  //    Cukup taruh file SQL baru di folder migrations/
+  //    dengan nama 003_*.sql, 004_*.sql, dst
+  //    lalu jalankan: node setup-db.js
+  // ─────────────────────────────────────────────────────────────
+  try {
+    const migrationsDir = path.join(__dirname, 'migrations');
+    const allFiles = fs.readdirSync(migrationsDir).sort();
+
+    // Ambil semua file yang dimulai dari 003 ke atas
+    const extraSeeds = allFiles.filter(f => {
+      const num = parseInt(f.split('_')[0]);
+      return f.endsWith('.sql') && num >= 3;
+    });
+
+    if (extraSeeds.length === 0) {
+      console.log('\nTidak ada file seed tambahan (003+) yang ditemukan.');
+    }
+
+    for (const seedFile of extraSeeds) {
+      // Ambil penanda unik dari nama file untuk cek duplikat
+      // Contoh: 003_bilangan_seed.sql → cek slug 'bilangan'
+      const slugGuess = seedFile.replace(/^\d+_/, '').replace(/_seed\.sql$/, '').replace(/_/g, '-');
+
+      try {
+        const checkResult = await client.query(
+          `SELECT COUNT(*) FROM topics WHERE slug = $1`,
+          [slugGuess]
+        );
+        const alreadySeeded = parseInt(checkResult.rows[0].count) > 0;
+
+        if (alreadySeeded) {
+          console.log(`✔ ${seedFile} already seeded (slug: ${slugGuess}). Skipping.`);
+          continue;
+        }
+      } catch {
+        // Kalau cek gagal, tetap jalankan file-nya
+      }
+
+      console.log(`\nRunning seed: ${seedFile}...`);
+      try {
+        const sqlPath = path.join(migrationsDir, seedFile);
+        const sql = fs.readFileSync(sqlPath, 'utf8');
+        await client.query(sql);
+        console.log(`✔ ${seedFile} seeded successfully!`);
+      } catch (error) {
+        console.error(`✘ Error running ${seedFile}:`, error.message);
+      }
+    }
+  } catch (error) {
+    console.error('Error reading migrations directory:', error.message);
+  }
+
+  await client.end();
+  console.log('\n=== SETUP COMPLETED SUCCESSFULLY ===');
 }
 
 setup();
