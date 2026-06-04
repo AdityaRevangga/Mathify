@@ -227,7 +227,7 @@ body { display: flex; min-height: 100vh; background: var(--bg-soft); }
 /* ===== STATS ROW ===== */
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
   margin-bottom: 1.75rem;
 }
