@@ -11,7 +11,11 @@
     "migrate": "node -e \"require('./src/config/database').query(require('fs').readFileSync('./migrations/001_init.sql','utf8')).then(()=>console.log('Migration done')).catch(e=>console.error(e))\"",
     "setup-db": "node setup-db.js"
   },
-  "keywords": ["math", "learning", "education"],
+  "keywords": [
+    "math",
+    "learning",
+    "education"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -20,6 +24,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "pg": "^8.13.0"
   },
   "devDependencies": {
