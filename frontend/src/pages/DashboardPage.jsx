@@ -86,20 +86,37 @@ const DashboardPage = () => {
   };
 
   // Topic card details mapping (colors, emojis, and levels based on topic slug)
-  const getTopicStyle = (topicSlug) => {
-    switch (topicSlug?.toLowerCase()) {
+  const getTopicStyle = (topic) => {
+    const slug = typeof topic === 'string' ? topic : topic?.slug;
+    const iconUrl = typeof topic === 'object' ? topic?.icon_url : null;
+    const key = (iconUrl || slug || '').toLowerCase();
+
+    switch (key) {
+      case 'code':
       case 'aljabar':
         return { emoji: '📊', color: 'blue', level: 'menengah', levelText: 'Intermediate' };
+      case 'triangle':
       case 'geometri':
         return { emoji: '📐', color: 'blue', level: 'dasar', levelText: 'Beginner' };
+      case 'calculator':
       case 'aritmatika':
         return { emoji: '🔢', color: 'orange', level: 'dasar', levelText: 'Beginner' };
+      case 'trending':
       case 'statistika':
         return { emoji: '📈', color: 'purple', level: 'menengah', levelText: 'Intermediate' };
+      case 'ruler':
       case 'trigonometri':
         return { emoji: '📏', color: 'red', level: 'lanjutan', levelText: 'Advanced' };
+      case 'book':
+        return { emoji: '📚', color: 'green', level: 'dasar', levelText: 'Beginner' };
+      case 'abacus':
+        return { emoji: '🧮', color: 'orange', level: 'menengah', levelText: 'Intermediate' };
+      case 'lightbulb':
+        return { emoji: '💡', color: 'purple', level: 'dasar', levelText: 'Beginner' };
+      case 'science':
+        return { emoji: '🧪', color: 'red', level: 'lanjutan', levelText: 'Advanced' };
       default:
-        return { emoji: '📐', color: 'blue', level: 'dasar', levelText: 'Beginner' };
+        return { emoji: '📚', color: 'green', level: 'dasar', levelText: 'Beginner' };
     }
   };
 
@@ -201,7 +218,7 @@ const DashboardPage = () => {
 
       <div className="courses-grid">
         {topics.slice(0, 3).map((topic) => {
-          const { emoji, color, level } = getTopicStyle(topic.slug);
+          const { emoji, color, level } = getTopicStyle(topic);
           const progress = getTopicProgress(topic.id);
           const lessonsCount = topic.material_count || 0;
 

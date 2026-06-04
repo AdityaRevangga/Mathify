@@ -14,7 +14,8 @@ const AdminTopicsPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
-    description: ''
+    description: '',
+    icon_url: 'book'
   });
 
   const loadTopics = async () => {
@@ -60,7 +61,7 @@ const AdminTopicsPage = () => {
     setError('');
     setSuccess('');
     setEditingId(null);
-    setFormData({ name: '', slug: '', description: '' });
+    setFormData({ name: '', slug: '', description: '', icon_url: 'book' });
     setIsFormOpen(true);
   };
 
@@ -71,7 +72,8 @@ const AdminTopicsPage = () => {
     setFormData({
       name: topic.name,
       slug: topic.slug,
-      description: topic.description || ''
+      description: topic.description || '',
+      icon_url: topic.icon_url || 'book'
     });
     setIsFormOpen(true);
   };
@@ -133,6 +135,27 @@ const AdminTopicsPage = () => {
     } catch (err) {
       console.error('Error saving topic:', err);
       setError(err.response?.data?.message || 'Gagal menyimpan topik. Pastikan slug unik.');
+    }
+  };
+
+  const getTopicEmoji = (iconUrl, slug) => {
+    const key = (iconUrl || slug || '').toLowerCase();
+    switch (key) {
+      case 'code':
+      case 'aljabar': return '📊';
+      case 'triangle':
+      case 'geometri': return '📐';
+      case 'calculator':
+      case 'aritmatika': return '🔢';
+      case 'trending':
+      case 'statistika': return '📈';
+      case 'ruler':
+      case 'trigonometri': return '📏';
+      case 'book': return '📚';
+      case 'abacus': return '🧮';
+      case 'lightbulb': return '💡';
+      case 'science': return '🧪';
+      default: return '📚';
     }
   };
 
@@ -199,6 +222,26 @@ const AdminTopicsPage = () => {
                   disabled={!!editingId} // Disable slug editing for safety
                 />
               </div>
+              <div className="form-group-admin">
+                <label htmlFor="icon_url">Logo / Ikon Topik</label>
+                <select
+                  id="icon_url"
+                  name="icon_url"
+                  className="admin-select"
+                  value={formData.icon_url}
+                  onChange={handleInputChange}
+                >
+                  <option value="book">📚 Buku / Lainnya</option>
+                  <option value="code">📊 Grafik Batang (Aljabar)</option>
+                  <option value="triangle">📐 Penggaris Segitiga (Geometri)</option>
+                  <option value="calculator">🔢 Angka / Kalkulator (Aritmatika)</option>
+                  <option value="trending">📈 Grafik Garis (Statistika)</option>
+                  <option value="ruler">📏 Penggaris Lurus (Trigonometri)</option>
+                  <option value="abacus">🧮 Sempoa</option>
+                  <option value="lightbulb">💡 Bola Lampu (Logika)</option>
+                  <option value="science">🧪 Tabung Sains</option>
+                </select>
+              </div>
             </div>
             <div className="form-group-admin">
               <label htmlFor="description">Deskripsi Singkat</label>
@@ -247,7 +290,12 @@ const AdminTopicsPage = () => {
                   <td>
                     <span className="badge badge-blue">{topic.slug}</span>
                   </td>
-                  <td style={{ fontWeight: 600 }}>{topic.name}</td>
+                  <td style={{ fontWeight: 600 }}>
+                    <span style={{ marginRight: '0.5rem', fontSize: '1.2rem' }}>
+                      {getTopicEmoji(topic.icon_url, topic.slug)}
+                    </span>
+                    {topic.name}
+                  </td>
                   <td style={{ color: 'var(--text-muted)' }}>{topic.description || '-'}</td>
                   <td>
                     <span className="badge badge-green" style={{ 

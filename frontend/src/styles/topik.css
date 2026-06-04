@@ -94,6 +94,8 @@ body { display: flex; min-height: 100vh; background: var(--bg-soft); }
 .prog-orange  { background: #FEF3C7; color: #92400E; }
 .prog-blue    { background: var(--blue-light); color: var(--blue); }
 .prog-green   { background: #D1FAE5; color: #065F46; }
+.prog-red     { background: #FEE2E2; color: #991B1B; }
+.prog-purple  { background: #F5F3FF; color: #6D28D9; }
 .prog-none    { background: var(--bg-gray); color: var(--text-muted); }
 
 .topic-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text); }
@@ -105,6 +107,8 @@ body { display: flex; min-height: 100vh; background: var(--bg-soft); }
 .fill-orange { background: var(--orange); }
 .fill-blue   { background: var(--blue); }
 .fill-green  { background: var(--green); }
+.fill-red    { background: var(--red); }
+.fill-purple { background: #8B5CF6; }
 .fill-none   { background: var(--bg-gray); width: 0; }
 
 /* ===== SUB MATERI GRID ===== */

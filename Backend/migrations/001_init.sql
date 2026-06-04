@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS materials (
   title VARCHAR(200) NOT NULL,
   slug VARCHAR(200) UNIQUE NOT NULL,
   description TEXT,
+  type VARCHAR(50) DEFAULT 'theory',
   sort_order INTEGER DEFAULT 0,
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

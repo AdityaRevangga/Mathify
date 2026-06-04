@@ -23,4 +23,9 @@ router.post('/:materialId/steps', adminOnly, materialController.createStep);
 router.put('/steps/:stepId', adminOnly, materialController.updateStep);
 router.delete('/steps/:stepId', adminOnly, materialController.deleteStep);
 
+// Practice Questions (Latihan Soal) - Admin only untuk CRUD
+router.post('/:materialId/practice', adminOnly, materialController.createPractice);
+router.put('/practice/:practiceId', adminOnly, materialController.updatePractice);
+router.delete('/practice/:practiceId', adminOnly, materialController.deletePractice);
+
 module.exports = router;
