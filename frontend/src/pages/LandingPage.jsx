@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logoMathify from '../assets/logo_mathify.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -84,7 +85,10 @@ const LandingPage = () => {
         boxShadow: scrolled ? '0 1px 24px rgba(0,0,0,0.07)' : 'none',
         transition: 'all 0.3s ease',
       }}>
-        <span style={{ fontWeight: 800, fontSize: 22, color: '#2563EB', letterSpacing: '-0.5px' }}>Mathify</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src={logoMathify} alt="Mathify Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+          <span style={{ fontWeight: 800, fontSize: 22, color: '#2563EB', letterSpacing: '-0.5px' }}>Mathify</span>
+        </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <button onClick={() => navigate('/login')} style={{
             padding: '8px 20px', borderRadius: 8, border: '1.5px solid #D1D5DB',
@@ -313,7 +317,10 @@ const LandingPage = () => {
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 40, marginBottom: 48 }}>
             <div>
-              <h3 style={{ fontWeight: 800, fontSize: 20, color: '#60A5FA', marginBottom: 12 }}>Mathify</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: 12 }}>
+                <img src={logoMathify} alt="Mathify Logo" style={{ width: '28px', height: '28px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+                <h3 style={{ fontWeight: 800, fontSize: 20, color: '#60A5FA', margin: 0 }}>Mathify</h3>
+              </div>
               <p style={{ color: '#94A3B8', fontSize: 14, lineHeight: 1.7 }}>
                 Empowering the next generation of mathematicians through accessible, engaging, and highly effective digital education.
               </p>

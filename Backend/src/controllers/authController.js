@@ -204,7 +204,7 @@ const authController = {
   },
 };
 
-const googleLogin = async (req, res) => {
+const googleLogin = async (req, res, next) => {
   try {
     const { email, name, avatar_url } = req.body;
 
@@ -213,7 +213,6 @@ const googleLogin = async (req, res) => {
     }
 
     const db = require('../config/database');
-    const jwt = require('jsonwebtoken');
     const username = email.split('@')[0];
 
     // Cek apakah user sudah ada
@@ -225,19 +224,30 @@ const googleLogin = async (req, res) => {
     } else {
       // Buat user baru
       const newUser = await db.query(
-        `INSERT INTO users (username, email, password, full_name, avatar_url, role)
-         VALUES ($1, $2, $3, $4, $5, 'student') RETURNING *`,
+        `INSERT INTO users (username, email, password, full_name, avatar_url, role, xp, streak, study_duration, last_active)
+         VALUES ($1, $2, $3, $4, $5, 'student', 0, 1, 0, NOW()) RETURNING *`,
         [username, email, 'GOOGLE_AUTH', name, avatar_url]
       );
       user = newUser.rows[0];
     }
 
-    const accessToken = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    // Update active streak on login
+    await User.updateActiveStreak(user.id);
+
+    // Fetch the updated user details
+    const updatedUser = await User.findById(user.id);
+
+    const accessToken = generateAccessToken(updatedUser);
+    const refreshToken = await generateRefreshToken(updatedUser.id);
 
     res.json({
       success: true,
-      data: { accessToken, refreshToken, user }
+      message: 'Login Google berhasil',
+      data: {
+        user: updatedUser,
+        accessToken,
+        refreshToken: refreshToken.token
+      }
     });
   } catch (error) {
     console.error('Google login error:', error);

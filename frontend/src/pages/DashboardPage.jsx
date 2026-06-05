@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { topicsAPI, materialsAPI, resultsAPI } from '../services/api';
 import StatCard from '../components/StatCard';
-import TopicCard from '../components/TopicCard';
+import DashboardTopicCard from '../components/DashboardTopicCard';
 import '../styles/dashboard.css';
 import '../styles/topik.css';
 
@@ -93,14 +93,17 @@ const DashboardPage = () => {
 
     switch (key) {
       case 'code':
+      case 'function':
       case 'aljabar':
-        return { emoji: '📊', color: 'blue', level: 'menengah', levelText: 'Intermediate' };
+        return { emoji: '📊', color: 'blue', level: 'menengah', levelText: 'Intermediate', imageUrl: '/aljabar.jpg' };
       case 'triangle':
       case 'geometri':
-        return { emoji: '📐', color: 'blue', level: 'dasar', levelText: 'Beginner' };
+        return { emoji: '📐', color: 'blue', level: 'dasar', levelText: 'Beginner', imageUrl: '/geometri.png' };
       case 'calculator':
       case 'aritmatika':
-        return { emoji: '🔢', color: 'orange', level: 'dasar', levelText: 'Beginner' };
+      case 'hash':
+      case 'bilangan':
+        return { emoji: '🔢', color: 'orange', level: 'dasar', levelText: 'Beginner', imageUrl: '/bilangan.jpg' };
       case 'trending':
       case 'statistika':
         return { emoji: '📈', color: 'purple', level: 'menengah', levelText: 'Intermediate' };
@@ -218,20 +221,17 @@ const DashboardPage = () => {
 
       <div className="courses-grid">
         {topics.slice(0, 3).map((topic) => {
-          const { emoji, color, level } = getTopicStyle(topic);
+          const { emoji, color, level, levelText, imageUrl } = getTopicStyle(topic);
           const progress = getTopicProgress(topic.id);
           const lessonsCount = topic.material_count || 0;
 
           return (
-            <TopicCard
+            <DashboardTopicCard
               key={topic.id}
               title={topic.name}
               description={topic.description}
-              lessonsCount={lessonsCount}
-              progress={progress}
-              level={level}
-              emoji={emoji}
-              color={color}
+              levelText={levelText}
+              imageUrl={imageUrl}
               onClick={() => handleTopicClick(topic)}
             />
           );

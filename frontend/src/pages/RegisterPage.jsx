@@ -6,6 +6,7 @@ import '../styles/register.css';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 import { useGoogleLogin } from '@react-oauth/google';
+import logoMathify from '../assets/logo_mathify.png';
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
@@ -84,9 +85,9 @@ const RegisterPage = () => {
     <div style={{ display: 'flex', width: '100%', minHeight: '100vh', background: 'white' }}>
       {/* LEFT PANEL */}
       <div className="left-panel">
-        <div className="panel-logo">
-          <div className="logo-icon">⊞</div>
-          MathIfy
+        <div className="panel-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, fontSize: '1.5rem', color: 'white' }}>
+          <img src={logoMathify} alt="Mathify Logo" style={{ width: '36px', height: '36px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+          Mathify
         </div>
 
         <div className="panel-content">

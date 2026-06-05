@@ -68,29 +68,30 @@ const TopicsPage = () => {
     const key = (iconUrl || slug || '').toLowerCase();
 
     switch (key) {
-      case 'code':
-      case 'aljabar':
-        return { emoji: '📊', color: 'blue', level: 'menengah', levelText: 'Intermediate' };
+      // Beginner
+      case 'hash':
+      case 'bilangan':
+        return { emoji: '🔢', color: 'green', level: 'dasar', levelText: 'Beginner' };
       case 'triangle':
       case 'geometri':
         return { emoji: '📐', color: 'blue', level: 'dasar', levelText: 'Beginner' };
-      case 'calculator':
-      case 'aritmatika':
-        return { emoji: '🔢', color: 'orange', level: 'dasar', levelText: 'Beginner' };
-      case 'trending':
-      case 'statistika':
-        return { emoji: '📈', color: 'purple', level: 'menengah', levelText: 'Intermediate' };
-      case 'ruler':
+      
+      // Intermediate
+      case 'function':
+      case 'aljabar':
+        return { emoji: '📊', color: 'blue', level: 'menengah', levelText: 'Intermediate' };
+      case 'activity':
       case 'trigonometri':
-        return { emoji: '📏', color: 'red', level: 'lanjutan', levelText: 'Advanced' };
-      case 'book':
-        return { emoji: '📚', color: 'green', level: 'dasar', levelText: 'Beginner' };
-      case 'abacus':
-        return { emoji: '🧮', color: 'orange', level: 'menengah', levelText: 'Intermediate' };
-      case 'lightbulb':
-        return { emoji: '💡', color: 'purple', level: 'dasar', levelText: 'Beginner' };
-      case 'science':
-        return { emoji: '🧪', color: 'red', level: 'lanjutan', levelText: 'Advanced' };
+        return { emoji: '📏', color: 'purple', level: 'menengah', levelText: 'Intermediate' };
+
+      // Advanced
+      case 'bar-chart':
+      case 'statistika':
+        return { emoji: '📈', color: 'purple', level: 'lanjutan', levelText: 'Advanced' };
+      case 'trending-up':
+      case 'kalkulus':
+        return { emoji: '📉', color: 'red', level: 'lanjutan', levelText: 'Advanced' };
+
       default:
         return { emoji: '📚', color: 'green', level: 'dasar', levelText: 'Beginner' };
     }

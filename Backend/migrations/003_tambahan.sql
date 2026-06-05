@@ -365,3 +365,32 @@ INSERT INTO quiz_questions (quiz_id, question_text, option_a, option_b, option_c
 ((SELECT id FROM quizzes WHERE title = 'Kuis Integral Tentu dan Luas Daerah'), 'Nilai dari ∫[0 ke 2] (3x²) dx adalah…', '6', '8', '12', '4', 'b', 3),
 ((SELECT id FROM quizzes WHERE title = 'Kuis Integral Tentu dan Luas Daerah'), 'Jika ∫[0 ke k] 4x dx = 50, maka nilai k adalah…', '4', '5', '25', '10', 'b', 4),
 ((SELECT id FROM quizzes WHERE title = 'Kuis Integral Tentu dan Luas Daerah'), 'Nilai dari ∫[1 ke 3] (2x + 1) dx adalah…', '8', '10', '12', '14', 'b', 5);
+
+-- ============================================================
+-- SEED VIDEOS TAMBAHAN
+-- ============================================================
+
+INSERT INTO videos (material_id, title, description, video_url, thumbnail_url, duration, sort_order) VALUES
+-- ALJABAR
+((SELECT id FROM materials WHERE slug = 'simbol-matematika'), 'Video: Makna Simbol Matematika', 'Memahami tanda dan simbol penting dalam matematika.', 'https://www.youtube.com/watch?v=Rc6vjXtS70Q', 'https://img.youtube.com/vi/9B3q3A3M6xQ/maxresdefault.jpg', 420, 1),
+((SELECT id FROM materials WHERE slug = 'bentuk-aljabar-operasi'), 'Video: Operasi Aljabar', 'Menyederhanakan, menjumlahkan, dan mengalikan bentuk aljabar.', 'https://www.youtube.com/watch?v=cQAwIhfC6Dg', 'https://img.youtube.com/vi/E-b-PZ_z8mI/maxresdefault.jpg', 600, 1),
+((SELECT id FROM materials WHERE slug = 'plsv-aljabar'), 'Video: Persamaan Linear 1 Variabel', 'Cara menyelesaikan PLSV dengan mudah.', 'https://www.youtube.com/watch?v=j3-vxTMQlXM', 'https://img.youtube.com/vi/tY8D_JzX2eQ/maxresdefault.jpg', 540, 1),
+((SELECT id FROM materials WHERE slug = 'fungsi-dan-relasi'), 'Video: Relasi dan Fungsi', 'Konsep domain, kodomain, range, dan fungsi.', 'https://www.youtube.com/watch?v=Qnkaep-LsoY', 'https://img.youtube.com/vi/Zc2X2MvP-t0/maxresdefault.jpg', 660, 1),
+
+-- GEOMETRI
+((SELECT id FROM materials WHERE slug = 'titik-garis-bidang'), 'Video: Titik, Garis, dan Bidang', 'Pengenalan dasar-dasar geometri.', 'https://www.youtube.com/watch?v=Rc6vjXtS70Q', 'https://img.youtube.com/vi/9B3q3A3M6xQ/maxresdefault.jpg', 480, 1),
+((SELECT id FROM materials WHERE slug = 'luas-keliling-bangun-datar'), 'Video: Bangun Datar', 'Cara menghitung luas dan keliling bangun datar lengkap.', 'https://www.youtube.com/watch?v=cQAwIhfC6Dg', 'https://img.youtube.com/vi/E-b-PZ_z8mI/maxresdefault.jpg', 720, 1),
+((SELECT id FROM materials WHERE slug = 'teorema-pythagoras'), 'Video: Teorema Pythagoras', 'Penjelasan dan contoh soal teorema Pythagoras.', 'https://www.youtube.com/watch?v=j3-vxTMQlXM', 'https://img.youtube.com/vi/tY8D_JzX2eQ/maxresdefault.jpg', 600, 1),
+((SELECT id FROM materials WHERE slug = 'volume-bangun-ruang'), 'Video: Bangun Ruang', 'Menghitung volume dan luas permukaan balok, kubus, tabung, dll.', 'https://www.youtube.com/watch?v=Qnkaep-LsoY', 'https://img.youtube.com/vi/Zc2X2MvP-t0/maxresdefault.jpg', 900, 1),
+
+-- TRIGONOMETRI
+((SELECT id FROM materials WHERE slug = 'perbandingan-trigonometri'), 'Video: Dasar Trigonometri (Sin, Cos, Tan)', 'Memahami perbandingan trigonometri di segitiga siku-siku.', 'https://www.youtube.com/watch?v=Rc6vjXtS70Q', 'https://img.youtube.com/vi/9B3q3A3M6xQ/maxresdefault.jpg', 600, 1),
+((SELECT id FROM materials WHERE slug = 'trigonometri-kuadran'), 'Video: Trigonometri Berbagai Kuadran', 'Aturan tanda sudut berelasi di kuadran I-IV.', 'https://www.youtube.com/watch?v=cQAwIhfC6Dg', 'https://img.youtube.com/vi/E-b-PZ_z8mI/maxresdefault.jpg', 600, 1),
+((SELECT id FROM materials WHERE slug = 'aturan-sinus-cosinus'), 'Video: Aturan Sinus dan Cosinus', 'Penerapan aturan sinus dan cosinus pada segitiga sembarang.', 'https://www.youtube.com/watch?v=j3-vxTMQlXM', 'https://img.youtube.com/vi/tY8D_JzX2eQ/maxresdefault.jpg', 600, 1),
+((SELECT id FROM materials WHERE slug = 'identitas-trigonometri'), 'Video: Identitas Trigonometri', 'Pembuktian dan penyederhanaan identitas trigonometri.', 'https://www.youtube.com/watch?v=Qnkaep-LsoY', 'https://img.youtube.com/vi/Zc2X2MvP-t0/maxresdefault.jpg', 600, 1),
+
+-- STATISTIKA
+((SELECT id FROM materials WHERE slug = 'pengumpulan-penyajian-data'), 'Video: Penyajian Data Dasar', 'Membaca dan membuat berbagai macam diagram statistika.', 'https://www.youtube.com/watch?v=Rc6vjXtS70Q', 'https://img.youtube.com/vi/9B3q3A3M6xQ/maxresdefault.jpg', 540, 1),
+((SELECT id FROM materials WHERE slug = 'ukuran-pemusatan-data'), 'Video: Mean, Median, Modus', 'Cara menghitung ukuran pemusatan data kelompok & tunggal.', 'https://www.youtube.com/watch?v=cQAwIhfC6Dg', 'https://img.youtube.com/vi/E-b-PZ_z8mI/maxresdefault.jpg', 600, 1),
+((SELECT id FROM materials WHERE slug = 'ukuran-penyebaran-data'), 'Video: Varians dan Standar Deviasi', 'Menganalisa persebaran dan deviasi suatu data.', 'https://www.youtube.com/watch?v=j3-vxTMQlXM', 'https://img.youtube.com/vi/tY8D_JzX2eQ/maxresdefault.jpg', 660, 1),
+((SELECT id FROM materials WHERE slug = 'peluang-dasar'), 'Video: Peluang Kejadian', 'Memahami teori peluang dasar dan kaidah pencacahan.', 'https://www.youtube.com/watch?v=Qnkaep-LsoY', 'https://img.youtube.com/vi/Zc2X2MvP-t0/maxresdefault.jpg', 720, 1);

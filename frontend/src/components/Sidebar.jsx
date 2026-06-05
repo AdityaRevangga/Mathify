@@ -18,7 +18,7 @@ const Sidebar = () => {
       <div className="sidebar-logo">
         <img 
           src={logoMathify} 
-          alt="MathIfy Logo" 
+          alt="Mathify Logo" 
           style={{ 
             width: '24px', 
             height: '24px', 
@@ -27,7 +27,7 @@ const Sidebar = () => {
             flexShrink: 0
           }} 
         />
-        MathIfy
+        Mathify
       </div>
       <nav className="sidebar-nav">
       <NavLink

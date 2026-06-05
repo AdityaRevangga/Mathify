@@ -85,3 +85,10 @@ INSERT INTO quiz_questions (quiz_id, question_text, option_a, option_b, option_c
 ((SELECT id FROM quizzes WHERE title = 'Kuis Bilangan Berpangkat dan Akar'), 'Nilai dari 4⁻² + √16 adalah…', '4,0625', '3,9375', '4,5', '5', 'a', 2),
 ((SELECT id FROM quizzes WHERE title = 'Kuis Bilangan Berpangkat dan Akar'), 'Jika 2ˣ = 32, maka nilai x adalah…', '4', '5', '6', '16', 'b', 3),
 ((SELECT id FROM quizzes WHERE title = 'Kuis Bilangan Berpangkat dan Akar'), 'Bentuk sederhana dari √(a⁴b²) adalah…', 'a²b', 'ab²', '2ab', 'a²b²', 'a', 4);
+
+-- ==================== VIDEOS ====================
+INSERT INTO videos (material_id, title, description, video_url, thumbnail_url, duration, sort_order) VALUES
+((SELECT id FROM materials WHERE slug = 'jenis-jenis-bilangan'), 'Video: Jenis-jenis Bilangan', 'Penjelasan lengkap mengenai bilangan asli, cacah, bulat, rasional, dan irasional.', 'https://www.youtube.com/watch?v=Rc6vjXtS70Q', 'https://img.youtube.com/vi/9B3q3A3M6xQ/maxresdefault.jpg', 600, 1),
+((SELECT id FROM materials WHERE slug = 'operasi-bilangan-bulat'), 'Video: Operasi Bilangan Bulat', 'Cara mudah memahami penjumlahan, pengurangan, perkalian, dan pembagian bilangan bulat.', 'https://www.youtube.com/watch?v=cQAwIhfC6Dg', 'https://img.youtube.com/vi/E-b-PZ_z8mI/maxresdefault.jpg', 720, 1),
+((SELECT id FROM materials WHERE slug = 'fpb-dan-kpk'), 'Video: Cara Cepat FPB dan KPK', 'Trik menyelesaikan soal cerita dan mencari FPB & KPK dengan pohon faktor.', 'https://www.youtube.com/watch?v=j3-vxTMQlXM', 'https://img.youtube.com/vi/tY8D_JzX2eQ/maxresdefault.jpg', 840, 1),
+((SELECT id FROM materials WHERE slug = 'bilangan-berpangkat-akar'), 'Video: Bilangan Berpangkat & Akar', 'Penyederhanaan dan sifat-sifat eksponen serta bentuk akar.', 'https://www.youtube.com/watch?v=Qnkaep-LsoY', 'https://img.youtube.com/vi/Zc2X2MvP-t0/maxresdefault.jpg', 900, 1);
